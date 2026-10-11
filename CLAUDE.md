@@ -20,7 +20,7 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 |---|---|
 | `index.html` | App komplett |
 | `sw.js` | Service Worker: offline, Updates (HTML und `lists/` network-first, Rest cache-first) |
-| `manifest.webmanifest`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png` | Home-Bildschirm; `icon.svg` ist die Quelle der PNGs (angebissene Vokabelkarte) |
+| `manifest.webmanifest`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png` | Home-Bildschirm; `icon.svg` ist die Quelle der PNGs (Union Jack mit Vokabelkarte „a“, Entwurf von Thomas); PNGs randlos rendern, iOS rundet selbst |
 | `lists/index.json`, `lists/*.json` | Lektionen (Vokabellisten) |
 | `tools/check.sh` | Prüfung: JS-Syntax, JSON, Listen, Versionsgleichheit |
 | `tools/add-list.py` | Claudes Antwort (Buchfotos → JSON) als Lektion in `lists/` aufnehmen, feste Wort-Ids, `rev` hochzählen |
@@ -30,8 +30,8 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 
 Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleichzeitig** hochzählen, sonst bekommt das iPhone die alte Fassung aus dem Cache:
 
-- `sw.js`: `const CACHE = 'wordbox-v1.4';`
-- `index.html`: Text `Version 1.4` in den Einstellungen (Erfolge → Einstellungen)
+- `sw.js`: `const CACHE = 'wordbox-v1.5';`
+- `index.html`: Text `Version 1.5` in den Einstellungen (Erfolge → Einstellungen)
 
 `tools/check.sh` bricht ab, wenn beide nicht übereinstimmen. Neue Listen in `lists/` brauchen keinen neuen Release.
 

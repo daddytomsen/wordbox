@@ -429,8 +429,8 @@ const capFirst = s => s ? s[0].toUpperCase() + s.slice(1) : s;
 const lowFirst = s => s ? s[0].toLowerCase() + s.slice(1) : s;
 
 function logo(cls = 'logo') {
-  // Angebissene Vokabelkarte, kleine Fassung von icon.svg. Die Maske schneidet den Biss durch beide Karten.
-  return `<svg class="${cls}" viewBox="0 0 32 32" aria-hidden="true"><defs><mask id="logo-bite"><rect width="32" height="32" fill="#fff"/><circle cx="25.5" cy="10.5" r="4.2"/><circle cx="21.8" cy="8.6" r="2.5"/><circle cx="27" cy="14.6" r="2.5"/></mask></defs><g mask="url(#logo-bite)"><rect x="5" y="8" width="17" height="13" rx="3" fill="var(--hl)" transform="rotate(-10 13.5 14.5)"/><g transform="rotate(3 17 16)"><rect x="8.5" y="9.5" width="17" height="13" rx="3" fill="var(--surface)" stroke="var(--royal)" stroke-width="2"/><path d="M12.5 14.5h8M12.5 18h5" stroke="var(--royal)" stroke-width="1.8" stroke-linecap="round"/></g></g><circle cx="28.3" cy="6.3" r="1.1" fill="var(--royal)"/><circle cx="30" cy="9.6" r=".8" fill="var(--marker-deep)"/></svg>`;
+  // Kleine Fassung von icon.svg: Union Jack, davor die Vokabelkarte mit „a" und Haken.
+  return `<svg class="${cls}" viewBox="0 0 32 32" aria-hidden="true"><defs><clipPath id="logo-clip"><rect width="32" height="32" rx="8"/></clipPath></defs><g clip-path="url(#logo-clip)"><rect width="32" height="32" fill="#012169"/><path d="M0 0 32 32M32 0 0 32" fill="none" stroke="#fff" stroke-width="4.8"/><path d="M0 0 32 32M32 0 0 32" fill="none" stroke="#C8102E" stroke-width="2.2"/><path d="M0 16h32M16 0v32" fill="none" stroke="#fff" stroke-width="8.9"/><path d="M0 16h32M16 0v32" fill="none" stroke="#C8102E" stroke-width="4.9"/><g transform="rotate(4 23 23)"><rect x="17.4" y="15.4" width="11" height="14.1" rx="1.7" fill="#BDEFE9"/><rect x="18.3" y="16.3" width="10" height="13.5" rx="1.7" fill="#fff"/><text x="23.3" y="25.3" fill="#123C57" font-family="Arial,Helvetica,sans-serif" font-size="8.7" font-weight="800" text-anchor="middle">a</text><circle cx="26.3" cy="18.6" r="1.4" fill="#FFC83D"/></g></g></svg>`;
 }
 
 /* ---------- words / mastery ---------- */
@@ -1012,7 +1012,7 @@ function viewAwards() {
     <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Voc a Bit in einem normalen Fenster.</div>'}</div></div>
     <div class="row" style="gap:8px;padding-bottom:12px;flex-wrap:wrap"><button class="btn btn-soft btn-sm" data-act="backup">${icon('download')}Sicherung speichern</button><label class="btn btn-line btn-sm" for="restoreFile" style="cursor:pointer">${icon('upload')}Sicherung laden</label><input id="restoreFile" class="sr" type="file" accept=".json,application/json" data-ch="restore-file"></div>
     ${restore}
-    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.4</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
+    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.5</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
   </section>`;
 }
 function viewQuiz() {
