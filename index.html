@@ -1,0 +1,1430 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Word Box Vokabeltrainer</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Word Box">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#EDF0F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1128" media="(prefers-color-scheme: dark)">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Lexend:wght@300..700&display=swap">
+<style>
+/* Layout: one-column phone app (max 560px) with sticky top bar and fixed bottom nav; the quiz takes over the whole screen.
+   Identity: Königsblau school ink + yellow highlighter + the German Karteikasten (5 compartments) as the learning model. */
+:root{
+  --bg:#EDF0F8; --surface:#FFFFFF; --surface-2:#F5F7FC; --ink:#161D42; --ink-2:#4A5378; --ink-3:#8790B0;
+  --line:#DCE1EF; --line-2:#C7CEE5;
+  --royal:#2E47CF; --royal-deep:#1C2F9C; --royal-ink:#FFFFFF; --royal-ink-2:rgba(255,255,255,.78); --royal-soft:#E3E8FD;
+  --hl:#FFD43B; --marker-deep:#D99A00; --marker-soft:#FFF2C2; --marker-ink:#5C4300;
+  --flame:#F2542D; --flame-soft:#FFE7DF;
+  --good:#12A16B; --good-deep:#0B7A50; --good-soft:#DBF4E8; --good-ink:#09603F;
+  --bad:#E5484D; --bad-deep:#B92D33; --bad-soft:#FDE4E5; --bad-ink:#9C2127; --on-good:#FFFFFF;
+  --f0:#C7CEE5; --f1:#FF7F61; --f2:#FFAE3D; --f3:#F5CB2E; --f4:#6FD3A0; --f5:#12A16B;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Lexend","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-ipa:"Noto Sans","Segoe UI","Lucida Sans Unicode","Arial Unicode MS",system-ui,sans-serif;
+  --r-lg:22px; --r-md:16px; --r-sm:10px; --nav-h:66px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0D1128; --surface:#161C3A; --surface-2:#1D2447; --ink:#EEF1FF; --ink-2:#B2B9DA; --ink-3:#7880A6;
+  --line:#2A3260; --line-2:#3A447C;
+  --royal:#7C90FF; --royal-deep:#4E62D8; --royal-ink:#0D1128; --royal-ink-2:rgba(13,17,40,.72); --royal-soft:#252F6B;
+  --hl:rgba(255,212,59,.38); --marker-deep:#FFD43B; --marker-soft:#3E3312; --marker-ink:#FFE38A;
+  --flame:#FF7A52; --flame-soft:#3E1F18;
+  --good:#3DD69B; --good-deep:#20A673; --good-soft:#0F3A2B; --good-ink:#93ECC8;
+  --bad:#FF6B70; --bad-deep:#D2454B; --bad-soft:#45181D; --bad-ink:#FFB5B8; --on-good:#0D1128;
+  --f0:#3A447C;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0D1128; --surface:#161C3A; --surface-2:#1D2447; --ink:#EEF1FF; --ink-2:#B2B9DA; --ink-3:#7880A6;
+  --line:#2A3260; --line-2:#3A447C;
+  --royal:#7C90FF; --royal-deep:#4E62D8; --royal-ink:#0D1128; --royal-ink-2:rgba(13,17,40,.72); --royal-soft:#252F6B;
+  --hl:rgba(255,212,59,.38); --marker-deep:#FFD43B; --marker-soft:#3E3312; --marker-ink:#FFE38A;
+  --flame:#FF7A52; --flame-soft:#3E1F18;
+  --good:#3DD69B; --good-deep:#20A673; --good-soft:#0F3A2B; --good-ink:#93ECC8;
+  --bad:#FF6B70; --bad-deep:#D2454B; --bad-soft:#45181D; --bad-ink:#FFB5B8; --on-good:#0D1128;
+  --f0:#3A447C;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;-webkit-text-size-adjust:100%;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--f-body);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.015em}
+p{margin:0}
+:focus-visible{outline:3px solid var(--royal);outline-offset:2px;border-radius:8px}
+.ms{width:1em;height:1em;font-size:24px;display:inline-block;flex:none;vertical-align:middle;overflow:visible}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#app{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hl{background:linear-gradient(100deg,transparent 2%,var(--hl) 3%,var(--hl) 97%,transparent 98%) 0 85%/100% 42% no-repeat;padding-inline:.08em}
+.ipa{font-family:var(--f-ipa);color:var(--ink-3);font-size:.9em}
+.lbl{font:600 12px/1.2 var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.muted{color:var(--ink-2)}
+.small{font-size:14px}
+
+/* top bar + nav */
+.top{position:sticky;top:0;z-index:20;background:var(--bg);margin-inline:-16px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px}
+.top-in{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:8px;background:none;border:0;padding:4px 0;font:800 21px var(--f-display);letter-spacing:-.03em;color:var(--ink)}
+.logo{width:30px;height:30px;flex:none}
+.chips{display:flex;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px 5px 8px;border-radius:999px;background:var(--surface);border:1.5px solid var(--line);font:700 15px var(--f-display);font-variant-numeric:tabular-nums}
+.chip .ms{font-size:20px;color:var(--ink-3)}
+.chip-flame.on .ms{color:var(--flame)}
+.chip-xp .ms{color:var(--marker-deep)}
+.main{display:flex;flex-direction:column;gap:16px;padding-block:6px calc(var(--nav-h) + 40px + env(safe-area-inset-bottom,0px))}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1.5px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);height:var(--nav-h)}
+.nav button{background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:600 12px var(--f-body);color:var(--ink-3)}
+.nav .nic{display:grid;place-items:center;padding:3px 18px;border-radius:999px;transition:background .2s}
+.nav button .ms{font-size:24px}
+.nav button[aria-current="page"]{color:var(--royal)}
+.nav button[aria-current="page"] .nic{background:var(--royal-soft)}
+
+/* generic */
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:18px}
+.card h3{font-size:19px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:var(--r-md);padding:14px 20px;min-height:52px;font:600 17px/1.1 var(--f-body);transition:transform .08s,box-shadow .08s}
+.btn .ms{font-size:22px}
+.btn.wide{width:100%}
+.btn-primary{background:var(--royal);color:var(--royal-ink);box-shadow:0 4px 0 var(--royal-deep)}
+.btn-primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--royal-deep)}
+.btn-good{background:var(--good);color:var(--on-good);box-shadow:0 4px 0 var(--good-deep)}
+.btn-bad{background:var(--bad);color:var(--on-good);box-shadow:0 4px 0 var(--bad-deep)}
+.btn-good:active,.btn-bad:active{transform:translateY(3px);box-shadow:none}
+.btn-soft{background:var(--royal-soft);color:var(--royal)}
+.btn-line{background:var(--surface);color:var(--ink);border:2px solid var(--line-2)}
+.btn-danger{background:var(--bad-soft);color:var(--bad-ink)}
+.btn-sm{min-height:40px;padding:8px 14px;font-size:15px;border-radius:12px}
+.link{background:none;border:0;color:var(--royal);font-weight:600;padding:8px}
+.iconbtn{width:44px;height:44px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--royal-soft);color:var(--royal);flex:none}
+.iconbtn.sm{width:36px;height:36px}
+.iconbtn.sm .ms{font-size:20px}
+.iconbtn.plain{background:transparent;color:var(--ink-2)}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font:600 13px var(--f-body);background:var(--surface-2);color:var(--ink-2)}
+.pill .ms{font-size:16px}
+.pill-marker{background:var(--marker-soft);color:var(--marker-ink)}
+.notice{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--r-md);background:var(--marker-soft);color:var(--marker-ink);font-size:15px}
+.notice .ms{font-size:22px}
+.err{color:var(--bad-ink);background:var(--bad-soft);padding:10px 14px;border-radius:12px;font-size:15px}
+
+/* home */
+.hello h1{font-size:32px}
+.hello p{color:var(--ink-2);margin-top:4px}
+.goal{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px 18px;align-items:center}
+.ring{width:96px;height:96px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg);display:block}
+.ring circle{fill:none;stroke-width:10;stroke-linecap:round}
+.ring .trk{stroke:var(--surface-2)}
+.ring .val{stroke:var(--marker-deep);transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1)}
+.ring.done .val{stroke:var(--good)}
+.ring .lab{position:absolute;inset:0;display:grid;place-content:center;text-align:center;line-height:1}
+.ring .lab b{font:800 24px var(--f-display);font-variant-numeric:tabular-nums}
+.ring .lab small{font-size:12px;color:var(--ink-3);margin-top:3px}
+.goal h3{font-size:20px}
+.goal p{color:var(--ink-2);font-size:15px;margin-top:4px}
+.week{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding-top:12px;border-top:1.5px dashed var(--line)}
+.day{display:flex;flex-direction:column;align-items:center;gap:5px;font:600 12px var(--f-body);color:var(--ink-3)}
+.day i{width:32px;height:32px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-style:normal}
+.day i .ms{font-size:19px}
+.day.on i{background:var(--flame);color:#fff}
+.day.today span{color:var(--ink)}
+.day.today i{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--royal)}
+.cta{display:flex;align-items:center;gap:16px;width:100%;text-align:left;padding:18px;border:0;border-radius:var(--r-lg);background:var(--royal);color:var(--royal-ink);box-shadow:0 5px 0 var(--royal-deep);transition:transform .08s,box-shadow .08s}
+.cta:active{transform:translateY(4px);box-shadow:0 1px 0 var(--royal-deep)}
+.cta .ic{width:54px;height:54px;border-radius:17px;background:var(--royal-ink-2);color:var(--royal);display:grid;place-items:center;flex:none}
+.cta .ic .ms{font-size:30px}
+.cta strong{display:block;font:800 23px/1.1 var(--f-display);letter-spacing:-.02em}
+.cta small{display:block;color:var(--royal-ink-2);font-size:14px;margin-top:4px}
+.review{display:flex;align-items:center;gap:14px}
+.review .badge-ic{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:var(--marker-soft);color:var(--marker-ink);flex:none}
+.review.calm .badge-ic{background:var(--good-soft);color:var(--good-ink)}
+.review h3{font-size:18px}
+.review p{font-size:14px;color:var(--ink-2)}
+.lvl{display:flex;align-items:center;gap:14px}
+.lvl .num{width:52px;height:52px;border-radius:16px;background:var(--ink);color:var(--surface);display:grid;place-content:center;text-align:center;flex:none;line-height:1}
+.lvl .num small{font:600 10px var(--f-body);letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.lvl .num b{font:800 22px var(--f-display)}
+.bar{height:12px;border-radius:999px;background:var(--surface-2);overflow:hidden;position:relative}
+.bar > span{display:block;height:100%;border-radius:999px;background:var(--royal);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.stackbar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--f0);gap:2px}
+.stackbar span{display:block;height:100%}
+.unit-row{display:flex;flex-direction:column;gap:8px;padding:14px 0;border-top:1.5px solid var(--line)}
+.unit-row:first-of-type{border-top:0;padding-top:4px}
+.unit-row b{font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--ink-3)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.empty{text-align:center;padding:28px 18px}
+.empty .ms{font-size:44px;color:var(--royal)}
+.empty h3{margin:10px 0 6px}
+.empty p{color:var(--ink-2)}
+.skel{height:84px;border-radius:var(--r-lg);background:var(--surface);border:1.5px solid var(--line);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55}}
+
+/* practice */
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:6px}
+.sec-h h2{font-size:22px}
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mode{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:14px;border-radius:var(--r-md);background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;min-width:0}
+.mode .ms{font-size:24px;color:var(--royal)}
+.mode b{font:700 16px/1.2 var(--f-body)}
+.mode small{color:var(--ink-3);font-size:13px}
+.mode[aria-pressed="true"]{border-color:var(--royal);background:var(--royal-soft)}
+.mode[aria-pressed="true"] small{color:var(--ink-2)}
+.mode.none{border-style:dashed}
+.seg{display:flex;background:var(--surface-2);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:transparent;border-radius:10px;padding:10px 6px;font-weight:600;color:var(--ink-2);min-height:44px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--royal);box-shadow:0 1px 0 var(--line-2),0 0 0 1.5px var(--line)}
+.chipbar{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
+.chipbar::-webkit-scrollbar{display:none}
+.fchip{flex:none;border:1.5px solid var(--line-2);background:var(--surface);border-radius:999px;padding:8px 14px;font:600 14px var(--f-body);color:var(--ink-2);white-space:nowrap;min-height:40px}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.wlist{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.ghead{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface-2);border-top:1.5px solid var(--line);position:relative;cursor:pointer}
+.ghead:first-child{border-top:0}
+.ghead .lbl{flex:1}
+.wrow{display:flex;align-items:center;gap:12px;padding:11px 16px;border-top:1px solid var(--line);cursor:pointer;position:relative}
+.wrow input,.ghead input{position:absolute;opacity:0;width:1px;height:1px}
+.cbox{width:26px;height:26px;border-radius:8px;border:2px solid var(--line-2);display:grid;place-items:center;flex:none;color:transparent;background:var(--surface);transition:background .12s}
+.cbox .ms{font-size:18px;--sw:3}
+input:checked + .cbox{background:var(--royal);border-color:var(--royal);color:var(--royal-ink)}
+input:focus-visible + .cbox{outline:3px solid var(--royal);outline-offset:2px}
+.wtxt{flex:1;min-width:0;display:flex;flex-direction:column}
+.wtxt b{font-weight:600;overflow-wrap:anywhere}
+.wtxt span{font-size:14px;color:var(--ink-2);overflow-wrap:anywhere}
+.pips{display:flex;gap:3px;flex:none}
+.pips i{width:6px;height:16px;border-radius:3px;background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line)}
+.startbar{position:sticky;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 10px);z-index:10}
+.startbar .btn{width:100%;font-size:18px;min-height:58px}
+.opt-mark{font-size:12px;color:var(--ink-3);margin-left:4px}
+
+/* vocab */
+.search{position:relative}
+.search input{width:100%;height:50px;border-radius:var(--r-md);border:1.5px solid var(--line-2);background:var(--surface);padding:0 16px 0 44px;font-size:16px}
+.search .ms{position:absolute;left:14px;top:13px;color:var(--ink-3)}
+.kasten{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;align-items:end;height:140px;margin-top:6px}
+.fach{display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.fach .pile{width:100%;border-radius:8px 8px 4px 4px;min-height:14px;position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;background-image:repeating-linear-gradient(180deg,transparent 0 5px,rgba(0,0,0,.08) 5px 6px)}
+.fach .pile b{font:800 15px var(--f-display);color:#1A1F3A;font-variant-numeric:tabular-nums}
+.fach small{font:600 11px var(--f-body);color:var(--ink-3);white-space:nowrap}
+.import-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px;border-radius:var(--r-lg);border:2px dashed var(--royal);background:var(--royal-soft);color:var(--ink)}
+.import-card .ic{width:50px;height:50px;border-radius:16px;background:var(--royal);color:var(--royal-ink);display:grid;place-items:center;flex:none}
+.import-card b{font:800 18px var(--f-display);display:block}
+.import-card small{color:var(--ink-2);font-size:14px}
+details.unit{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+details.unit summary{list-style:none;display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer}
+details.unit summary::-webkit-details-marker{display:none}
+details.unit summary .ms{transition:transform .2s;color:var(--ink-3)}
+details.unit[open] summary .ms.chev{transform:rotate(180deg)}
+details.unit summary b{font:700 17px var(--f-display);display:block}
+details.unit summary small{color:var(--ink-3);font-size:13px}
+.vrow{display:flex;gap:12px;padding:12px 16px;border-top:1px solid var(--line);align-items:flex-start}
+.vrow .grow b{font-weight:600}
+.vrow .de{color:var(--ink-2);font-size:15px}
+.vrow .ex{font-size:14px;color:var(--ink-3);font-style:italic;margin-top:2px}
+.vrow .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:12px;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--ink-2)}
+.unit-foot{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+/* awards */
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-md);padding:14px}
+.tile .lbl{display:flex;align-items:center;gap:4px}
+.tile .lbl .ms{font-size:16px}
+.tile b{display:block;font:800 28px/1.1 var(--f-display);margin-top:6px;font-variant-numeric:tabular-nums}
+.tile small{color:var(--ink-3);font-size:13px}
+.badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.bdg{display:flex;gap:12px;align-items:center;padding:12px;border-radius:var(--r-md);background:var(--surface);border:1.5px solid var(--line);min-width:0}
+.bdg .medal{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--marker-soft);color:var(--marker-ink);box-shadow:inset 0 0 0 3px var(--hl)}
+.bdg.locked .medal{background:var(--surface-2);color:var(--ink-3);box-shadow:none}
+.bdg b{font-size:14px;font-weight:600;display:block;line-height:1.25}
+.bdg small{font-size:12px;color:var(--ink-3);line-height:1.3;display:block}
+.bdg > div{min-width:0}
+.setting{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.setting:first-of-type{border-top:0}
+.switch{width:52px;height:32px;border-radius:999px;border:0;background:var(--line-2);position:relative;flex:none;transition:background .15s}
+.switch::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .15s}
+.switch[aria-checked="true"]{background:var(--good)}
+.switch[aria-checked="true"]::after{transform:translateX(20px)}
+.area{width:100%;border-radius:12px;border:1.5px solid var(--line-2);background:var(--surface);padding:12px 14px;font:400 16px/1.5 var(--f-body);resize:vertical;min-height:120px}
+.area[readonly]{font-size:13px;color:var(--ink-2)}
+.field{width:100%;height:48px;border-radius:12px;border:1.5px solid var(--line-2);background:var(--surface);padding:0 14px;font-size:16px}
+
+/* quiz */
+.quiz{padding-bottom:calc(40px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px;padding-block:12px 40px}
+.quiz.answered{padding-bottom:300px}
+.qtop{display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--bg);padding:calc(6px + env(safe-area-inset-top,0px)) 0 6px;z-index:5}
+.qbar{flex:1;height:16px;border-radius:999px;background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--line);overflow:hidden}
+.qbar span{display:block;height:100%;background:var(--good);border-radius:999px;transition:width .4s cubic-bezier(.2,.8,.2,1);position:relative}
+.qbar span::after{content:"";position:absolute;left:10px;right:10px;top:4px;height:4px;border-radius:2px;background:rgba(255,255,255,.4)}
+.combo{display:inline-flex;align-items:center;gap:2px;font:800 16px var(--f-display);color:var(--flame);min-width:44px;justify-content:flex-end}
+.combo .ms{font-size:20px}
+.qcard{display:flex;flex-direction:column;gap:10px;padding-top:8px}
+.qprompt{font:800 34px/1.12 var(--f-display);letter-spacing:-.02em;overflow-wrap:anywhere}
+.qprompt.long{font-size:25px}
+.qprompt.sentence{font:500 24px/1.4 var(--f-body);letter-spacing:0}
+.qsay{display:flex;align-items:center;gap:12px}
+.blank{display:inline-block;min-width:3.5em;border-bottom:3px solid var(--royal);color:var(--royal);font-weight:700;text-align:center;padding:0 .2em}
+.blank.ok{color:var(--good-ink);border-color:var(--good)}
+.hint{display:inline-flex;align-items:center;gap:6px;font-size:15px;color:var(--ink-2)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{width:100%;text-align:left;display:flex;align-items:center;gap:14px;padding:13px 16px;background:var(--surface);color:var(--ink);border:2px solid var(--line);border-bottom-width:5px;border-radius:var(--r-md);font:500 18px/1.3 var(--f-body);min-height:62px;transition:transform .06s,background .15s,border-color .15s}
+.opt:hover{border-color:var(--line-2)}
+.opt:active{transform:translateY(2px);border-bottom-width:3px;margin-bottom:2px}
+.opt .key{flex:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;font:600 13px var(--f-body);color:var(--ink-3)}
+.opt span.t{flex:1;min-width:0;overflow-wrap:anywhere}
+.opt.is-right{background:var(--good-soft);border-color:var(--good);color:var(--good-ink)}
+.opt.is-right .key{border-color:var(--good);background:var(--good);color:var(--on-good)}
+.opt.is-wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad-ink);animation:shake .35s}
+.opt.is-wrong .key{border-color:var(--bad);background:var(--bad);color:var(--on-good)}
+.opt.is-dim{color:var(--ink-3)}
+.opt[disabled]{cursor:default}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.typebox{display:flex;flex-direction:column;gap:10px}
+.typebox input{height:60px;border-radius:var(--r-md);border:2px solid var(--line-2);border-bottom-width:4px;background:var(--surface);padding:0 18px;font:500 22px var(--f-body)}
+.typebox input:focus{border-color:var(--royal);outline:none}
+.typebox input.ok{border-color:var(--good);background:var(--good-soft)}
+.typebox input.no{border-color:var(--bad);background:var(--bad-soft)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:40;border-top:3px solid;padding-bottom:env(safe-area-inset-bottom,0px);animation:up .28s cubic-bezier(.2,.8,.2,1)}
+.sheet.ok{background:var(--good-soft);border-color:var(--good);color:var(--good-ink)}
+.sheet.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad-ink)}
+.sheet-in{max-width:560px;margin:0 auto;padding:16px 16px 18px;display:flex;flex-direction:column;gap:10px}
+.sheet-head{display:flex;align-items:center;gap:10px}
+.sheet-head .ms{font-size:30px}
+.sheet-head strong{font:800 24px var(--f-display);flex:1}
+.gain{font:800 16px var(--f-display);background:var(--hl);color:var(--marker-ink);padding:4px 10px;border-radius:999px}
+.sheet .wcard{background:var(--surface);color:var(--ink);border-radius:var(--r-md);padding:12px 14px;display:flex;gap:12px;align-items:flex-start}
+.sheet .wcard .grow b{font-weight:600}
+.sheet .wcard .de{font-size:14px;color:var(--ink-2)}
+.sheet .wcard .ex{font-size:14px;color:var(--ink-3);font-style:italic;margin-top:2px}
+@keyframes up{from{transform:translateY(100%)}}
+
+/* result */
+.result{display:flex;flex-direction:column;gap:16px;padding-block:calc(28px + env(safe-area-inset-top,0px)) calc(40px + env(safe-area-inset-bottom,0px))}
+.result .hero{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.result .hero .big{width:96px;height:96px;border-radius:30px;display:grid;place-items:center;background:var(--marker-soft);color:var(--marker-ink)}
+.result .hero .big .ms{font-size:56px}
+.result h1{font-size:44px}
+.xpline{font:800 40px var(--f-display);font-variant-numeric:tabular-nums}
+.tiles3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tiles3 .tile{padding:12px;text-align:center}
+.tiles3 .tile b{font-size:24px}
+.streakbox{display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--r-lg);background:var(--flame-soft);color:var(--ink)}
+.streakbox .ms{font-size:44px;color:var(--flame)}
+.streakbox b{font:800 22px var(--f-display);display:block}
+.newbadge{animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+.mist{display:flex;flex-direction:column}
+.mist div{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.mist div:first-child{border-top:0}
+
+/* import */
+.drop{display:flex;flex-direction:column;align-items:center;gap:8px;padding:26px 16px;border:2.5px dashed var(--royal);border-radius:var(--r-lg);background:var(--royal-soft);text-align:center;cursor:pointer}
+.drop .ms{font-size:40px;color:var(--royal)}
+.drop b{font:800 19px var(--f-display)}
+.drop small{color:var(--ink-2)}
+.thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.thumb{position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:var(--surface-2);max-width:100%}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb button{position:absolute;top:6px;right:6px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(13,17,40,.7);color:#fff;display:grid;place-items:center}
+.thumb button .ms{font-size:18px}
+.spin{width:56px;height:56px;border-radius:50%;border:6px solid var(--royal-soft);border-top-color:var(--royal);animation:rot 1s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.irow{display:flex;gap:12px;padding:12px 16px;border-top:1px solid var(--line);align-items:flex-start;position:relative}
+.irow.off .grow{opacity:.55}
+.irow .edit{display:grid;gap:8px;margin-top:8px}
+.irow .edit input{height:42px;border-radius:10px;border:1.5px solid var(--line-2);background:var(--surface);padding:0 12px;font-size:16px;width:100%}
+
+/* overlays */
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(10,13,32,.55);display:grid;place-items:center;padding:16px}
+.dialog{width:100%;max-width:420px;background:var(--surface);border-radius:26px;padding:24px 20px 18px;display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 32px);overflow:auto}
+.dialog h2{font-size:28px}
+.dialog .logo{width:56px;height:56px}
+#toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:70;background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:14px;font-weight:500;font-size:15px;max-width:calc(100vw - 32px);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;display:flex;gap:8px;align-items:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:80;width:100%;height:100%}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (min-width:600px){.qprompt{font-size:40px}.qprompt.long{font-size:28px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-add_a_photo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M12 20h-7a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v3.5" /> <path d="M16 19h6" /> <path d="M19 16v6" /> <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></g></symbol><symbol id="i-arrow_back" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M5 12l14 0" /> <path d="M5 12l6 6" /> <path d="M5 12l6 -6" /></g></symbol><symbol id="i-arrow_forward" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M5 12l14 0" /> <path d="M13 18l6 -6" /> <path d="M13 6l6 6" /></g></symbol><symbol id="i-auto_awesome" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6z" /></g></symbol><symbol id="i-autorenew" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /> <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></g></symbol><symbol id="i-bolt" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11" /></g></symbol><symbol id="i-bolt-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M13 2l.018 .001l.016 .001l.083 .005l.011 .002h.011l.038 .009l.052 .008l.016 .006l.011 .001l.029 .011l.052 .014l.019 .009l.015 .004l.028 .014l.04 .017l.021 .012l.022 .01l.023 .015l.031 .017l.034 .024l.018 .011l.013 .012l.024 .017l.038 .034l.022 .017l.008 .01l.014 .012l.036 .041l.026 .027l.006 .009c.12 .147 .196 .322 .218 .513l.001 .012l.002 .041l.004 .064v6h5a1 1 0 0 1 .868 1.497l-.06 .091l-8 11c-.568 .783 -1.808 .38 -1.808 -.588v-6h-5a1 1 0 0 1 -.868 -1.497l.06 -.091l8 -11l.01 -.013l.018 -.024l.033 -.038l.018 -.022l.009 -.008l.013 -.014l.04 -.036l.028 -.026l.008 -.006a1 1 0 0 1 .402 -.199l.011 -.001l.027 -.005l.074 -.013l.011 -.001l.041 -.002z" /></g></symbol><symbol id="i-cancel" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /> <path d="M10 10l4 4m0 -4l-4 4" /></g></symbol><symbol id="i-cancel-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-6.489 5.8a1 1 0 0 0 -1.218 1.567l1.292 1.293l-1.292 1.293l-.083 .094a1 1 0 0 0 1.497 1.32l1.293 -1.292l1.293 1.292l.094 .083a1 1 0 0 0 1.32 -1.497l-1.292 -1.293l1.292 -1.293l.083 -.094a1 1 0 0 0 -1.497 -1.32l-1.293 1.292l-1.293 -1.292l-.094 -.083z" /></g></symbol><symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M5 12l5 5l10 -10" /></g></symbol><symbol id="i-check_circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /> <path d="M9 12l2 2l4 -4" /></g></symbol><symbol id="i-check_circle-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></g></symbol><symbol id="i-close" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M18 6l-12 12" /> <path d="M6 6l12 12" /></g></symbol><symbol id="i-compare_arrows" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M21 17l-18 0" /> <path d="M6 10l-3 -3l3 -3" /> <path d="M3 7l18 0" /> <path d="M18 20l3 -3l-3 -3" /></g></symbol><symbol id="i-delete" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M4 7l16 0" /> <path d="M10 11l0 6" /> <path d="M14 11l0 6" /> <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /> <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></g></symbol><symbol id="i-delete-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M20 6a1 1 0 0 1 .117 1.993l-.117 .007h-.081l-.919 11a3 3 0 0 1 -2.824 2.995l-.176 .005h-8c-1.598 0 -2.904 -1.249 -2.992 -2.75l-.005 -.167l-.923 -11.083h-.08a1 1 0 0 1 -.117 -1.993l.117 -.007h16z" /> <path d="M14 2a2 2 0 0 1 2 2a1 1 0 0 1 -1.993 .117l-.007 -.117h-4l-.007 .117a1 1 0 0 1 -1.993 -.117a2 2 0 0 1 1.85 -1.995l.15 -.005h4z" /></g></symbol><symbol id="i-done_all" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M7 12l5 5l10 -10" /> <path d="M2 12l5 5m5 -5l5 -5" /></g></symbol><symbol id="i-edit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /> <path d="M13.5 6.5l4 4" /></g></symbol><symbol id="i-edit_note" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M20 17v-12c0 -1.121 -.879 -2 -2 -2s-2 .879 -2 2v12l2 2l2 -2z" /> <path d="M16 7h4" /> <path d="M18 19h-13a2 2 0 1 1 0 -4h4a2 2 0 1 0 0 -4h-3" /></g></symbol><symbol id="i-emoji_events" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M8 21l8 0" /> <path d="M12 17l0 4" /> <path d="M7 4l10 0" /> <path d="M17 4v8a5 5 0 0 1 -10 0v-8" /> <path d="M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /> <path d="M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /></g></symbol><symbol id="i-emoji_events-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M17 3a1 1 0 0 1 .993 .883l.007 .117v2.17a3 3 0 1 1 0 5.659v.171a6.002 6.002 0 0 1 -5 5.917v2.083h3a1 1 0 0 1 .117 1.993l-.117 .007h-8a1 1 0 0 1 -.117 -1.993l.117 -.007h3v-2.083a6.002 6.002 0 0 1 -4.996 -5.692l-.004 -.225v-.171a3 3 0 0 1 -3.996 -2.653l-.003 -.176l.005 -.176a3 3 0 0 1 3.995 -2.654l-.001 -2.17a1 1 0 0 1 1 -1h10zm-12 5a1 1 0 1 0 0 2a1 1 0 0 0 0 -2zm14 0a1 1 0 1 0 0 2a1 1 0 0 0 0 -2z" /></g></symbol><symbol id="i-expand_more" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M6 9l6 6l6 -6" /></g></symbol><symbol id="i-flag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9z" /> <path d="M5 21v-7" /></g></symbol><symbol id="i-flag-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M4 5a1 1 0 0 1 .3 -.714a6 6 0 0 1 8.213 -.176l.351 .328a4 4 0 0 0 5.272 0l.249 -.227c.61 -.483 1.527 -.097 1.61 .676l.005 .113v9a1 1 0 0 1 -.3 .714a6 6 0 0 1 -8.213 .176l-.351 -.328a4 4 0 0 0 -5.136 -.114v6.552a1 1 0 0 1 -1.993 .117l-.007 -.117v-16z" /></g></symbol><symbol id="i-history" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M12 8l0 4l2 2" /> <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></g></symbol><symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M5 12l-2 0l9 -9l9 9l-2 0" /> <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /> <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></g></symbol><symbol id="i-home-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M12.707 2.293l9 9c.63 .63 .184 1.707 -.707 1.707h-1v6a3 3 0 0 1 -3 3h-1v-7a3 3 0 0 0 -2.824 -2.995l-.176 -.005h-2a3 3 0 0 0 -3 3v7h-1a3 3 0 0 1 -3 -3v-6h-1c-.89 0 -1.337 -1.077 -.707 -1.707l9 -9a1 1 0 0 1 1.414 0m.293 11.707a1 1 0 0 1 1 1v7h-4v-7a1 1 0 0 1 .883 -.993l.117 -.007z" /></g></symbol><symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /> <path d="M12 9h.01" /> <path d="M11 12h1v4h1" /></g></symbol><symbol id="i-info-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M12 2c5.523 0 10 4.477 10 10a10 10 0 0 1 -19.995 .324l-.005 -.324l.004 -.28c.148 -5.393 4.566 -9.72 9.996 -9.72zm0 9h-1l-.117 .007a1 1 0 0 0 0 1.986l.117 .007v3l.007 .117a1 1 0 0 0 .876 .876l.117 .007h1l.117 -.007a1 1 0 0 0 .876 -.876l.007 -.117l-.007 -.117a1 1 0 0 0 -.764 -.857l-.112 -.02l-.117 -.006v-3l-.007 -.117a1 1 0 0 0 -.876 -.876l-.117 -.007zm.01 -3l-.127 .007a1 1 0 0 0 0 1.986l.117 .007l.127 -.007a1 1 0 0 0 0 -1.986l-.117 -.007z" /></g></symbol><symbol id="i-inventory_2" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /> <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" /> <path d="M10 12l4 0" /></g></symbol><symbol id="i-inventory_2-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M2 3m0 2a2 2 0 0 1 2 -2h16a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2z" /> <path d="M19 9c.513 0 .936 .463 .993 1.06l.007 .14v7.2c0 1.917 -1.249 3.484 -2.824 3.594l-.176 .006h-10c-1.598 0 -2.904 -1.499 -2.995 -3.388l-.005 -.212v-7.2c0 -.663 .448 -1.2 1 -1.2h14zm-5 2h-4l-.117 .007a1 1 0 0 0 0 1.986l.117 .007h4l.117 -.007a1 1 0 0 0 0 -1.986l-.117 -.007z" /></g></symbol><symbol id="i-keyboard" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M2 6m0 2a2 2 0 0 1 2 -2h16a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2z" /> <path d="M6 10l0 .01" /> <path d="M10 10l0 .01" /> <path d="M14 10l0 .01" /> <path d="M18 10l0 .01" /> <path d="M6 14l0 .01" /> <path d="M18 14l0 .01" /> <path d="M10 14l4 .01" /></g></symbol><symbol id="i-local_fire_department" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M12 12c2 -2.96 0 -7 -1 -8c0 3.038 -1.773 4.741 -3 6c-1.226 1.26 -2 3.24 -2 5a6 6 0 1 0 12 0c0 -1.532 -1.056 -3.94 -2 -5c-1.786 3 -2.791 3 -4 2z" /></g></symbol><symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /> <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /> <path d="M8 11v-4a4 4 0 1 1 8 0v4" /></g></symbol><symbol id="i-lock-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M12 2a5 5 0 0 1 5 5v3a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-10a3 3 0 0 1 -3 -3v-6a3 3 0 0 1 3 -3v-3a5 5 0 0 1 5 -5m0 12a2 2 0 0 0 -1.995 1.85l-.005 .15a2 2 0 1 0 2 -2m0 -10a3 3 0 0 0 -3 3v3h6v-3a3 3 0 0 0 -3 -3" /></g></symbol><symbol id="i-menu_book" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /> <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /> <path d="M3 6l0 13" /> <path d="M12 6l0 13" /> <path d="M21 6l0 13" /></g></symbol><symbol id="i-menu_book-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M12.088 4.82a10 10 0 0 1 9.412 .314a1 1 0 0 1 .493 .748l.007 .118v13a1 1 0 0 1 -1.5 .866a8 8 0 0 0 -8 0a1 1 0 0 1 -1 0a8 8 0 0 0 -7.733 -.148l-.327 .18l-.103 .044l-.049 .016l-.11 .026l-.061 .01l-.117 .006h-.042l-.11 -.012l-.077 -.014l-.108 -.032l-.126 -.056l-.095 -.056l-.089 -.067l-.06 -.056l-.073 -.082l-.064 -.089l-.022 -.036l-.032 -.06l-.044 -.103l-.016 -.049l-.026 -.11l-.01 -.061l-.004 -.049l-.002 -.068v-13a1 1 0 0 1 .5 -.866a10 10 0 0 1 9.412 -.314l.088 .044l.088 -.044z" /></g></symbol><symbol id="i-military_tech" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M12 4v3m-4 -3v6m8 -6v6" /> <path d="M12 18.5l-3 1.5l.5 -3.5l-2 -2l3 -.5l1.5 -3l1.5 3l3 .5l-2 2l.5 3.5z" /></g></symbol><symbol id="i-play_arrow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M7 4v16l13 -8z" /></g></symbol><symbol id="i-play_arrow-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M6 4v16a1 1 0 0 0 1.524 .852l13 -8a1 1 0 0 0 0 -1.704l-13 -8a1 1 0 0 0 -1.524 .852z" /></g></symbol><symbol id="i-school" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" /> <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" /></g></symbol><symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /> <path d="M21 21l-6 -6" /></g></symbol><symbol id="i-settings" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /> <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></g></symbol><symbol id="i-settings-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M14.647 4.081a.724 .724 0 0 0 1.08 .448c2.439 -1.485 5.23 1.305 3.745 3.744a.724 .724 0 0 0 .447 1.08c2.775 .673 2.775 4.62 0 5.294a.724 .724 0 0 0 -.448 1.08c1.485 2.439 -1.305 5.23 -3.744 3.745a.724 .724 0 0 0 -1.08 .447c-.673 2.775 -4.62 2.775 -5.294 0a.724 .724 0 0 0 -1.08 -.448c-2.439 1.485 -5.23 -1.305 -3.745 -3.744a.724 .724 0 0 0 -.447 -1.08c-2.775 -.673 -2.775 -4.62 0 -5.294a.724 .724 0 0 0 .448 -1.08c-1.485 -2.439 1.305 -5.23 3.744 -3.745a.722 .722 0 0 0 1.08 -.447c.673 -2.775 4.62 -2.775 5.294 0zm-2.647 4.919a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z" /></g></symbol><symbol id="i-shuffle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M18 4l3 3l-3 3" /> <path d="M18 20l3 -3l-3 -3" /> <path d="M3 7h3a5 5 0 0 1 5 5a5 5 0 0 0 5 5h5" /> <path d="M21 7h-5a4.978 4.978 0 0 0 -3 1m-4 8a4.984 4.984 0 0 1 -3 1h-3" /></g></symbol><symbol id="i-star" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></g></symbol><symbol id="i-star-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z" /></g></symbol><symbol id="i-swap_horiz" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M7 10h14l-4 -4" /> <path d="M17 14h-14l4 4" /></g></symbol><symbol id="i-translate" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M4 5h7" /> <path d="M9 3v2c0 4.418 -2.239 8 -5 8" /> <path d="M5 9c0 2.144 2.952 3.908 6.7 4" /> <path d="M12 20l4 -9l4 9" /> <path d="M19.1 18h-6.2" /></g></symbol><symbol id="i-trending_up" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M3 17l6 -6l4 4l8 -8" /> <path d="M14 7l7 0l0 7" /></g></symbol><symbol id="i-volume_up" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M15 8a5 5 0 0 1 0 8" /> <path d="M17.7 5a9 9 0 0 1 0 14" /> <path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" /></g></symbol><symbol id="i-workspace_premium" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M12 9m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0" /> <path d="M12 15l3.4 5.89l1.598 -3.233l3.598 .232l-3.4 -5.889" /> <path d="M6.802 12l-3.4 5.89l3.598 -.233l1.598 3.232l3.4 -5.889" /></g></symbol><symbol id="i-workspace_premium-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><path d="M19.496 13.983l1.966 3.406a1.001 1.001 0 0 1 -.705 1.488l-.113 .011l-.112 -.001l-2.933 -.19l-1.303 2.636a1.001 1.001 0 0 1 -1.608 .26l-.082 -.094l-.072 -.11l-1.968 -3.407a8.994 8.994 0 0 0 6.93 -3.999z" /> <path d="M11.43 17.982l-1.966 3.408a1.001 1.001 0 0 1 -1.622 .157l-.076 -.1l-.064 -.114l-1.304 -2.635l-2.931 .19a1.001 1.001 0 0 1 -1.022 -1.29l.04 -.107l.05 -.1l1.968 -3.409a8.994 8.994 0 0 0 6.927 4.001z" /> <path d="M12 2l.24 .004a7 7 0 0 1 6.76 6.996l-.003 .193l-.007 .192l-.018 .245l-.026 .242l-.024 .178a6.985 6.985 0 0 1 -.317 1.268l-.116 .308l-.153 .348a7.001 7.001 0 0 1 -12.688 -.028l-.13 -.297l-.052 -.133l-.08 -.217l-.095 -.294a6.96 6.96 0 0 1 -.093 -.344l-.06 -.271l-.049 -.271l-.02 -.139l-.039 -.323l-.024 -.365l-.006 -.292a7 7 0 0 1 6.76 -6.996l.24 -.004z" /></g></symbol><symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /> <path d="M7 11l5 5l5 -5" /> <path d="M12 4l0 12" /></g></symbol><symbol id="i-upload" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /> <path d="M7 9l5 -5l5 5" /> <path d="M12 4l0 12" /></g></symbol><symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" /> <path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" /></g></symbol><symbol id="i-file" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M14 3v4a1 1 0 0 0 1 1h4" /> <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /> <path d="M9 9l1 0" /> <path d="M9 13l6 0" /> <path d="M9 17l6 0" /></g></symbol><symbol id="i-content_paste" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /> <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /> <path d="M9 12h6" /> <path d="M9 16h6" /></g></symbol><symbol id="i-library_add" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,2)"><path d="M7 3m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" /> <path d="M4.012 7.26a2.005 2.005 0 0 0 -1.012 1.737v10c0 1.1 .9 2 2 2h10c.75 0 1.158 -.385 1.5 -1" /> <path d="M11 10h6" /> <path d="M14 7v6" /></g></symbol><symbol id="i-local_fire_department-f" viewBox="0 0 24 24"><g fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 12c2 -2.96 0 -7 -1 -8c0 3.038 -1.773 4.741 -3 6c-1.226 1.26 -2 3.24 -2 5a6 6 0 1 0 12 0c0 -1.532 -1.056 -3.94 -2 -5c-1.786 3 -2.791 3 -4 2z" /></g></symbol></defs></svg>
+<div id="app"><div class="main" style="padding-top:60px"><div class="skel"></div><div class="skel"></div></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const app = document.getElementById('app');
+const toastEl = document.getElementById('toast');
+const DAY = 864e5;
+const INTERVAL = [0, 0, 1, 3, 7, 14];
+const LS_UNITS = 'wordbox.units.v1', LS_PROG = 'wordbox.prog.v1';
+const SEED = {"id":"theme1-camden-town","rev":1,"source":"server","title":"Theme 1: Back to Camden Town","pages":"S. 225–226","order":1,"source":"seed","createdAt":"2026-10-11","words":[{"id":"t1-01","en":"everything","de":"alles","ipa":"/ˈevriθɪŋ/","pos":"other","ex":"Everything was fine but then something went wrong.","gap":"Everything","sec":"A"},{"id":"t1-02","en":"to go wrong","de":"schiefgehen","ipa":"/ˌɡəʊ ˈrɒŋ/","pos":"verb","past":"went wrong","pp":"gone wrong","ex":"Everything was fine but then something went wrong.","gap":"went wrong","sec":"A"},{"id":"t1-03","en":"suddenly","de":"plötzlich","ipa":"/ˈsʌd(ə)nli/","pos":"adv","ex":"Suddenly Lara lost her balance.","gap":"Suddenly","sec":"A"},{"id":"t1-04","en":"to lose one's balance","de":"das Gleichgewicht verlieren","ipa":"/ˌluːz wʌnz ˈbæləns/","pos":"verb","past":"lost one's balance","pp":"lost one's balance","ex":"Suddenly Lara lost her balance.","gap":"lost her balance","sec":"A"},{"id":"t1-05","en":"How to …","de":"Wie man …","ipa":"/ˈhaʊ tə/","pos":"other","sec":"A"},{"id":"t1-06","en":"wave","de":"Welle","ipa":"/weɪv/","pos":"noun","sec":"A"},{"id":"t1-07","en":"strong","de":"stark, kräftig, fest","ipa":"/strɒŋ/","pos":"adj","ex":"Rachel is very strong.","gap":"strong","sec":"A"},{"id":"t1-08","en":"to push","de":"stoßen, schieben, drücken","ipa":"/pʊʃ/","pos":"verb","past":"pushed","ex":"Fiona pushed Olivia.","gap":"pushed","opp":"to pull","sec":"A"},{"id":"t1-09","en":"to hurt (sb)","de":"(jdm) wehtun, (jdn) verletzen","ipa":"/hɜːt/","pos":"verb","past":"hurt","pp":"hurt","ex":"When Olivia fell, she hurt her legs.","gap":"hurt","note":"simple past: hurt","sec":"A"},{"id":"t1-10","en":"dark","de":"dunkel","ipa":"/dɑːk/","pos":"adj","sec":"A"},{"id":"t1-11","en":"to pull","de":"ziehen","ipa":"/pʊl/","pos":"verb","past":"pulled","opp":"to push","sec":"A"},{"id":"t1-12","en":"out of","de":"aus","ipa":"/ˈaʊt əv/","pos":"other","sec":"A"},{"id":"t1-13","en":"to remember","de":"sich erinnern; daran denken","ipa":"/rɪˈmembə/","pos":"verb","past":"remembered","opp":"to forget","sec":"A"},{"id":"t1-14","en":"not … anything","de":"gar nichts","ipa":"/nɒt ˈeniθɪŋ/","pos":"other","sec":"A"},{"id":"t1-15","en":"to choose","de":"(aus)wählen","ipa":"/tʃuːz/","pos":"verb","past":"chose","pp":"chosen","ex":"He is choosing a book to read.","gap":"choosing","note":"simple past: chose /tʃəʊz/","sec":"A"},{"id":"t1-16","en":"wasn't (= was not)","de":"Vergangenheitsform von „isn't“","ipa":"/ˈwɒz(ə)nt/","pos":"other","ex":"Zoe wasn't in London last year.","gap":"wasn't","sec":"A10"},{"id":"t1-17","en":"weren't (= were not)","de":"Vergangenheitsform von „aren't“","ipa":"/ˈwɜːnt/","pos":"other","ex":"Kim and Jo weren't happy.","gap":"weren't","sec":"A10"},{"id":"t1-18","en":"to plan","de":"planen","ipa":"/plæn/","pos":"verb","past":"planned","ex":"We planned our trip last year.","gap":"planned","sec":"A12"},{"id":"t1-19","en":"plane","de":"Flugzeug","ipa":"/pleɪn/","pos":"noun","note":"on the plane – im Flugzeug","sec":"A12"},{"id":"t1-20","en":"train","de":"Zug","ipa":"/treɪn/","pos":"noun","sec":"A12"},{"id":"t1-21","en":"interesting","de":"interessant","ipa":"/ˈɪntrəstɪŋ/","pos":"adj","opp":"boring","sec":"A12"},{"id":"t1-22","en":"annoying","de":"ärgerlich","ipa":"/əˈnɔɪɪŋ/","pos":"adj","ex":"It's so annoying that our bus is late.","gap":"annoying","sec":"A12"},{"id":"t1-23","en":"trouble","de":"Schwierigkeiten, Ärger","ipa":"/ˈtrʌb(ə)l/","pos":"noun","note":"kein Plural","sec":"B1"},{"id":"t1-24","en":"to make sb do sth","de":"jdn zu etwas bringen, jdn etwas tun lassen","ipa":"/ˌmeɪk ˌsʌmbədi ˈduː/","pos":"verb","past":"made","pp":"made","note":"simple past: made","sec":"B1"},{"id":"t1-25","en":"may","de":"können, dürfen","ipa":"/meɪ/","pos":"other","ex":"You may bring your tablet to school, but you must not use it during the lesson.","gap":"may","sec":"B2"},{"id":"t1-26","en":"to switch off","de":"ausschalten, abschalten","ipa":"/ˌswɪtʃ ˈɒf/","pos":"verb","past":"switched off","sec":"B2"},{"id":"t1-27","en":"if","de":"wenn, falls, ob","ipa":"/ɪf/","pos":"other","ex":"We can have pizza if you like.","gap":"if","sec":"B2"},{"id":"t1-28","en":"break","de":"Pause","ipa":"/breɪk/","pos":"noun","ex":"Let's meet in our lunch break.","gap":"break","sec":"B2"},{"id":"t1-29","en":"to record","de":"aufzeichnen, aufnehmen","ipa":"/rɪˈkɔːd/","pos":"verb","past":"recorded","ex":"Jack wants to record his first song.","gap":"record","sec":"B2"},{"id":"t1-30","en":"unfriendly","de":"unfreundlich","ipa":"/ʌnˈfrendli/","pos":"adj","opp":"friendly","sec":"B2"},{"id":"t1-31","en":"to call","de":"(an)rufen, nennen","ipa":"/kɔːl/","pos":"verb","past":"called","note":"to call = to phone","sec":"B2"},{"id":"t1-32","en":"ill","de":"krank","ipa":"/ɪl/","pos":"adj","sec":"B2"},{"id":"t1-33","en":"office","de":"Büro, Amt; hier: Sekretariat","ipa":"/ˈɒfɪs/","pos":"noun","sec":"B2"},{"id":"t1-34","en":"to break","de":"(zer)brechen; hier: verstoßen gegen","ipa":"/breɪk/","pos":"verb","past":"broke","pp":"broken","ex":"Jack broke the rules when he used his phone in class.","gap":"broke","note":"simple past: broke /brəʊk/","sec":"B2"},{"id":"t1-35","en":"away","de":"weg","ipa":"/əˈweɪ/","pos":"adv","ex":"Your teacher can take your phone away.","gap":"away","sec":"B2"},{"id":"t1-36","en":"head teacher","de":"Schulleiter/in, Direktor/in","ipa":"/ˌhed ˈtiːtʃə/","pos":"noun","sec":"B4"},{"id":"t1-37","en":"punishment","de":"Bestrafung, Strafe","ipa":"/ˈpʌnɪʃmənt/","pos":"noun","sec":"B4"},{"id":"t1-38","en":"message","de":"Nachricht, Botschaft","ipa":"/ˈmesɪdʒ/","pos":"noun","ex":"Did you read my message?","gap":"message","sec":"B4"},{"id":"t1-39","en":"stupid","de":"dumm, blöd","ipa":"/ˈstjuːpɪd/","pos":"adj","opp":"great","note":"a great idea ↔ a stupid idea","sec":"B4"},{"id":"t1-40","en":"to leave","de":"verlassen, weggehen; hier: (zurück)lassen","ipa":"/liːv/","pos":"verb","past":"left","pp":"left","ex":"You mustn't leave the classroom during the lesson.","gap":"leave","note":"simple past: left","sec":"B4"},{"id":"t1-41","en":"most","de":"(die) meisten","ipa":"/məʊst/","pos":"other","ex":"Most people like chocolate.","gap":"Most","sec":"B4"},{"id":"t1-42","en":"to ask (for sth)","de":"(um etw) bitten","ipa":"/ˈɑːsk fə/","pos":"verb","past":"asked","ex":"Can I ask you for some help?","gap":"ask","sec":"B4"},{"id":"t1-43","en":"around","de":"umher, um, rund um, um … herum","ipa":"/əˈraʊnd/","pos":"adv","ex":"Pia played around with her phone in class.","gap":"around","sec":"B4"},{"id":"t1-44","en":"to go online","de":"online gehen","ipa":"/ˌɡəʊ ˌɒnˈlaɪn/","pos":"verb","past":"went online","pp":"gone online","ex":"I can use my phone to go online.","gap":"go online","sec":"B4"},{"id":"t1-45","en":"recording","de":"Aufnahme, Aufzeichnen","ipa":"/rɪˈkɔːdɪŋ/","pos":"noun","sec":"B4"},{"id":"t1-46","en":"bored","de":"gelangweilt","ipa":"/bɔːd/","pos":"adj","ex":"When are we leaving? I'm bored.","gap":"bored","sec":"B4"},{"id":"t1-47","en":"fault","de":"Schuld, Fehler","ipa":"/fɔːlt/","pos":"noun","sec":"B4"},{"id":"t1-48","en":"to agree","de":"zustimmen; hier: sich einig sein","ipa":"/əˈɡriː/","pos":"verb","past":"agreed","ex":"Charlie and George agree that football is great.","gap":"agree","opp":"to disagree","sec":"B4"},{"id":"t1-49","en":"to prepare","de":"vorbereiten, erstellen","ipa":"/prɪˈpeə/","pos":"verb","past":"prepared","ex":"My dad is preparing dinner.","gap":"preparing","note":"Frz. préparer","sec":"B4"},{"id":"t1-50","en":"presentation","de":"Präsentation","ipa":"/ˌprez(ə)nˈteɪʃ(ə)n/","pos":"noun","ex":"Mark is nervous about the presentation.","gap":"presentation","sec":"B4"},{"id":"t1-51","en":"topic","de":"Thema","ipa":"/ˈtɒpɪk/","pos":"noun","sec":"B4"},{"id":"t1-52","en":"(Great) Britain","de":"Großbritannien","ipa":"/ˌɡreɪt ˈbrɪt(ə)n/","pos":"noun","ex":"Britain is England, Scotland and Wales.","gap":"Britain","sec":"B4"},{"id":"t1-53","en":"another","de":"noch eine(r, s), ein(e) andere(r)","ipa":"/əˈnʌðə/","pos":"other","sec":"B4"},{"id":"t1-54","en":"work","de":"Arbeit","ipa":"/wɜːk/","pos":"noun","sec":"B4"},{"id":"t1-55","en":"to admit","de":"zugeben","ipa":"/ədˈmɪt/","pos":"verb","past":"admitted","sec":"B4"},{"id":"t1-56","en":"to punish","de":"(be)strafen","ipa":"/ˈpʌnɪʃ/","pos":"verb","past":"punished","ex":"The head teacher punished the pupils.","gap":"punished","sec":"B6"},{"id":"t1-57","en":"to highlight","de":"hervorheben, markieren","ipa":"/ˈhaɪˌlaɪt/","pos":"verb","past":"highlighted","opt":true,"sec":"B6"},{"id":"t1-58","en":"note","de":"Notiz, Mitteilung","ipa":"/nəʊt/","pos":"noun","sec":"B7"},{"id":"t1-59","en":"You're right.","de":"Du hast recht. / Ihr habt recht. / Sie haben recht.","ipa":"/ˌjɔː ˈraɪt/","pos":"other","sec":"B7"},{"id":"t1-60","en":"to disagree","de":"nicht übereinstimmen, nicht einverstanden sein","ipa":"/ˌdɪsəˈɡriː/","pos":"verb","past":"disagreed","opp":"to agree","sec":"B7"},{"id":"t1-61","en":"to present (sth to sb)","de":"(jdm etw) präsentieren","ipa":"/prɪˈzent/","pos":"verb","past":"presented","ex":"Would you like to present your ideas in class?","gap":"present","sec":"B8"},{"id":"t1-62","en":"serious","de":"ernst","ipa":"/ˈsɪəriəs/","pos":"adj","ex":"We forgot our tickets. – That's a serious problem.","gap":"serious","sec":"B8"},{"id":"t1-p01","en":"Hi …, / Hello …,","de":"eine Postkarte beginnen","pos":"phrase","sec":"Say it"},{"id":"t1-p02","en":"Hope to see you soon! Love, …","de":"eine Postkarte beenden","pos":"phrase","note":"Auch: Hope you're having fun, too! Bye, …","sec":"Say it"},{"id":"t1-p03","en":"The weather is fine.","de":"über das Wetter berichten","pos":"phrase","note":"Auch: It's a bit cloudy and not too warm. There's some sunshine, too.","sec":"Say it"},{"id":"t1-p04","en":"We're all having a great time.","de":"von einem Urlaub berichten","pos":"phrase","note":"Auch: We're staying at a nice bed and breakfast. It was fantastic! I loved it.","sec":"Say it"},{"id":"t1-p05","en":"The rules are too strict because …","de":"über Regeln sprechen","pos":"phrase","note":"Auch: The rules are fair because … The rules are like our school rules.","sec":"Say it"},{"id":"t1-p06","en":"That makes me really angry.","de":"Verärgerung ausdrücken","pos":"phrase","sec":"Say it"},{"id":"t1-p07","en":"I'm very disappointed.","de":"Enttäuschung ausdrücken","pos":"phrase","sec":"Say it"},{"id":"t1-p08","en":"I'm really sorry.","de":"dich entschuldigen","pos":"phrase","sec":"Say it"},{"id":"t1-p09","en":"It was my mistake.","de":"einen Fehler eingestehen","pos":"phrase","note":"Auch: It was my fault. It was a stupid thing to do.","sec":"Say it"},{"id":"t1-p10","en":"I think it's not fair that …","de":"sagen, ob du etwas fair/unfair findest","pos":"phrase","note":"Auch: I think it's fair that …","sec":"Say it"},{"id":"t1-p11","en":"That's true.","de":"jemandem zustimmen","pos":"phrase","note":"Auch: You're right. / Good idea. / OK.","sec":"Say it"},{"id":"t1-p12","en":"I don't think so.","de":"sagen, dass du anderer Meinung bist","pos":"phrase","sec":"Say it"}]};
+const REDUCED = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) { return false } })();
+
+const store = {
+  get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null } catch (e) { return null } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true } catch (e) { return false } }
+};
+
+function freshProg() {
+  return { v: 1, name: '', goal: 50, sound: true, speak: true, xp: 0, days: {}, streak: 0, best: 0, last: '',
+    rounds: 0, perfect: 0, typedRight: 0, pastRight: 0, extraRight: 0, bestCombo: 0, photos: 0, goalDays: 0,
+    badges: {}, w: {}, sel: null, mode: 'mix', len: 10, onboarded: false, removedLists: [], updatedAt: 0 };
+}
+
+const S = {
+  units: store.get(LS_UNITS) || [JSON.parse(JSON.stringify(SEED))],
+  prog: Object.assign(freshProg(), store.get(LS_PROG) || {}),
+  view: 'home', words: [], byId: new Map(),
+  storageOk: true, restore: null,
+  filter: 'all', unitFilter: null, search: '',
+  quiz: null, result: null, imp: null, confirm: null, delUnit: null, resetAsk: false
+};
+
+/* ---------- helpers ---------- */
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const FILLED = new Set(["bolt", "cancel", "check_circle", "delete", "emoji_events", "flag", "home", "info", "inventory_2", "lock", "menu_book", "play_arrow", "settings", "star", "workspace_premium", "local_fire_department"]);
+const icon = (n, cls = '') => `<svg class="ms ${cls}" aria-hidden="true" focusable="false"><use href="#i-${n}${/\bfill\b/.test(cls) && FILLED.has(n) ? '-f' : ''}"/></svg>`;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] } return a }
+function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') }
+const todayKey = () => ymd(new Date());
+function yesterdayKey() { const d = new Date(); d.setDate(d.getDate() - 1); return ymd(d) }
+const xpToday = () => S.prog.days[todayKey()] || 0;
+const nk = s => String(s || '').toLowerCase().replace(/[’`´]/g, "'").replace(/\s+/g, ' ').trim();
+const fmt = n => Number(n).toLocaleString('de-DE');
+const capFirst = s => s ? s[0].toUpperCase() + s.slice(1) : s;
+const lowFirst = s => s ? s[0].toLowerCase() + s.slice(1) : s;
+
+function logo(cls = 'logo') {
+  return `<svg class="${cls}" viewBox="0 0 32 32" aria-hidden="true"><rect x="6.5" y="3.5" width="16" height="13" rx="3" fill="var(--hl)" transform="rotate(-9 14.5 10)"/><rect x="10" y="5.5" width="15.5" height="13" rx="3" fill="var(--surface)" stroke="var(--royal)" stroke-width="2"/><path d="M13.5 10h8.5M13.5 13.5h5.5" stroke="var(--royal)" stroke-width="1.8" stroke-linecap="round"/><rect x="3" y="14.5" width="26" height="14.5" rx="4.5" fill="var(--royal)"/><rect x="11" y="19.5" width="10" height="3.4" rx="1.7" fill="var(--royal-ink)"/></svg>`;
+}
+
+/* ---------- words / mastery ---------- */
+function index() {
+  S.words = []; S.byId = new Map();
+  for (const u of S.units) for (const w of (u.words || [])) {
+    if (!w || !w.id || !w.en || !w.de) continue;
+    const x = Object.assign({}, w, { unit: u.id, unitTitle: u.title || 'Lektion' });
+    S.words.push(x); S.byId.set(x.id, x);
+  }
+}
+const ws = id => S.prog.w[id] || null;
+const fach = id => (ws(id) && ws(id).l) || 0;
+function isDue(id, now = Date.now()) { const s = ws(id); return !!s && s.l >= 1 && (s.d || 0) <= now }
+function isWeak(id) { const s = ws(id); return !!s && s.x > 0 && s.l <= 2 }
+const learnedCount = () => S.words.filter(w => fach(w.id) >= 4).length;
+const dueWords = () => S.words.filter(w => isDue(w.id) || isWeak(w.id));
+
+function grade(id, ok) {
+  const now = Date.now();
+  const s = S.prog.w[id] || (S.prog.w[id] = { l: 0, r: 0, x: 0, s: 0, d: 0 });
+  let promoted = false;
+  if (ok) {
+    s.r++;
+    if (s.l === 0) { s.l = 2; promoted = true }
+    else if ((s.d || 0) <= now && s.l < 5) { s.l++; promoted = true }
+    if (promoted) s.d = now + INTERVAL[s.l] * DAY;
+  } else { s.x++; s.l = 1; s.d = now }
+  s.s = now;
+  return promoted;
+}
+
+function selIds() {
+  if (Array.isArray(S.prog.sel)) return S.prog.sel.filter(id => S.byId.has(id));
+  const last = S.units[S.units.length - 1];
+  return last ? (last.words || []).map(w => w.id).filter(id => S.byId.has(id)) : [];
+}
+
+/* ---------- levels & badges ---------- */
+const LEVEL_NAMES = ['Starter', 'Explorer', 'Word Collector', 'Sentence Builder', 'Grammar Ninja', 'Vocab Hero', 'London Legend', 'Word Wizard'];
+const lvlStart = n => 50 * (n - 1) + 25 * n * (n - 1);
+function levelInfo(xp) {
+  let n = 1; while (lvlStart(n + 1) <= xp) n++;
+  const a = lvlStart(n), b = lvlStart(n + 1);
+  return { n, name: LEVEL_NAMES[Math.min(n - 1, LEVEL_NAMES.length - 1)], into: xp - a, span: b - a, pct: (xp - a) / (b - a) };
+}
+const BADGES = [
+  { id: 'first', ic: 'flag', t: 'Erste Runde', d: 'Deine erste Abfrage geschafft.', ok: p => p.rounds >= 1 },
+  { id: 'goal', ic: 'emoji_events', t: 'Tagesziel', d: 'Zum ersten Mal das Tagesziel erreicht.', ok: p => p.goalDays >= 1 },
+  { id: 'perfect', ic: 'star', t: 'Fehlerfrei', d: 'Eine ganze Runde ohne Fehler.', ok: p => p.perfect >= 1 },
+  { id: 'combo10', ic: 'bolt', t: '10er-Combo', d: '10 Antworten hintereinander richtig.', ok: p => p.bestCombo >= 10 },
+  { id: 'streak3', ic: 'local_fire_department', t: '3 Tage am Stück', d: 'Drei Tage hintereinander geübt.', ok: p => p.best >= 3 },
+  { id: 'streak7', ic: 'local_fire_department', t: 'Wochen-Serie', d: 'Sieben Tage hintereinander geübt.', ok: p => p.best >= 7 },
+  { id: 'streak30', ic: 'military_tech', t: 'Monats-Champion', d: '30 Tage hintereinander geübt.', ok: p => p.best >= 30 },
+  { id: 'learn25', ic: 'inventory_2', t: '25 Wörter sitzen', d: '25 Wörter sind in Fach 4 oder 5.', ok: (p, c) => c.learned >= 25 },
+  { id: 'learn100', ic: 'workspace_premium', t: '100 Wörter sitzen', d: '100 Wörter sind in Fach 4 oder 5.', ok: (p, c) => c.learned >= 100 },
+  { id: 'past', ic: 'history', t: 'Simple-Past-Profi', d: '25 Simple-Past-Formen richtig.', ok: p => p.pastRight >= 25 },
+  { id: 'typed', ic: 'keyboard', t: 'Tipp-Talent', d: '20 Wörter richtig geschrieben.', ok: p => p.typedRight >= 20 },
+  { id: 'comeback', ic: 'autorenew', t: 'Comeback', d: '10 Wiederholungswörter richtig.', ok: p => p.extraRight >= 10 },
+  { id: 'xp500', ic: 'trending_up', t: '500 XP', d: '500 XP gesammelt.', ok: p => p.xp >= 500 },
+  { id: 'xp2000', ic: 'auto_awesome', t: '2000 XP', d: '2000 XP gesammelt.', ok: p => p.xp >= 2000 },
+  { id: 'photo', ic: 'library_add', t: 'Sammler', d: 'Eine eigene Lektion hinzugefügt.', ok: p => p.photos >= 1 }
+];
+function checkBadges() {
+  const c = { learned: learnedCount() }, fresh = [];
+  for (const b of BADGES) if (!S.prog.badges[b.id] && b.ok(S.prog, c)) { S.prog.badges[b.id] = todayKey(); fresh.push(b) }
+  return fresh;
+}
+function shownStreak() { const p = S.prog; return (p.last === todayKey() || p.last === yesterdayKey()) ? p.streak : 0 }
+function streakTick() {
+  const p = S.prog, t = todayKey();
+  if (p.last === t) return false;
+  p.streak = p.last === yesterdayKey() ? p.streak + 1 : 1;
+  p.last = t; p.best = Math.max(p.best, p.streak);
+  return true;
+}
+function addDayXP(g) {
+  if (!g) return false;
+  const k = todayKey(), before = S.prog.days[k] || 0;
+  S.prog.days[k] = before + g;
+  const keys = Object.keys(S.prog.days).sort();
+  while (keys.length > 60) delete S.prog.days[keys.shift()];
+  if (before < S.prog.goal && before + g >= S.prog.goal) { S.prog.goalDays++; return true }
+  return false;
+}
+
+/* ---------- persistence (this browser) ---------- */
+function persist() { S.prog.updatedAt = Date.now(); if (!store.set(LS_PROG, S.prog)) S.storageOk = false }
+function saveUnits() { if (!store.set(LS_UNITS, S.units)) S.storageOk = false; index() }
+function downloadFile(name, text) {
+  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  const a = document.createElement('a'); a.href = url; a.download = name; a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+/* ---------- sound & speech ---------- */
+/* iOS rules: audio may only start inside a tap, Web Audio follows the silent switch unless the
+   audio session is "playback", and speech must be started once from a tap before it works later. */
+let actx = null, unlocked = false;
+function ensureCtx() {
+  try {
+    if (!actx) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; actx = new AC() }
+    if (actx.state !== 'running') actx.resume();
+    return actx;
+  } catch (e) { return null }
+}
+function unlockAudio() {
+  try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback' } catch (e) {}
+  const c = ensureCtx();
+  if (unlocked || !c) return;
+  unlocked = true;
+  try { const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0) } catch (e) {}
+  try { if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u) } } catch (e) {}
+}
+['touchend', 'click', 'keydown'].forEach(ev => document.addEventListener(ev, unlockAudio, { capture: true, passive: true }));
+document.addEventListener('visibilitychange', () => { if (!document.hidden && actx && actx.state !== 'running') { try { actx.resume() } catch (e) {} } });
+
+function tone(seq) {
+  if (!S.prog.sound) return;
+  const c = ensureCtx(); if (!c) return;
+  try {
+    const t0 = c.currentTime + 0.03;
+    for (const [f, st, dur, type, vol] of seq) {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = type || 'triangle'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t0 + st);
+      g.gain.exponentialRampToValueAtTime(vol || 0.22, t0 + st + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + st + dur);
+      o.connect(g); g.connect(c.destination); o.start(t0 + st); o.stop(t0 + st + dur + 0.05);
+    }
+  } catch (e) {}
+}
+const SFX = {
+  ok: () => tone([[659.25, 0, .12], [987.77, .09, .24]]),
+  bad: () => tone([[233, 0, .16, 'square', .07], [196, .13, .24, 'square', .06]]),
+  win: () => tone([[523.25, 0, .16], [659.25, .13, .16], [783.99, .26, .16], [1046.5, .39, .42]]),
+  badge: () => tone([[880, 0, .1, 'sine'], [1174.66, .08, .1, 'sine'], [1567.98, .16, .34, 'sine']])
+};
+let voice = null;
+function pickVoice() {
+  try {
+    const vs = speechSynthesis.getVoices() || [];
+    const gb = v => /en[-_]GB/i.test(v.lang), en = v => /^en/i.test(v.lang);
+    voice = vs.find(v => gb(v) && v.localService) || vs.find(gb) || vs.find(v => en(v) && v.localService) || null;
+  } catch (e) {}
+}
+try { if ('speechSynthesis' in window) { pickVoice(); if ('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = pickVoice } } catch (e) {}
+function speakText(t) {
+  return String(t || '').replace(/\(=\s*[^)]*\)/g, '').replace(/[()]/g, '').replace(/\bsb\b/g, 'somebody').replace(/\bsth\b/g, 'something')
+    .replace(/…|\.\.\./g, ' ').replace(/\s\/\s/g, '. ').replace(/\s+/g, ' ').trim();
+}
+function say(t) {
+  try {
+    if (!('speechSynthesis' in window) || !t) return;
+    const ss = speechSynthesis;
+    const u = new SpeechSynthesisUtterance(speakText(t));
+    u.lang = voice ? voice.lang : 'en-GB'; u.rate = 0.9; u.volume = 1;
+    if (voice) u.voice = voice;
+    if (ss.speaking || ss.pending) { ss.cancel(); setTimeout(() => { ss.speak(u) }, 80) }
+    else ss.speak(u);
+    if (ss.paused) ss.resume();
+  } catch (e) {}
+}
+
+/* ---------- confetti & toast ---------- */
+function confetti() {
+  if (REDUCED) return;
+  const c = document.createElement('canvas'); c.className = 'confetti'; document.body.appendChild(c);
+  const dpr = Math.min(2, window.devicePixelRatio || 1), W = innerWidth, H = innerHeight;
+  c.width = W * dpr; c.height = H * dpr;
+  const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+  const cs = getComputedStyle(document.documentElement);
+  const cols = ['--royal', '--hl', '--flame', '--good', '--f2'].map(v => cs.getPropertyValue(v).trim() || '#2E47CF');
+  const P = Array.from({ length: 140 }, () => ({ x: W / 2 + (Math.random() - .5) * 80, y: H * .35, vx: (Math.random() - .5) * 13, vy: -Math.random() * 13 - 4, r: Math.random() * 6 + 4, a: Math.random() * 6, va: (Math.random() - .5) * .3, c: pick(cols) }));
+  const t0 = performance.now();
+  (function step(t) {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of P) { p.vy += .32; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.a += p.va; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); ctx.restore() }
+    if (t - t0 < 2600) requestAnimationFrame(step); else c.remove();
+  })(t0);
+}
+let toastT = null;
+function toast(msg, ic) {
+  toastEl.innerHTML = (ic ? icon(ic, 'fill') : '') + '<span>' + esc(msg) + '</span>';
+  toastEl.classList.add('show'); clearTimeout(toastT);
+  toastT = setTimeout(() => toastEl.classList.remove('show'), 3200);
+}
+
+/* ---------- question building ---------- */
+const MODES = [
+  { id: 'mix', ic: 'shuffle', t: 'Gemischt', d: 'Alles durcheinander' },
+  { id: 'de-en', ic: 'translate', t: 'Deutsch → Englisch', d: 'Multiple Choice' },
+  { id: 'en-de', ic: 'swap_horiz', t: 'Englisch → Deutsch', d: 'Multiple Choice' },
+  { id: 'past', ic: 'history', t: 'Simple Past', d: 'choose → chose' },
+  { id: 'opp', ic: 'compare_arrows', t: 'Gegenteile', d: 'push ↔ pull' },
+  { id: 'gap', ic: 'edit_note', t: 'Lückensätze', d: 'Sätze aus dem Buch' },
+  { id: 'type', ic: 'keyboard', t: 'Schreiben', d: 'Selbst eintippen' }
+];
+const MIX_W = { 'de-en': 3, 'en-de': 2, past: 3, gap: 2, opp: 2 };
+function applicable(w, t) {
+  if (t === 'de-en' || t === 'en-de') return true;
+  if (t === 'past') return w.pos === 'verb' && !!w.past;
+  if (t === 'opp') return !!w.opp;
+  if (t === 'gap') return !!(w.ex && w.gap && w.ex.indexOf(w.gap) >= 0);
+  if (t === 'type') return w.pos !== 'phrase' && w.en.length <= 40;
+  return false;
+}
+const typesFor = m => m === 'mix' ? Object.keys(MIX_W) : [m];
+const canDo = (w, m) => typesFor(m).some(t => applicable(w, t));
+function pickType(w, m) {
+  if (m !== 'mix') return m;
+  const opts = Object.keys(MIX_W).filter(t => applicable(w, t));
+  let sum = opts.reduce((a, t) => a + MIX_W[t], 0), r = Math.random() * sum;
+  for (const t of opts) { r -= MIX_W[t]; if (r <= 0) return t }
+  return opts[0] || 'de-en';
+}
+function prio(id) {
+  const s = ws(id); let p = Math.random() * 2.5;
+  if (!s || !s.l) p += 2;
+  else { if ((s.d || 0) <= Date.now()) p += 3; if (s.x > 0 && s.l <= 2) p += 4; p -= s.l * .6 }
+  return p;
+}
+function bigrams(s) { const a = []; for (let i = 0; i < s.length - 1; i++) a.push(s.slice(i, i + 2)); return a }
+function sim(a, b) {
+  a = nk(a).replace(/^to /, ''); b = nk(b).replace(/^to /, '');
+  if (!a || !b) return 0;
+  const A = bigrams(a), B = bigrams(b); if (!A.length || !B.length) return 0;
+  let hit = 0; const pool = B.slice();
+  for (const g of A) { const i = pool.indexOf(g); if (i >= 0) { hit++; pool.splice(i, 1) } }
+  return 2 * hit / (A.length + B.length);
+}
+function tiersOf(w, get) {
+  const others = S.words.filter(x => x.id !== w.id);
+  return [others.filter(x => x.unit === w.unit && x.pos === w.pos).map(get),
+          others.filter(x => x.pos === w.pos).map(get),
+          others.map(get)];
+}
+function pickOpts(answer, tiers, k = 3) {
+  const used = new Set([nk(answer)]), flat = [];
+  tiers.forEach((tier, ti) => shuffle(tier.slice()).forEach(c => { if (c && !used.has(nk(c))) { used.add(nk(c)); flat.push({ c, ti }) } }));
+  const out = [];
+  const near = flat.filter(o => o.ti <= 1).map(o => ({ c: o.c, s: sim(answer, o.c) })).sort((a, b) => b.s - a.s)[0];
+  if (near && near.s > .3) out.push(near.c);
+  for (let ti = 0; ti < tiers.length && out.length < k; ti++) for (const o of flat) { if (out.length >= k) break; if (o.ti === ti && out.indexOf(o.c) < 0) out.push(o.c) }
+  return shuffle([answer].concat(out));
+}
+function verbBase(en) { return String(en).replace(/\([^)]*\)/g, ' ').trim().replace(/^to\s+/i, '').split(/\s+/)[0].toLowerCase() }
+const third = v => /(s|sh|ch|x|o|z)$/.test(v) ? v + 'es' : /[^aeiou]y$/.test(v) ? v.slice(0, -1) + 'ies' : v + 's';
+const ingF = v => /ie$/.test(v) ? v.slice(0, -2) + 'ying' : /[^e]e$/.test(v) ? v.slice(0, -1) + 'ing' : v + 'ing';
+const regPast = v => /e$/.test(v) ? v + 'd' : /[^aeiou]y$/.test(v) ? v.slice(0, -1) + 'ied' : v + 'ed';
+function pastWrong(w) {
+  const pw = String(w.past).split(' '), tail = pw.slice(1).join(' '), p0 = pw[0].toLowerCase();
+  const v = verbBase(w.en), T = s => tail ? s + ' ' + tail : s;
+  const reg = regPast(v), dbl = v + v.slice(-1) + 'ed';
+  let first = [], rest;
+  if (p0 === reg) rest = [v, third(v), ingF(v)];
+  else if (p0 === dbl) { first = [reg]; rest = [v, third(v), ingF(v)] }
+  else { first = [reg]; rest = [w.pp ? String(w.pp).split(' ')[0] : '', v, third(v), ingF(v)] }
+  const seen = new Set([nk(w.past)]), out = [];
+  for (const c of first.concat(shuffle(rest))) { if (!c) continue; const s = T(c); if (seen.has(nk(s))) continue; seen.add(nk(s)); out.push(s) }
+  return out.slice(0, 3);
+}
+function gapForm(x) { return (x.ex.indexOf(x.gap) === 0 && !/^[A-Z]/.test(x.en)) ? lowFirst(x.gap) : x.gap }
+function makeQ(w, type, extra) {
+  const ph = w.pos === 'phrase';
+  const q = { wid: w.id, type, extra: !!extra, unitTitle: w.unitTitle, say: w.en };
+  if (type === 'de-en') { q.label = ph ? 'Was sagst du auf Englisch?' : 'Wie heißt das auf Englisch?'; q.prompt = w.de; q.answer = w.en; q.options = pickOpts(w.en, tiersOf(w, x => x.en)) }
+  else if (type === 'en-de') { q.label = ph ? 'Was drückst du damit aus?' : 'Was bedeutet das?'; q.prompt = w.en; q.showSay = true; q.answer = w.de; q.options = pickOpts(w.de, tiersOf(w, x => x.de)) }
+  else if (type === 'past') { q.label = 'Wie heißt das Simple Past?'; q.prompt = w.en; q.showSay = true; q.hint = w.de; q.answer = w.past; q.say = w.past; q.options = shuffle([w.past].concat(pastWrong(w))) }
+  else if (type === 'opp') { q.label = 'Was ist das Gegenteil?'; q.prompt = w.en; q.showSay = true; q.answer = w.opp; q.say = w.opp; q.options = pickOpts(w.opp, tiersOf(w, x => x.en)) }
+  else if (type === 'gap') {
+    const start = w.ex.indexOf(w.gap) === 0;
+    const own = gapForm(w);
+    const tiers = tiersOf(w, x => x.ex && x.gap && x.ex.indexOf(x.gap) >= 0 ? gapForm(x) : '');
+    const opts = pickOpts(own, tiers);
+    q.options = opts.map(o => start ? capFirst(o) : o);
+    q.answer = start ? capFirst(own) : own;
+    const i = w.ex.indexOf(w.gap);
+    q.before = w.ex.slice(0, i); q.after = w.ex.slice(i + w.gap.length);
+    q.label = 'Welches Wort fehlt?'; q.hint = w.de; q.say = w.ex; q.prompt = w.ex;
+  }
+  else if (type === 'type') { q.label = 'Schreib es auf Englisch.'; q.prompt = w.de; q.answer = w.en }
+  return q;
+}
+function buildRound(ids, mode, n, extras) {
+  const set = new Set(ids);
+  const pool = ids.map(id => S.byId.get(id)).filter(w => w && canDo(w, mode));
+  pool.forEach(w => w._p = prio(w.id)); pool.sort((a, b) => b._p - a._p);
+  let k = extras ? (n >= 15 ? 3 : n >= 10 ? 2 : 1) : 0;
+  const ex = extras ? S.words.filter(w => !set.has(w.id) && canDo(w, mode) && (isWeak(w.id) || isDue(w.id))) : [];
+  ex.forEach(w => w._p = prio(w.id)); ex.sort((a, b) => b._p - a._p);
+  const extraPick = ex.slice(0, k);
+  const main = pool.slice(0, Math.max(0, n - extraPick.length));
+  const items = main.map(w => [w, false]).concat(extraPick.map(w => [w, true]));
+  return shuffle(items).map(([w, e]) => makeQ(w, pickType(w, mode), e));
+}
+
+/* ---------- typed answers ---------- */
+function normAns(s) {
+  return String(s).toLowerCase().replace(/[’`´]/g, "'").replace(/…|\.\.\./g, ' ')
+    .replace(/\b(sb|sth|somebody|something|someone)\b/g, ' ')
+    .replace(/\b(your|my|his|her|their|our)\b/g, "one's")
+    .replace(/[.,!?;:"“”„]/g, ' ').replace(/\s+/g, ' ').trim().replace(/^to /, '').trim();
+}
+function variants(t) {
+  const out = new Set();
+  const base = String(t).replace(/\(=\s*([^)]*)\)/g, (m, a) => { out.add(normAns(a)); return ' ' });
+  for (const alt of base.split(/\s\/\s/)) { out.add(normAns(alt.replace(/\([^)]*\)/g, ' '))); out.add(normAns(alt.replace(/[()]/g, ' '))) }
+  out.delete(''); return Array.from(out);
+}
+function lev(a, b) {
+  const m = a.length, n = b.length; if (!m) return n; if (!n) return m;
+  let prev = Array.from({ length: n + 1 }, (_, i) => i);
+  for (let i = 1; i <= m; i++) { const cur = [i]; for (let j = 1; j <= n; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = cur }
+  return prev[n];
+}
+function checkTyped(input, target) {
+  const v = normAns(input), vs = variants(target);
+  if (vs.indexOf(v) >= 0) return { ok: true, almost: false };
+  if (vs.some(x => x.length >= 4 && lev(x, v) <= 1)) return { ok: true, almost: true };
+  return { ok: false, almost: false };
+}
+
+/* ---------- quiz flow ---------- */
+const PRAISE = ['Great!', 'Brilliant!', 'Well done!', 'Spot on!', 'Excellent!', 'Nice one!', 'Super!', 'Klasse!', 'Stark!', 'Perfekt!'];
+const OOPS = ['Nicht ganz.', 'Knapp daneben.', 'Fast!', 'Das war’s nicht.'];
+function startRound(ids, mode, n, opts = {}) {
+  const list = buildRound(ids, mode, n, opts.extras !== false);
+  if (!list.length) { toast('Für diese Abfrage passen keine Wörter aus deiner Auswahl.', 'info'); return }
+  S.quiz = { mode, list, i: 0, answered: false, chosen: null, combo: 0, bestCombo: 0, right: 0, wrong: 0, xp: 0, promoted: 0,
+    mistakes: new Map(), requeued: new Set(), typed: '', typeErr: '', goalHit: false, extraCount: list.filter(q => q.extra).length };
+  S.view = 'quiz'; S.confirm = null;
+  render(); window.scrollTo(0, 0);
+}
+function answerMC(idx) {
+  const Q = S.quiz; if (!Q || Q.answered) return;
+  const q = Q.list[Q.i]; Q.chosen = idx;
+  settle(q.options[idx] === q.answer, false);
+}
+function answerTyped() {
+  const Q = S.quiz; if (!Q || Q.answered) return;
+  const inp = document.getElementById('typeIn'); const val = (inp && inp.value || '').trim();
+  if (!val) { Q.typeErr = 'Schreib zuerst eine Antwort.'; render(); focusType(); return }
+  Q.typed = val; const r = checkTyped(val, Q.list[Q.i].answer); settle(r.ok, r.almost);
+}
+function focusType() { const i = document.getElementById('typeIn'); if (i) i.focus() }
+function settle(ok, almost) {
+  const Q = S.quiz, q = Q.list[Q.i], w = S.byId.get(q.wid);
+  Q.answered = true; Q.lastOk = ok; Q.almost = almost; Q.typeErr = '';
+  if (grade(q.wid, ok)) Q.promoted++;
+  let gain = 0;
+  if (ok) {
+    Q.combo++; Q.bestCombo = Math.max(Q.bestCombo, Q.combo); Q.right++;
+    gain = q.type === 'type' ? 15 : 10;
+    if (q.extra) { gain += 5; S.prog.extraRight++ }
+    if (q.type === 'type') S.prog.typedRight++;
+    if (q.type === 'past') S.prog.pastRight++;
+    Q.praise = Q.combo >= 3 && Q.combo % 5 === 0 ? Q.combo + 'er-Combo!' : (almost ? 'Fast perfekt!' : pick(PRAISE));
+    SFX.ok();
+  } else {
+    Q.combo = 0; Q.wrong++; Q.mistakes.set(q.wid, q); Q.praise = pick(OOPS); Q.again = false;
+    if (!Q.requeued.has(q.wid) && w) { Q.requeued.add(q.wid); Q.list.splice(Math.min(Q.list.length, Q.i + 3), 0, makeQ(w, q.type, q.extra)); Q.again = true }
+    SFX.bad();
+  }
+  Q.gain = gain; Q.xp += gain; S.prog.xp += gain;
+  if (addDayXP(gain)) Q.goalHit = true;
+  S.prog.bestCombo = Math.max(S.prog.bestCombo, Q.bestCombo);
+  persist(false);
+  if (S.prog.speak) say(q.say);
+  render();
+  const nb = document.getElementById('nextBtn'); if (nb) nb.focus({ preventScroll: true });
+}
+function nextQ() {
+  const Q = S.quiz; if (!Q) return;
+  Q.i++; Q.answered = false; Q.chosen = null; Q.typed = ''; Q.typeErr = ''; Q.almost = false;
+  if (Q.i >= Q.list.length) return finish(false);
+  render(); window.scrollTo(0, 0);
+  if (Q.list[Q.i].type === 'type') focusType();
+}
+function finish(quit) {
+  const Q = S.quiz, p = S.prog; if (!Q) return;
+  let bonus = 0, streakUp = false, perfect = false;
+  const answered = Q.right + Q.wrong;
+  if (!quit) {
+    bonus = 10;
+    if (Q.wrong === 0 && Q.right >= 5) { bonus += 20; p.perfect++; perfect = true }
+    p.rounds++; streakUp = streakTick();
+  }
+  p.xp += bonus; if (addDayXP(bonus)) Q.goalHit = true;
+  const fresh = checkBadges();
+  persist(true);
+  S.quiz = null; S.confirm = null;
+  if (quit) { S.view = 'home'; render(); if (answered) toast('Runde beendet. ' + Q.xp + ' XP gesammelt.', 'bolt'); return }
+  S.result = { right: Q.right, wrong: Q.wrong, xp: Q.xp + bonus, bonus, perfect, best: Q.bestCombo, promoted: Q.promoted, mode: Q.mode,
+    streakUp, goalHit: Q.goalHit, fresh, mistakes: Array.from(Q.mistakes.values()) };
+  S.view = 'result'; render(); window.scrollTo(0, 0);
+  SFX.win();
+  if (answered && (Q.right / answered >= .8 || streakUp || Q.goalHit)) confetti();
+  if (fresh.length) setTimeout(SFX.badge, 700);
+}
+
+/* ---------- views ---------- */
+function topbar() {
+  const p = S.prog, st = shownStreak();
+  return `<header class="top"><div class="top-in">
+    <button class="brand" data-act="nav" data-v="home" aria-label="Word Box, zur Startseite">${logo()}<span>Word Box</span></button>
+    <div class="chips">
+      <span class="chip chip-flame ${p.last === todayKey() ? 'on' : ''}" title="Serie: ${st} Tage">${icon('local_fire_department', 'fill')}<b>${st}</b><span class="sr">Tage Serie</span></span>
+      <span class="chip chip-xp" title="XP gesamt">${icon('bolt', 'fill')}<b>${fmt(p.xp)}</b><span class="sr">XP</span></span>
+    </div></div></header>`;
+}
+function navbar() {
+  const items = [['home', 'home', 'Start'], ['practice', 'school', 'Üben'], ['vocab', 'menu_book', 'Vokabeln'], ['awards', 'emoji_events', 'Erfolge']];
+  return `<nav class="nav" aria-label="Hauptnavigation"><div class="nav-in">${items.map(([v, ic, t]) =>
+    `<button data-act="nav" data-v="${v}" ${S.view === v ? 'aria-current="page"' : ''}><span class="nic">${icon(ic, S.view === v ? 'fill' : '')}</span><span>${t}</span></button>`).join('')}</div></nav>`;
+}
+function pips(id) {
+  const l = fach(id);
+  let h = `<span class="pips" title="${l ? 'Fach ' + l + ' von 5' : 'Neu'}" aria-label="${l ? 'Fach ' + l + ' von 5' : 'Neu'}">`;
+  for (let k = 1; k <= 5; k++) h += `<i style="${k <= l ? 'background:var(--f' + l + ');box-shadow:none' : ''}"></i>`;
+  return h + '</span>';
+}
+function dist(words) { const c = [0, 0, 0, 0, 0, 0]; for (const w of words) c[fach(w.id)]++; return c }
+function stackbar(c) {
+  const tot = c.reduce((a, b) => a + b, 0) || 1;
+  return `<div class="stackbar" role="img" aria-label="Verteilung auf die Fächer">${c.map((n, k) => n ? `<span style="width:${(n / tot * 100).toFixed(1)}%;background:var(--f${k})"></span>` : '').join('')}</div>`;
+}
+function emptyState() {
+  return `<div class="card empty">${icon('library_add')}<h3>Noch keine Vokabeln</h3><p>Füge eine Wortliste hinzu: abtippen, einfügen oder aus Fotos mit Claude erstellen.</p><button class="btn btn-primary" data-act="imp-open" style="margin-top:14px">${icon('library_add')}Vokabeln hinzufügen</button></div>`;
+}
+function viewHome() {
+  const p = S.prog, lv = levelInfo(p.xp), today = xpToday(), pct = Math.min(1, today / p.goal);
+  const C = 2 * Math.PI * 40;
+  const dname = new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+  const wk = new Date(); const dow = (wk.getDay() + 6) % 7; wk.setDate(wk.getDate() - dow);
+  const DN = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  let week = '';
+  for (let i = 0; i < 7; i++) { const d = new Date(wk); d.setDate(wk.getDate() + i); const k = ymd(d); const on = (p.days[k] || 0) > 0; const isT = k === todayKey();
+    week += `<div class="day ${on ? 'on' : ''} ${isT ? 'today' : ''}"><i>${on ? icon('local_fire_department', 'fill') : ''}</i><span>${DN[i]}</span></div>` }
+  const left = Math.max(0, p.goal - today);
+  const goalTxt = left ? `Noch <b>${left} XP</b> bis zu deinem Tagesziel.` : 'Tagesziel geschafft. Richtig stark!';
+  if (!S.words.length) return `<div class="hello"><h1>${p.name ? 'Hi ' + esc(p.name) + '!' : 'Hi!'}</h1><p>${esc(dname)}</p></div>` + emptyState();
+  const due = dueWords().length;
+  const sel = selIds();
+  const units = S.units.map(u => { const ws_ = (u.words || []).map(w => S.byId.get(w.id)).filter(Boolean); const c = dist(ws_); const learned = c[4] + c[5];
+    return `<div class="unit-row"><div class="row between"><b class="grow">${esc(u.title)}</b><span class="small muted">${learned}/${ws_.length} sitzen</span></div>${stackbar(c)}</div>` }).join('');
+  return `
+  <div class="hello"><h1>${p.name ? 'Hi ' + esc(p.name) + '!' : 'Hi!'}</h1><p>${esc(dname)}</p></div>
+  <section class="card goal" aria-label="Tagesziel">
+    <div class="ring ${pct >= 1 ? 'done' : ''}"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/><circle class="val" cx="50" cy="50" r="40" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - pct)).toFixed(1)}"/></svg>
+      <div class="lab"><b>${today}</b><small>von ${p.goal} XP</small></div></div>
+    <div><h3>${pct >= 1 ? 'Ziel erreicht!' : 'Tagesziel'}</h3><p>${goalTxt}</p></div>
+    <div class="week" aria-label="Diese Woche">${week}</div>
+  </section>
+  <button class="cta" data-act="quick">
+    <span class="ic">${icon('bolt', 'fill')}</span>
+    <span class="grow"><strong>Schnelle Runde</strong><small>${p.len} Fragen · gemischt · aus ${sel.length} gewählten Wörtern</small></span>
+    ${icon('arrow_forward')}
+  </button>
+  <section class="card review ${due ? '' : 'calm'}">
+    <span class="badge-ic">${icon(due ? 'autorenew' : 'check_circle', 'fill')}</span>
+    <div class="grow"><h3>${due ? due + ' ' + (due === 1 ? 'Wort wartet' : 'Wörter warten') + ' auf dich' : 'Nichts fällig'}</h3>
+      <p>${due ? 'Fehlerwörter und fällige Wiederholungen aus dem Karteikasten.' : 'Alle Wiederholungen erledigt. Neue kommen morgen dazu.'}</p></div>
+    ${due ? `<button class="btn btn-soft btn-sm" data-act="review">Üben</button>` : ''}
+  </section>
+  <section class="card lvl">
+    <div class="num"><small>Level</small><b>${lv.n}</b></div>
+    <div class="grow stack" style="gap:8px"><div class="row between"><b>${lv.name}</b><span class="small muted">${lv.into} / ${lv.span} XP</span></div>
+      <div class="bar"><span style="width:${(lv.pct * 100).toFixed(1)}%"></span></div></div>
+  </section>
+  <section class="card"><div class="row between" style="margin-bottom:8px"><h3>Deine Lektionen</h3><button class="link" data-act="nav" data-v="vocab">Alle</button></div>${units}
+    <div class="legend" style="margin-top:10px"><span><i style="background:var(--f0)"></i>neu</span><span><i style="background:var(--f1)"></i>Fach 1</span><span><i style="background:var(--f3)"></i>Fach 3</span><span><i style="background:var(--f5)"></i>Fach 5</span></div></section>`;
+}
+function secName(s) { if (!s) return 'Ohne Abschnitt'; if (s === 'Say it') return 'Say it in English'; if (s === 'A') return 'Teil A'; return 'Abschnitt ' + s }
+function visibleWords() {
+  const f = S.filter, now = Date.now();
+  return S.words.filter(w => (!S.unitFilter || w.unit === S.unitFilter) &&
+    (f === 'all' || (f === 'new' && !fach(w.id)) || (f === 'weak' && isWeak(w.id)) || (f === 'due' && (isDue(w.id, now) || isWeak(w.id))) || (f === 'verbs' && w.pos === 'verb') || (f === 'phrases' && w.pos === 'phrase')));
+}
+function viewPractice() {
+  if (!S.words.length) return `<div class="sec-h"><h2>Üben</h2></div>` + emptyState();
+  const p = S.prog, sel = new Set(selIds()), selWords = Array.from(sel).map(id => S.byId.get(id)).filter(Boolean);
+  const modes = MODES.map(m => { const n = selWords.filter(w => canDo(w, m.id)).length;
+    return `<button class="mode ${n ? '' : 'none'}" data-act="mode" data-m="${m.id}" aria-pressed="${p.mode === m.id}">${icon(m.ic)}<b>${m.t}</b><small>${n ? n + ' Wörter' : 'keine in Auswahl'}</small></button>` }).join('');
+  const lens = [10, 15, 20].map(n => `<button data-act="len" data-n="${n}" aria-pressed="${p.len === n}">${n} Fragen</button>`).join('');
+  const uchips = [`<button class="fchip" data-act="ufilter" data-u="" aria-pressed="${!S.unitFilter}">Alle Lektionen</button>`]
+    .concat(S.units.map(u => `<button class="fchip" data-act="ufilter" data-u="${esc(u.id)}" aria-pressed="${S.unitFilter === u.id}">${esc(u.title)}</button>`)).join('');
+  const F = [['all', 'Alle'], ['new', 'Neu'], ['weak', 'Fehlerwörter'], ['due', 'Fällig'], ['verbs', 'Verben'], ['phrases', 'Redemittel']];
+  const fchips = F.map(([k, t]) => `<button class="fchip" data-act="filter" data-f="${k}" aria-pressed="${S.filter === k}">${t}</button>`).join('');
+  const vis = visibleWords();
+  let groups = [], cur = null;
+  for (const w of vis) { const key = w.unit + '|' + (w.sec || ''); if (!cur || cur.key !== key) { cur = { key, unit: w.unitTitle, sec: w.sec, words: [] }; groups.push(cur) } cur.words.push(w) }
+  const multi = !S.unitFilter && S.units.length > 1;
+  let list = '';
+  groups.forEach((g, gi) => {
+    const all = g.words.every(w => sel.has(w.id));
+    list += `<label class="ghead"><input type="checkbox" data-ch="tg" data-g="${gi}" ${all ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="lbl">${multi ? esc(g.unit) + ' · ' : ''}${esc(secName(g.sec))}</span><span class="small muted">${g.words.length}</span></label>`;
+    for (const w of g.words) list += `<label class="wrow"><input type="checkbox" data-ch="tw" data-id="${esc(w.id)}" ${sel.has(w.id) ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="wtxt"><b>${esc(w.en)}${w.opt ? '<span class="opt-mark" title="fakultativ">°</span>' : ''}</b><span>${esc(w.de)}</span></span>${pips(w.id)}</label>`;
+  });
+  S._groups = groups;
+  const m = p.mode, avail = selWords.filter(w => canDo(w, m)).length;
+  const count = Math.min(p.len, avail);
+  return `
+  <div class="sec-h"><h2>Was willst du üben?</h2></div>
+  <div class="modes">${modes}</div>
+  <div class="seg" role="group" aria-label="Rundenlänge">${lens}</div>
+  <div class="sec-h"><h2>Welche Wörter?</h2><span class="small muted">${sel.size} gewählt</span></div>
+  <div class="chipbar" role="group" aria-label="Lektion">${uchips}</div>
+  <div class="chipbar" role="group" aria-label="Filter">${fchips}</div>
+  <div class="row between"><span class="small muted">${vis.length} Wörter angezeigt</span><span class="row" style="gap:4px"><button class="link" data-act="selvis" data-on="1">Alle wählen</button><button class="link" data-act="selvis" data-on="0">Keine</button></span></div>
+  ${vis.length ? `<div class="wlist">${list}</div>` : `<div class="card empty"><h3>Keine Wörter für diesen Filter</h3><p>Probier einen anderen Filter.</p></div>`}
+  <div class="startbar"><button class="btn btn-primary" data-act="start">${icon('play_arrow')}${count ? `Los geht's · ${count} Fragen` : 'Wähle passende Wörter'}</button></div>`;
+}
+function viewVocab() {
+  const c = dist(S.words), max = Math.max(1, ...c);
+  const kasten = c.map((n, k) => `<div class="fach"><div class="pile" style="height:${Math.max(12, n / max * 100).toFixed(0)}%;background-color:var(--f${k})"><b${k ? '' : ' style="color:var(--ink)"'}>${n}</b></div><small>${k ? 'Fach ' + k : 'Neu'}</small></div>`).join('');
+  return `
+  <div class="sec-h"><h2>Vokabeln</h2><span class="small muted">${S.words.length} Wörter</span></div>
+  <button class="import-card" data-act="imp-open"><span class="ic">${icon('library_add')}</span><span class="grow"><b>Neue Vokabeln hinzufügen</b><small>Liste einfügen, Datei öffnen oder aus Buchfotos</small></span>${icon('arrow_forward')}</button>
+  ${S.words.length ? `<section class="card"><div class="row between"><h3>Dein Karteikasten</h3>${icon('inventory_2')}</div>
+    <div class="kasten" role="img" aria-label="Verteilung der Wörter auf die Fächer">${kasten}</div>
+    <p class="small muted" style="margin-top:12px">Richtig beantwortet wandert ein Wort ein Fach weiter, aber höchstens einmal pro Wiederholung. Falsch heißt: zurück in Fach 1. Ab Fach 4 sitzt ein Wort.</p></section>
+  <div class="search">${icon('search')}<input id="vsearch" type="search" placeholder="Wort suchen, z. B. choose" value="${esc(S.search)}" data-in="search" autocomplete="off" aria-label="Wort suchen"></div>
+  <div id="vlist" class="stack">${vocabList()}</div>` : emptyState()}`;
+}
+function vocabList() {
+  const q = nk(S.search);
+  return S.units.map(u => {
+    const words = (u.words || []).map(w => S.byId.get(w.id)).filter(Boolean).filter(w => !q || nk(w.en).includes(q) || nk(w.de).includes(q));
+    if (q && !words.length) return '';
+    const c = dist(words);
+    const rows = words.map(w => `<div class="vrow"><div class="grow"><b>${esc(w.en)}</b>${w.ipa ? ` <span class="ipa">${esc(w.ipa)}</span>` : ''}<div class="de">${esc(w.de)}</div>${w.ex ? `<div class="ex">${esc(w.ex)}</div>` : ''}
+      <div class="tags">${w.past ? `<span class="tag">simple past: ${esc(w.past)}</span>` : ''}${w.opp ? `<span class="tag">↔ ${esc(w.opp)}</span>` : ''}${w.note && !/^simple past/.test(w.note) ? `<span class="tag">${esc(w.note)}</span>` : ''}${w.sec ? `<span class="tag">${esc(w.sec)}</span>` : ''}</div></div>
+      <div class="stack" style="gap:8px;align-items:flex-end"><button class="iconbtn sm" data-act="say" data-t="${esc(w.en)}" aria-label="${esc(w.en)} vorlesen">${icon('volume_up')}</button>${pips(w.id)}</div></div>`).join('');
+    const del = S.delUnit === u.id
+      ? `<span class="small muted grow" style="align-self:center">Lektion und Fortschritt löschen?</span><button class="btn btn-line btn-sm" data-act="del-no">Abbrechen</button><button class="btn btn-danger btn-sm" data-act="del-yes" data-u="${esc(u.id)}">${icon('delete')}Löschen</button>`
+      : `<button class="btn btn-soft btn-sm" data-act="practice-unit" data-u="${esc(u.id)}">${icon('school')}Diese Lektion üben</button><button class="btn btn-line btn-sm" data-act="del-ask" data-u="${esc(u.id)}" aria-label="Lektion löschen">${icon('delete')}</button>`;
+    return `<details class="unit" ${q || S.openUnit === u.id ? 'open' : ''} data-u="${esc(u.id)}"><summary><div class="grow"><b>${esc(u.title)}</b><small>${esc(u.pages || '')}${u.pages ? ' · ' : ''}${words.length} Wörter · ${c[4] + c[5]} sitzen</small></div>${icon('expand_more', 'chev')}</summary>
+      ${rows}${q ? '' : `<div class="unit-foot">${del}</div>`}</details>`;
+  }).join('') || `<div class="card empty"><h3>Nichts gefunden</h3><p>Kein Wort passt zu „${esc(S.search)}“.</p></div>`;
+}
+function viewAwards() {
+  const p = S.prog, lv = levelInfo(p.xp), learned = learnedCount();
+  const badges = BADGES.map(b => { const got = !!p.badges[b.id];
+    return `<div class="bdg ${got ? '' : 'locked'}"><span class="medal">${icon(got ? b.ic : 'lock', got ? 'fill' : '')}</span><div><b>${b.t}</b><small>${b.d}</small></div></div>` }).join('');
+  const nGot = BADGES.filter(b => p.badges[b.id]).length;
+  const goals = [[30, 'Locker'], [50, 'Normal'], [100, 'Fleißig'], [150, 'Profi']].map(([n, t]) => `<button data-act="goal" data-n="${n}" aria-pressed="${p.goal === n}">${t}<br><span class="small muted">${n} XP</span></button>`).join('');
+  const restore = S.restore ? `<div class="setting"><span class="grow small">Sicherung vom ${esc(S.restore.date)} laden? Dein jetziger Stand wird ersetzt.</span><button class="btn btn-line btn-sm" data-act="restore-no">Nein</button><button class="btn btn-primary btn-sm" data-act="restore-yes">Laden</button></div>` : '';
+  return `
+  <div class="sec-h"><h2>Erfolge</h2><span class="small muted">${nGot} von ${BADGES.length} Abzeichen</span></div>
+  <div class="tiles">
+    <div class="tile"><span class="lbl">${icon('trending_up')}Level ${lv.n}</span><b>${fmt(p.xp)}</b><small>XP · ${lv.name}</small></div>
+    <div class="tile"><span class="lbl">${icon('local_fire_department')}Serie</span><b>${shownStreak()}</b><small>Tage · Rekord ${p.best}</small></div>
+    <div class="tile"><span class="lbl">${icon('inventory_2')}Sitzen</span><b>${learned}</b><small>von ${S.words.length} Wörtern</small></div>
+    <div class="tile"><span class="lbl">${icon('flag')}Runden</span><b>${p.rounds}</b><small>${p.perfect} davon fehlerfrei</small></div>
+  </div>
+  <div class="badges">${badges}</div>
+  <section class="card"><div class="row between" style="margin-bottom:6px"><h3>Einstellungen</h3>${icon('settings')}</div>
+    <div class="stack" style="gap:6px;padding-block:6px 12px"><label for="setName" class="lbl">Dein Name</label><input id="setName" class="field" maxlength="24" value="${esc(p.name)}" data-ch="name" placeholder="Vorname"></div>
+    <div class="stack" style="gap:6px;padding-bottom:12px"><span class="lbl">Tagesziel</span><div class="seg" role="group" aria-label="Tagesziel">${goals}</div></div>
+    <div class="setting"><div class="grow"><b>Soundeffekte</b><div class="small muted">Töne bei richtig, falsch und Erfolgen</div></div><button class="switch" role="switch" aria-checked="${p.sound}" data-act="tog" data-k="sound" aria-label="Soundeffekte"></button></div>
+    <div class="setting"><div class="grow"><b>Vorlesen</b><div class="small muted">Das englische Wort nach jeder Antwort hören</div></div><button class="switch" role="switch" aria-checked="${p.speak}" data-act="tog" data-k="speak" aria-label="Vorlesen"></button></div>
+    <div class="setting"><div class="grow"><b>Ton testen</b><div class="small muted">Nichts zu hören? Lautstärke hochdrehen. Auf älteren iPhones schaltet der Stumm-Schalter die Töne ab.</div></div><button class="btn btn-soft btn-sm" data-act="sound-test">${icon('volume_up')}Test</button></div>
+    <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Word Box in einem normalen Fenster.</div>'}</div></div>
+    <div class="row" style="gap:8px;padding-bottom:12px;flex-wrap:wrap"><button class="btn btn-soft btn-sm" data-act="backup">${icon('download')}Sicherung speichern</button><label class="btn btn-line btn-sm" for="restoreFile" style="cursor:pointer">${icon('upload')}Sicherung laden</label><input id="restoreFile" class="sr" type="file" accept=".json,application/json" data-ch="restore-file"></div>
+    ${restore}
+    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.1</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
+  </section>`;
+}
+function viewQuiz() {
+  const Q = S.quiz, q = Q.list[Q.i];
+  const prog = (Q.i + (Q.answered ? 1 : 0)) / Q.list.length;
+  const w = S.byId.get(q.wid) || {};
+  let body = '';
+  const extraTag = q.extra ? `<span class="pill pill-marker">${icon('autorenew')}Wiederholung · ${esc(q.unitTitle)}</span>` : '';
+  if (q.type === 'gap') {
+    body = `<div class="qprompt sentence">${esc(q.before)}<span class="blank ${Q.answered ? 'ok' : ''}">${Q.answered ? esc(q.answer) : '&nbsp;'}</span>${esc(q.after)}</div>
+      <span class="hint">${icon('translate')}${esc(q.hint)}</span>`;
+  } else {
+    const long = String(q.prompt).length > 26 ? 'long' : '';
+    body = `<div class="qsay"><div class="qprompt ${long} grow">${esc(q.prompt)}</div>${q.showSay ? `<button class="iconbtn" data-act="say" data-t="${esc(q.prompt)}" aria-label="Vorlesen">${icon('volume_up')}</button>` : ''}</div>
+      ${q.showSay && w.ipa ? `<span class="ipa">${esc(w.ipa)}</span>` : ''}${q.hint ? `<span class="hint">${icon('translate')}${esc(q.hint)}</span>` : ''}`;
+  }
+  let answers;
+  if (q.type === 'type') {
+    const st = Q.answered ? (Q.lastOk ? 'ok' : 'no') : '';
+    answers = `<div class="typebox"><input id="typeIn" class="${st}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Englisch eintippen" value="${esc(Q.typed)}" ${Q.answered ? 'readonly' : ''} aria-label="Antwort auf Englisch" data-in="typing">
+      ${Q.typeErr ? `<div class="err" role="alert">${esc(Q.typeErr)}</div>` : ''}
+      ${Q.answered ? '' : `<button class="btn btn-primary wide" data-act="type-check">Prüfen</button><button class="link" data-act="type-skip">Weiß ich nicht</button>`}</div>`;
+  } else {
+    answers = `<div class="opts" role="group" aria-label="Antworten">${q.options.map((o, i) => {
+      let cls = '';
+      if (Q.answered) { if (o === q.answer) cls = 'is-right'; else if (i === Q.chosen) cls = 'is-wrong'; else cls = 'is-dim' }
+      return `<button class="opt ${cls}" data-act="ans" data-i="${i}" ${Q.answered ? 'disabled' : ''}><span class="key">${i + 1}</span><span class="t">${esc(o)}</span></button>` }).join('')}</div>`;
+  }
+  let sheet = '';
+  if (Q.answered) {
+    const ok = Q.lastOk;
+    const exHtml = w.ex ? `<div class="ex">${esc(w.ex)}</div>` : '';
+    const note = w.pos === 'phrase' && w.note ? `<div class="ex">${esc(w.note)}</div>` : '';
+    const sayT = q.type === 'past' ? w.past : w.en;
+    const wcard = `<div class="wcard"><div class="grow"><b>${esc(w.en)}</b>${q.type === 'past' ? ` → <b>${esc(w.past)}</b>` : ''}${w.ipa ? ` <span class="ipa">${esc(w.ipa)}</span>` : ''}<div class="de">${esc(w.de)}</div>${exHtml}${note}</div><button class="iconbtn sm" data-act="say" data-t="${esc(sayT)}" aria-label="Vorlesen">${icon('volume_up')}</button></div>`;
+    sheet = `<div class="sheet ${ok ? 'ok' : 'no'}" role="status" aria-live="polite"><div class="sheet-in">
+      <div class="sheet-head">${icon(ok ? 'check_circle' : 'cancel', 'fill')}<strong>${esc(Q.praise)}</strong>${Q.gain ? `<span class="gain">+${Q.gain} XP</span>` : ''}</div>
+      ${ok && Q.almost ? `<div>Ein kleiner Tippfehler. Richtig geschrieben: <b>${esc(q.answer)}</b></div>` : ''}
+      ${!ok ? `<div>Richtig ist: <b>${esc(q.answer)}</b>${Q.again ? ' · kommt gleich nochmal' : ''}</div>` : ''}
+      ${wcard}
+      <button class="btn ${ok ? 'btn-good' : 'btn-bad'} wide" data-act="next" id="nextBtn">Weiter ${icon('arrow_forward')}</button>
+    </div></div>`;
+  }
+  const comboHtml = Q.combo >= 2 ? `<span class="combo" title="Richtig in Folge">${icon('bolt', 'fill')}${Q.combo}</span>` : '<span class="combo"></span>';
+  const confirm = S.confirm === 'quit' ? `<div class="overlay"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="qT"><h2 id="qT">Runde beenden?</h2><p class="muted">Deine Antworten und XP bis hierhin bleiben gespeichert. Für die Serie zählt nur eine fertige Runde.</p>
+    <button class="btn btn-primary wide" data-act="quit-no">Weiter üben</button><button class="btn btn-line wide" data-act="quit-yes">Beenden</button></div></div>` : '';
+  return `<div class="quiz ${Q.answered ? 'answered' : ''}">
+    <div class="qtop"><button class="iconbtn plain" data-act="quit" aria-label="Runde beenden">${icon('close')}</button>
+      <div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(prog * 100)}" aria-label="Fortschritt"><span style="width:${Math.max(3, prog * 100).toFixed(1)}%"></span></div>${comboHtml}</div>
+    <div class="qcard">${extraTag}<span class="lbl">${esc(q.label)}</span>${body}</div>
+    ${answers}
+  </div>${sheet}${confirm}`;
+}
+function viewResult() {
+  const R = S.result, n = R.right + R.wrong, acc = n ? Math.round(R.right / n * 100) : 0;
+  const head = R.perfect ? 'Perfect!' : acc >= 80 ? 'Brilliant!' : acc >= 60 ? 'Well done!' : 'Good effort!';
+  const p = S.prog, today = xpToday();
+  const streak = R.streakUp ? `<div class="streakbox">${icon('local_fire_department', 'fill')}<div><b>${p.streak} ${p.streak === 1 ? 'Tag' : 'Tage'} Serie</b><span class="small">Komm morgen wieder, damit deine Flamme weiterbrennt.</span></div></div>` : '';
+  const goal = R.goalHit ? `<div class="notice" style="background:var(--good-soft);color:var(--good-ink)">${icon('emoji_events', 'fill')}<div><b>Tagesziel geschafft!</b> ${today} von ${p.goal} XP heute.</div></div>`
+    : `<div class="card row"><div class="grow"><b>Heute ${today} von ${p.goal} XP</b><div class="bar" style="margin-top:8px"><span style="width:${Math.min(100, today / p.goal * 100).toFixed(1)}%;background:var(--marker-deep)"></span></div></div></div>`;
+  const badges = R.fresh.length ? `<div class="stack"><span class="lbl">Neue Abzeichen</span><div class="badges">${R.fresh.map((b, i) => `<div class="bdg newbadge" style="animation-delay:${.3 + i * .15}s"><span class="medal">${icon(b.ic, 'fill')}</span><div><b>${b.t}</b><small>${b.d}</small></div></div>`).join('')}</div></div>` : '';
+  const mist = R.mistakes.length ? `<section class="card"><h3 style="margin-bottom:6px">Das übst du nochmal</h3><div class="mist">${R.mistakes.map(q => { const w = S.byId.get(q.wid) || {};
+    return `<div><span class="grow"><b>${esc(q.type === 'gap' ? w.en : q.prompt)}</b> → ${esc(q.answer)}</span><button class="iconbtn sm" data-act="say" data-t="${esc(q.type === 'past' ? w.past : w.en)}" aria-label="Vorlesen">${icon('volume_up')}</button></div>` }).join('')}</div></section>` : '';
+  return `<div class="result">
+    <div class="hero"><div class="big">${icon(R.perfect ? 'star' : acc >= 60 ? 'emoji_events' : 'school', 'fill')}</div><h1>${head}</h1>
+      <p class="muted">${R.right} von ${n} richtig${R.bonus > 10 ? ' · Bonus für eine fehlerfreie Runde' : ''}</p>
+      <div class="xpline"><span class="hl" id="xpCount" data-to="${R.xp}">+${R.xp}</span> XP</div></div>
+    <div class="tiles3">
+      <div class="tile"><span class="lbl">Treffer</span><b>${acc}%</b></div>
+      <div class="tile"><span class="lbl">Combo</span><b>${R.best}</b></div>
+      <div class="tile"><span class="lbl">Fach hoch</span><b>${R.promoted}</b></div>
+    </div>
+    ${streak}${goal}${badges}${mist}
+    <div class="stack">${R.mistakes.length ? `<button class="btn btn-primary wide" data-act="redo">${icon('autorenew')}Fehler nochmal üben</button>` : ''}
+      <button class="btn ${R.mistakes.length ? 'btn-line' : 'btn-primary'} wide" data-act="done">Fertig</button></div>
+  </div>`;
+}
+function viewOnboard() {
+  const goals = [[30, 'Locker'], [50, 'Normal'], [100, 'Fleißig']].map(([n, t]) => `<button data-act="ob-goal" data-n="${n}" aria-pressed="${S.prog.goal === n}">${t}<br><span class="small muted">${n} XP</span></button>`).join('');
+  return `<div class="overlay"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="obT">${logo('logo')}
+    <h2 id="obT">Welcome to Word Box!</h2>
+    <p class="muted">Hier übst du deine Englisch-Vokabeln: mit Karteikasten, Tagesziel, Serie und Abzeichen.</p>
+    <label for="obName" class="lbl">Wie heißt du?</label><input id="obName" class="field" maxlength="24" placeholder="Dein Vorname" value="${esc(S.prog.name)}" autocomplete="given-name">
+    <span class="lbl">Wie viel willst du am Tag üben?</span><div class="seg" role="group" aria-label="Tagesziel">${goals}</div>
+    <button class="btn btn-primary wide" data-act="ob-go">Los geht's</button><button class="link" data-act="ob-skip">Später</button>
+  </div></div>`;
+}
+
+/* ---------- adding vocabulary ---------- */
+function viewImport() {
+  const I = S.imp;
+  let inner = '';
+  if (I.step === 'review') {
+    const on = I.words.filter(w => w.on).length, dups = I.words.filter(w => w.dup).length;
+    const rows = I.words.map((w, i) => `<div class="irow ${w.on ? '' : 'off'}"><label style="display:contents"><input type="checkbox" class="sr" data-ch="imp-tog" data-i="${i}" ${w.on ? 'checked' : ''}><span class="cbox">${icon('check')}</span></label>
+      <div class="grow"><b>${esc(w.en)}</b>${w.ipa ? ` <span class="ipa">${esc(w.ipa)}</span>` : ''}<div class="small muted">${esc(w.de)}</div>
+        <div class="tags" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">${w.past ? `<span class="tag">simple past: ${esc(w.past)}</span>` : ''}${w.ex ? `<span class="tag">Beispielsatz</span>` : ''}${w.sec ? `<span class="tag">${esc(w.sec)}</span>` : ''}${w.dup ? `<span class="tag" style="background:var(--marker-soft);color:var(--marker-ink)">schon vorhanden</span>` : ''}</div>
+        ${w.edit ? `<div class="edit"><input aria-label="Englisch" value="${esc(w.en)}" data-in="imp-f" data-i="${i}" data-f="en"><input aria-label="Deutsch" value="${esc(w.de)}" data-in="imp-f" data-i="${i}" data-f="de"><input aria-label="Simple Past" placeholder="Simple Past (nur bei Verben)" value="${esc(w.past)}" data-in="imp-f" data-i="${i}" data-f="past"><button class="btn btn-soft btn-sm" data-act="imp-edit" data-i="${i}">Fertig</button></div>` : ''}</div>
+      ${w.edit ? '' : `<button class="iconbtn sm plain" data-act="imp-edit" data-i="${i}" aria-label="Bearbeiten">${icon('edit')}</button>`}</div>`).join('');
+    inner = `<div class="card stack"><div><label for="impTitle2" class="lbl">Name der Lektion</label><input id="impTitle2" class="field" style="margin-top:6px" value="${esc(I.title)}" data-in="imp-title" maxlength="80"></div>
+        <p class="small muted">${I.words.length} Einträge erkannt${dups ? ` · ${dups} schon vorhanden (abgewählt)` : ''}. Prüf kurz, ob alles stimmt. Mit dem Stift kannst du Fehler korrigieren.</p></div>
+      <div class="row between"><span class="small muted">${on} ausgewählt</span><span class="row" style="gap:4px"><button class="link" data-act="imp-all" data-on="1">Alle</button><button class="link" data-act="imp-all" data-on="0">Keine</button></span></div>
+      <div class="wlist">${rows}</div>
+      ${I.err ? `<div class="err" role="alert">${esc(I.err)}</div>` : ''}
+      <div class="startbar" style="bottom:calc(env(safe-area-inset-bottom,0px) + 12px)"><button class="btn btn-primary" data-act="imp-save">${icon('done_all')}${on} Vokabeln speichern</button></div>
+      <button class="link" data-act="imp-reset">Zurück zur Eingabe</button>`;
+  } else {
+    inner = `
+    <section class="card stack">
+      <div class="row">${icon('content_paste')}<h3>Liste einfügen</h3></div>
+      <p class="small muted">Eine Vokabel pro Zeile: <b>Englisch ; Deutsch ; Simple Past ; Beispielsatz</b>. Simple Past und Beispielsatz sind freiwillig. Die Antwort, die Claude aus deinen Buchfotos macht, kannst du hier direkt einfügen.</p>
+      <textarea id="impText" class="area" rows="7" placeholder="to choose ; (aus)wählen ; chose ; He is choosing a book.&#10;plane ; Flugzeug&#10;suddenly ; plötzlich" data-in="imp-text" autocapitalize="off" spellcheck="false" aria-label="Vokabelliste">${esc(I.text)}</textarea>
+      <div><label for="impTitle" class="lbl">Name der Lektion (optional)</label><input id="impTitle" class="field" style="margin-top:6px" placeholder="z. B. Theme 2: …" value="${esc(I.title)}" data-in="imp-title" maxlength="80"></div>
+      ${I.err ? `<div class="err" role="alert">${esc(I.err)}</div>` : ''}
+      <button class="btn btn-primary wide" data-act="imp-parse">${icon('check')}Vokabeln prüfen</button>
+    </section>
+    <label class="drop" for="impFile">${icon('file')}<b>Datei öffnen</b><small>Word-Box-Datei (.json) oder Textliste (.txt), auch aus iCloud Drive</small></label>
+    <input id="impFile" class="sr" type="file" accept=".json,.txt,.csv,.tsv,application/json,text/plain" data-ch="imp-file">
+    <section class="card stack">
+      <div class="row">${icon('add_a_photo')}<h3>Aus Fotos vom Buch</h3></div>
+      <p class="small muted">Fotografiere die Word-lists-Seiten und schick die Fotos zusammen mit dieser Anleitung an Claude. Claudes Antwort fügst du oben bei „Liste einfügen“ ein.</p>
+      <button class="btn btn-soft wide" data-act="imp-copy">${icon('copy')}Anleitung kopieren</button>
+      ${I.showPrompt ? `<textarea id="promptBox" class="area" rows="6" readonly aria-label="Anleitung für Claude">${esc(importPrompt())}</textarea>` : ''}
+    </section>`;
+  }
+  return `<div class="main" style="padding-bottom:110px">
+    <div class="row" style="padding-top:calc(12px + env(safe-area-inset-top,0px))"><button class="iconbtn plain" data-act="imp-back" aria-label="Zurück">${icon('arrow_back')}</button><h2 style="font-size:24px">Neue Vokabeln</h2></div>
+    ${inner}</div>`;
+}
+function importPrompt() {
+  return `Lies bitte die Vokabeln aus den angehängten Fotos aus und antworte nur mit dem JSON-Objekt. Die genaue Anleitung:
+
+You are reading photos of the vocabulary pages ("Word lists") of a German school textbook for English (grade 6). If several photos overlap, list every entry only once, in page order.
+
+Each vocabulary row has three columns: (1) the English headword, usually followed by its IPA pronunciation in slashes and sometimes by "simple past: …"; (2) the German meaning; (3) optionally an English example sentence, an opposite written as "X ↔ Y", or a short note. Small boxed labels such as "A10" or "B4" mark textbook sections; a label applies to its row and all following rows until the next label.
+
+Reply with ONE JSON object and nothing else, shaped like:
+{"title":"Theme 2: …","pages":"S. 227–228","words":[{"en":"to choose","de":"(aus)wählen","ipa":"/tʃuːz/","pos":"verb","past":"chose","pp":"chosen","ex":"He is choosing a book to read.","gap":"choosing","opp":"","sec":"A10","note":""}]}
+
+Rules for the fields:
+- title: the theme or unit heading printed on the page, or "". pages: the page numbers as "S. x–y", or "".
+- en: the English headword exactly as printed, including "to " for verbs and brackets like "(sth)", without the IPA.
+- de: the German meaning exactly as printed (keep commas and "hier:" notes).
+- ipa: the IPA as printed including slashes, or "".
+- pos: one of verb, noun, adj, adv, phrase, other.
+- past: for verbs the simple past (as printed after "simple past:", otherwise the correct form; for multi-word verbs the whole phrase, e.g. "went online"); "" for everything else.
+- pp: the past participle for irregular verbs, else "".
+- ex: the English example sentence from column 3, or "".
+- gap: the exact part of ex that is the headword (usually bold, possibly inflected, e.g. "chose"); "" if there is none.
+- opp: if column 3 shows "X ↔ Y" for this word, the other side; else "".
+- sec: the section label that applies, or "".
+- note: other short info from column 3 that is not an example sentence (e.g. "to call = to phone"), else "".
+If a "Say it in English" box is visible, add one entry per row with pos "phrase", de = the German situation on the left, en = the first English phrase on the right, note = "Auch: " plus the other English variants, sec "Say it".
+Ignore page numbers, headers, pictures, exercises and text from neighbouring pages at the image edges. Copy spelling exactly and do not invent entries you cannot read.`;
+}
+const POS = ['verb', 'noun', 'adj', 'adv', 'phrase', 'other'];
+function normalizeImport(data) {
+  const arr = Array.isArray(data) ? data : (data && Array.isArray(data.words) ? data.words : []);
+  const existing = new Set(S.words.map(w => nk(w.en)));
+  const seen = new Set(), out = [];
+  for (const o of arr) {
+    if (!o || typeof o !== 'object') continue;
+    const s = k => typeof o[k] === 'string' ? o[k].trim() : '';
+    const w = { en: s('en'), de: s('de'), ipa: s('ipa'), pos: POS.indexOf(s('pos')) >= 0 ? s('pos') : 'other', past: s('past'), pp: s('pp'), ex: s('ex'), gap: s('gap'), opp: s('opp'), sec: s('sec'), note: s('note') };
+    if (w.pos !== 'verb') { w.past = ''; w.pp = '' }
+    if (w.gap && w.ex.indexOf(w.gap) < 0) w.gap = '';
+    if (!w.en || !w.de || w.en.length > 90 || w.de.length > 140) continue;
+    const key = nk(w.en) + '|' + nk(w.de); if (seen.has(key)) continue; seen.add(key);
+    w.dup = existing.has(nk(w.en)); w.on = !w.dup; w.edit = false;
+    out.push(w);
+  }
+  return out;
+}
+function parseText(text) {
+  const t = String(text || '').replace(/^﻿/, '').trim();
+  if (!t) return null;
+  const tryJson = s => { try { return JSON.parse(s) } catch (e) { return undefined } };
+  let data;
+  if (/^[\[{]/.test(t)) data = tryJson(t);
+  if (data === undefined) { const m = t.match(/```(?:json)?\s*([\s\S]*?)```/i); if (m) data = tryJson(m[1].trim()) }
+  if (data === undefined) { const a = t.indexOf('{'), b = t.lastIndexOf('}'); if (a >= 0 && b > a) { const d = tryJson(t.slice(a, b + 1)); if (d && Array.isArray(d.words)) data = d } }
+  if (data && typeof data === 'object') return { data, words: normalizeImport(data) };
+  const rows = [];
+  for (const line of t.split(/\r?\n/)) {
+    const l = line.trim(); if (!l || l[0] === '#') continue;
+    let parts = l.indexOf('\t') >= 0 ? l.split('\t') : l.indexOf(';') >= 0 ? l.split(';') : l.indexOf(' = ') >= 0 ? l.split(' = ') : l.split(/\s+[–—-]\s+/);
+    parts = parts.map(s => s.trim());
+    if (parts.length < 2 || !parts[0] || !parts[1]) continue;
+    const en = parts[0], de = parts[1], past = parts[2] || '', ex = parts[3] || '';
+    const verb = /^to\s/i.test(en) || !!past;
+    const stem = en.replace(/\([^)]*\)/g, ' ').replace(/^to\s+/i, '').replace(/\s+/g, ' ').trim();
+    let gap = '';
+    if (ex) { if (past && ex.indexOf(past) >= 0) gap = past; else if (stem && ex.indexOf(stem) >= 0) gap = stem; else if (stem && ex.indexOf(capFirst(stem)) >= 0) gap = capFirst(stem) }
+    rows.push({ en, de, pos: verb ? 'verb' : 'other', past: verb ? past : '', ex, gap });
+  }
+  return { data: null, words: normalizeImport(rows) };
+}
+function startReview(res, fileTitle) {
+  const I = S.imp;
+  if (res && res.data && res.data.app === 'wordbox') { I.err = 'Das ist eine Word-Box-Sicherung. Spiel sie unter Erfolge → Sicherung laden ein.'; render(); return }
+  if (!res || !res.words.length) { I.err = 'Keine Vokabeln erkannt. Schreib eine pro Zeile, zum Beispiel: to choose ; (aus)wählen ; chose'; render(); return }
+  const d = res.data;
+  I.words = res.words; I.err = '';
+  if (!I.title.trim() && d && typeof d.title === 'string' && d.title.trim()) I.title = d.title.trim();
+  if (!I.title.trim() && fileTitle) I.title = fileTitle;
+  if (!I.title.trim()) I.title = 'Neue Lektion';
+  I.pages = d && typeof d.pages === 'string' ? d.pages.trim() : '';
+  I.step = 'review'; render(); window.scrollTo(0, 0);
+}
+function saveImport() {
+  const I = S.imp, chosen = I.words.filter(w => w.on);
+  if (!chosen.length) { I.err = 'Wähle mindestens eine Vokabel aus.'; render(); return }
+  const id = 'u' + Date.now().toString(36);
+  const order = Math.max(0, ...S.units.map(u => u.order || 0)) + 1;
+  const words = chosen.map((w, i) => {
+    const o = { id: id + '-' + String(i + 1).padStart(3, '0'), en: w.en.trim(), de: w.de.trim(), pos: w.pos };
+    if (o.pos !== 'verb' && w.past && w.past.trim()) o.pos = 'verb';
+    for (const k of ['ipa', 'past', 'pp', 'ex', 'gap', 'opp', 'sec', 'note']) if (w[k] && String(w[k]).trim()) o[k] = String(w[k]).trim();
+    if (o.gap && (!o.ex || o.ex.indexOf(o.gap) < 0)) delete o.gap;
+    if (o.pos !== 'verb') { delete o.past; delete o.pp }
+    return o;
+  }).filter(o => o.en && o.de);
+  const title = (I.title || '').trim() || 'Neue Lektion';
+  S.units.push({ id, title, pages: I.pages || '', order, source: 'list', createdAt: todayKey(), words });
+  saveUnits();
+  S.prog.photos++; S.prog.sel = words.map(w => w.id);
+  const fresh = checkBadges(); persist();
+  S.imp = null; S.view = 'vocab'; S.openUnit = id; render(); window.scrollTo(0, 0);
+  toast(`${title}: ${words.length} Vokabeln gespeichert und für die Abfrage gewählt.`, 'check_circle');
+  if (fresh.length) { SFX.badge(); setTimeout(() => toast('Neues Abzeichen: ' + fresh.map(b => b.t).join(', '), 'workspace_premium'), 3400) }
+}
+function readFile(file, cb) {
+  const r = new FileReader();
+  r.onload = () => cb(String(r.result || ''), null);
+  r.onerror = () => cb('', r.error || new Error('read'));
+  r.readAsText(file, 'utf-8');
+}
+
+/* ---------- render ---------- */
+function render() {
+  const v = S.view;
+  let html;
+  if (v === 'quiz' && S.quiz) html = viewQuiz();
+  else if (v === 'result' && S.result) html = viewResult();
+  else if (v === 'import' && S.imp) html = viewImport();
+  else {
+    if (['home', 'practice', 'vocab', 'awards'].indexOf(v) < 0) S.view = 'home';
+    const body = S.view === 'home' ? viewHome() : S.view === 'practice' ? viewPractice() : S.view === 'vocab' ? viewVocab() : viewAwards();
+    html = topbar() + `<main class="main" id="main">${body}</main>` + navbar();
+    if (!S.prog.onboarded && S.view === 'home') html += viewOnboard();
+  }
+  app.innerHTML = html;
+  if (S.view === 'result') countUp();
+}
+function countUp() {
+  const el = document.getElementById('xpCount'); if (!el || REDUCED) return;
+  const to = +el.dataset.to, t0 = performance.now();
+  (function f(t) { const k = Math.min(1, (t - t0) / 900); el.textContent = '+' + Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f) })(t0);
+}
+function go(v) { S.view = v; S.delUnit = null; S.resetAsk = false; render(); window.scrollTo(0, 0) }
+
+/* ---------- events ---------- */
+const ACT = {
+  nav: t => go(t.dataset.v),
+  quick: () => { const ids = selIds(); startRound(ids.length ? ids : S.words.map(w => w.id), 'mix', S.prog.len) },
+  review: () => startRound(dueWords().map(w => w.id), 'mix', S.prog.len, { extras: false }),
+  mode: t => { S.prog.mode = t.dataset.m; persist(); render() },
+  len: t => { S.prog.len = +t.dataset.n; persist(); render() },
+  ufilter: t => { S.unitFilter = t.dataset.u || null; render() },
+  filter: t => { S.filter = t.dataset.f; render() },
+  selvis: t => { const on = t.dataset.on === '1', sel = new Set(selIds()); for (const w of visibleWords()) on ? sel.add(w.id) : sel.delete(w.id); S.prog.sel = Array.from(sel); persist(); render() },
+  start: () => { const ids = selIds(); if (!ids.length) { toast('Wähle zuerst Wörter aus.', 'info'); return } startRound(ids, S.prog.mode, S.prog.len) },
+  'practice-unit': t => { const u = S.units.find(x => x.id === t.dataset.u); if (!u) return; S.prog.sel = (u.words || []).map(w => w.id); S.unitFilter = u.id; S.filter = 'all'; persist(); go('practice') },
+  say: t => say(t.dataset.t),
+  ans: t => answerMC(+t.dataset.i),
+  next: () => nextQ(),
+  'type-check': () => answerTyped(),
+  'type-skip': () => { const Q = S.quiz; if (!Q || Q.answered) return; Q.typed = ''; settle(false, false) },
+  quit: () => { if (!S.quiz) return; if (S.quiz.right + S.quiz.wrong === 0) { S.quiz = null; go('home'); return } S.confirm = 'quit'; render() },
+  'quit-no': () => { S.confirm = null; render() },
+  'quit-yes': () => finish(true),
+  redo: () => { const R = S.result; if (!R) return; const ids = Array.from(new Set(R.mistakes.map(q => q.wid))); startRound(ids, R.mode, ids.length, { extras: false }) },
+  done: () => { S.result = null; go('home') },
+  'del-ask': t => { S.delUnit = t.dataset.u; S.openUnit = t.dataset.u; render() },
+  'del-no': () => { S.delUnit = null; render() },
+  'del-yes': t => {
+    const id = t.dataset.u, u = S.units.find(x => x.id === id); S.delUnit = null;
+    S.units = S.units.filter(x => x.id !== id); saveUnits();
+    if (u && u.source === 'server') S.prog.removedLists = Array.from(new Set((S.prog.removedLists || []).concat(id)));
+    if (u) { const ids = new Set((u.words || []).map(w => w.id)); for (const k of Object.keys(S.prog.w)) if (ids.has(k)) delete S.prog.w[k]; if (Array.isArray(S.prog.sel)) S.prog.sel = S.prog.sel.filter(x => !ids.has(x)) }
+    if (S.unitFilter === id) S.unitFilter = null;
+    persist(); render(); toast('Lektion gelöscht.', 'delete');
+  },
+  goal: t => { S.prog.goal = +t.dataset.n; persist(); render() },
+  tog: t => { const k = t.dataset.k; S.prog[k] = !S.prog[k]; persist(); render(); if (k === 'sound' && S.prog.sound) SFX.ok() },
+  'reset-ask': () => { S.resetAsk = true; render() },
+  'reset-no': () => { S.resetAsk = false; render() },
+  'reset-yes': () => { const keep = { name: S.prog.name, goal: S.prog.goal, sound: S.prog.sound, speak: S.prog.speak, onboarded: true }; S.prog = Object.assign(freshProg(), keep); S.resetAsk = false; persist(); render(); toast('Fortschritt zurückgesetzt.', 'autorenew') },
+  'sound-test': () => { unlockAudio(); const was = S.prog.sound; S.prog.sound = true; SFX.win(); S.prog.sound = was; say('Hello! The sound is working.'); toast('Du solltest jetzt eine Melodie und eine Stimme hören.', 'volume_up') },
+  backup: () => {
+    try { downloadFile('wordbox-sicherung-' + todayKey() + '.json', JSON.stringify({ app: 'wordbox', v: 1, exported: new Date().toISOString(), prog: S.prog, units: S.units })); toast('Sicherung wird gespeichert.', 'download') }
+    catch (e) { toast('Sicherung konnte nicht erstellt werden.', 'info') }
+  },
+  'restore-no': () => { S.restore = null; render() },
+  'restore-yes': () => {
+    const d = S.restore && S.restore.data; if (!d) return;
+    S.prog = Object.assign(freshProg(), d.prog, { onboarded: true }); S.units = d.units; S.restore = null; S.unitFilter = null;
+    saveUnits(); persist(); render(); toast('Sicherung geladen.', 'check_circle');
+  },
+  'ob-goal': t => { const i = document.getElementById('obName'); if (i) S.prog.name = i.value.trim(); S.prog.goal = +t.dataset.n; render() },
+  'ob-go': () => { const i = document.getElementById('obName'); if (i) S.prog.name = i.value.trim().slice(0, 24); S.prog.onboarded = true; persist(); render(); SFX.ok() },
+  'ob-skip': () => { S.prog.onboarded = true; persist(); render() },
+  'imp-open': () => { S.imp = S.imp || { step: 'pick', text: '', title: '', words: [], err: '', showPrompt: false }; go('import') },
+  'imp-back': () => { S.imp = null; go('vocab') },
+  'imp-parse': () => { const I = S.imp; if (!I.text.trim()) { I.err = 'Füge zuerst eine Liste ein.'; render(); return } startReview(parseText(I.text)) },
+  'imp-copy': () => {
+    const text = importPrompt();
+    const fallback = () => {
+      S.imp.showPrompt = true; render();
+      const b = document.getElementById('promptBox');
+      if (b) { b.focus(); b.select(); try { b.setSelectionRange(0, b.value.length) } catch (e) {} }
+      toast('Der Text ist markiert. Jetzt kopieren.', 'copy');
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => toast('Anleitung kopiert. Jetzt mit den Fotos an Claude schicken.', 'check_circle'), fallback);
+      else fallback();
+    } catch (e) { fallback() }
+  },
+  'imp-edit': t => { const w = S.imp.words[+t.dataset.i]; if (w) { w.edit = !w.edit; render() } },
+  'imp-all': t => { const on = t.dataset.on === '1'; S.imp.words.forEach(w => w.on = on); render() },
+  'imp-save': () => saveImport(),
+  'imp-reset': () => { S.imp.step = 'pick'; S.imp.words = []; S.imp.err = ''; render() }
+};
+const CH = {
+  tw: t => { const sel = new Set(selIds()); t.checked ? sel.add(t.dataset.id) : sel.delete(t.dataset.id); S.prog.sel = Array.from(sel); persist(); render() },
+  tg: t => { const g = (S._groups || [])[+t.dataset.g]; if (!g) return; const sel = new Set(selIds()); for (const w of g.words) t.checked ? sel.add(w.id) : sel.delete(w.id); S.prog.sel = Array.from(sel); persist(); render() },
+  name: t => { S.prog.name = t.value.trim().slice(0, 24); persist(); render() },
+  'imp-tog': t => { const w = S.imp.words[+t.dataset.i]; if (w) { w.on = t.checked; render() } },
+  'imp-file': t => {
+    const f = t.files && t.files[0]; if (!f) return;
+    const fileTitle = f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
+    readFile(f, (text, err) => {
+      if (err) { S.imp.err = 'Die Datei konnte nicht gelesen werden.'; render(); return }
+      startReview(parseText(text), fileTitle);
+    });
+  },
+  'restore-file': t => {
+    const f = t.files && t.files[0]; if (!f) return;
+    readFile(f, (text, err) => {
+      let d = null;
+      try { d = JSON.parse(text) } catch (e) { d = null }
+      if (err || !d || d.app !== 'wordbox' || !d.prog || !Array.isArray(d.units)) { toast('Das ist keine Word-Box-Sicherung.', 'info'); return }
+      const dt = d.exported ? new Date(d.exported) : null;
+      S.restore = { date: dt && !isNaN(dt) ? dt.toLocaleDateString('de-DE') : 'unbekanntem Datum', data: d };
+      render();
+    });
+  }
+};
+const IN = {
+  search: t => { S.search = t.value; const el = document.getElementById('vlist'); if (el) el.innerHTML = vocabList() },
+  typing: () => { if (S.quiz && S.quiz.typeErr) { S.quiz.typeErr = ''; const e = app.querySelector('.typebox .err'); if (e) e.remove() } },
+  'imp-text': t => { if (S.imp) S.imp.text = t.value },
+  'imp-title': t => { if (S.imp) S.imp.title = t.value },
+  'imp-f': t => { const w = S.imp && S.imp.words[+t.dataset.i]; if (w) w[t.dataset.f] = t.value }
+};
+app.addEventListener('click', e => { const t = e.target.closest('[data-act]'); if (!t || !app.contains(t)) return; const f = ACT[t.dataset.act]; if (f) { e.preventDefault(); f(t, e) } });
+app.addEventListener('change', e => { const t = e.target; const f = t.dataset && CH[t.dataset.ch]; if (f) f(t, e) });
+app.addEventListener('input', e => { const t = e.target; const f = t.dataset && IN[t.dataset.in]; if (f) f(t, e) });
+app.addEventListener('toggle', e => { const d = e.target; if (d.matches && d.matches('details.unit')) { if (d.open) S.openUnit = d.dataset.u; else if (S.openUnit === d.dataset.u) S.openUnit = null } }, true);
+document.addEventListener('keydown', e => {
+  if (S.view !== 'quiz' || !S.quiz || S.confirm) return;
+  const Q = S.quiz, q = Q.list[Q.i];
+  if (Q.answered) { if (e.key === 'Enter') { e.preventDefault(); nextQ() } return }
+  if (q.type === 'type') { if (e.key === 'Enter' && e.target && e.target.id === 'typeIn') { e.preventDefault(); answerTyped() } return }
+  const n = parseInt(e.key, 10);
+  if (n >= 1 && n <= q.options.length) { e.preventDefault(); answerMC(n - 1) }
+});
+
+/* ---------- lessons from the server (lists/ folder next to this page) ---------- */
+function listToUnit(L, data) {
+  const arr = Array.isArray(data) ? data : (data && Array.isArray(data.words) ? data.words : []);
+  const title = (data && typeof data.title === 'string' && data.title.trim()) || L.title || 'Lektion';
+  const pages = (data && typeof data.pages === 'string' && data.pages.trim()) || L.pages || '';
+  const words = [], ids = new Set();
+  arr.forEach((o, i) => {
+    if (!o || typeof o.en !== 'string' || typeof o.de !== 'string' || !o.en.trim() || !o.de.trim()) return;
+    let id = typeof o.id === 'string' && o.id.trim() ? o.id.trim() : L.id + '-' + String(i + 1).padStart(3, '0');
+    if (ids.has(id)) id = L.id + '-' + String(i + 1).padStart(3, '0') + 'x';
+    ids.add(id);
+    const w = { id, en: o.en.trim(), de: o.de.trim(), pos: POS.indexOf(o.pos) >= 0 ? o.pos : 'other' };
+    for (const k of ['ipa', 'past', 'pp', 'ex', 'gap', 'opp', 'sec', 'note']) if (typeof o[k] === 'string' && o[k].trim()) w[k] = o[k].trim();
+    if (o.opt) w.opt = true;
+    if (w.pos !== 'verb' && w.past) w.pos = 'verb';
+    if (w.gap && (!w.ex || w.ex.indexOf(w.gap) < 0)) delete w.gap;
+    words.push(w);
+  });
+  return { id: L.id, title, pages, rev: +L.rev || 1, source: 'server', createdAt: todayKey(), words };
+}
+let syncing = false, lastSync = 0;
+async function syncLists() {
+  if (syncing || !/^https?:$/.test(location.protocol)) return;
+  syncing = true; lastSync = Date.now();
+  try {
+    const r = await fetch('lists/index.json', { cache: 'no-cache' });
+    if (!r.ok) return;
+    const idx = await r.json();
+    const lists = Array.isArray(idx) ? idx : (idx && Array.isArray(idx.lists) ? idx.lists : []);
+    const removed = new Set(S.prog.removedLists || []);
+    const added = [], updated = [];
+    for (const L of lists) {
+      if (!L || typeof L.id !== 'string' || typeof L.file !== 'string' || removed.has(L.id)) continue;
+      const have = S.units.find(u => u.id === L.id);
+      if (have && (+have.rev || 1) >= (+L.rev || 1)) continue;
+      let data;
+      try { const rr = await fetch('lists/' + encodeURIComponent(L.file), { cache: 'no-cache' }); if (!rr.ok) continue; data = await rr.json() } catch (e) { continue }
+      const unit = listToUnit(L, data);
+      if (!unit.words.length) continue;
+      if (have) { unit.order = have.order; Object.assign(have, unit); updated.push(unit) }
+      else { unit.order = Math.max(0, ...S.units.map(u => u.order || 0)) + 1; S.units.push(unit); added.push(unit) }
+    }
+    if (!added.length && !updated.length) return;
+    saveUnits();
+    if (added.length) { S.prog.sel = added[added.length - 1].words.map(w => w.id); persist() }
+    if (S.view !== 'quiz' && S.view !== 'import') render();
+    if (added.length) toast(added.length === 1 ? 'Neue Lektion: ' + added[0].title : added.length + ' neue Lektionen geladen', 'library_add');
+    else toast(updated.map(u => u.title).join(', ') + ' wurde aktualisiert.', 'autorenew');
+  } catch (e) {
+  } finally { syncing = false }
+}
+
+/* ---------- boot ---------- */
+S.storageOk = store.set('wordbox.check', todayKey());
+if (!store.get(LS_UNITS)) store.set(LS_UNITS, S.units);
+index();
+render();
+syncLists();
+document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - lastSync > 10 * 60 * 1000) syncLists() });
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}) });
+}
+})();
+</script>
+</body>
+</html>

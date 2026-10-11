@@ -1,0 +1,7 @@
+.DS_Store
+*.local.*
+# Sicherungen und Buchfotos gehören nicht ins öffentliche Repo
+wordbox-sicherung-*.json
+fotos/
+*.heic
+*.HEIC
