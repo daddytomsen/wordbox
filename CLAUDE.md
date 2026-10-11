@@ -21,6 +21,7 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 | `manifest.webmanifest`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png` | Home-Bildschirm |
 | `lists/index.json`, `lists/*.json` | Lektionen (Vokabellisten) |
 | `tools/check.sh` | Prüfung: JS-Syntax, JSON, Listen, Versionsgleichheit |
+| `tools/add-list.py` | Claudes Antwort (Buchfotos → JSON) als Lektion in `lists/` aufnehmen, feste Wort-Ids, `rev` hochzählen |
 | `robots.txt`, `.nojekyll` | keine Suchmaschinen, GitHub Pages ohne Jekyll |
 
 ## Release-Regel

@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Word Box
 
-Stand: 11.10.2026 · Version 1.1 · Projektordner `~/Downloads/wordbox`
+Stand: 11.10.2026 · Version 1.2 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -18,12 +18,15 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 - Home-Bildschirm-App: Manifest, Icons, Service Worker (offline), Safe-Areas.
 - Ton-Korrektur für iOS (Freischalten beim ersten Tippen, `audioSession`, Sprachausgabe synchron) und Knopf „Ton testen“.
 - `tools/check.sh` geprüft: JS-Syntax ok, JSON ok, Versionen gleich.
+- Git-Repo `daddytomsen/wordbox` (öffentlich), GitHub Pages aktiv, alle drei Adressen antworten mit 200 (11.10.).
+- Sicherung speichern nutzt auf iOS das Teilen-Menü (`navigator.share` mit Datei), sonst Download wie bisher (Version 1.2).
+- `tools/add-list.py` nimmt Claudes Antwort als Lektion auf (siehe Aufgabe 4), mit Testlauf geprüft.
 
 **Nicht auf echtem iPhone getestet.** Alles oben ist nur im Code geprüft.
 
 ## Aufgaben
 
-### 1. Git und GitHub Pages einrichten
+### 1. Git und GitHub Pages einrichten – erledigt 11.10.
 
 Erst nach Freigabe durch Thomas pushen. Das Repo muss öffentlich sein (Pages kostenlos), GitHub-Konto `daddytomsen`.
 
@@ -51,7 +54,7 @@ Fertig, wenn:
 
 Ergebnisse in diese Datei unter „Testprotokoll“ eintragen. Falls kein Ton: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Englisch → eine britische Stimme laden. Ist eine en-GB-Stimme da, nimmt die App sie automatisch.
 
-### 3. Sicherung speichern auf dem iPhone verlässlich machen
+### 3. Sicherung speichern auf dem iPhone verlässlich machen – im Code erledigt 11.10., Test am iPhone offen
 
 `downloadFile()` nutzt `<a download>` mit Blob. In einer Home-Bildschirm-App auf iOS klappt das oft nicht oder öffnet nur eine Vorschau.
 
@@ -59,7 +62,9 @@ Umsetzen: Wenn `navigator.canShare?.({ files: [file] })` true ist, `navigator.sh
 
 Fertig, wenn auf dem iPhone in der Home-Bildschirm-App „Sicherung speichern“ das Teilen-Menü öffnet und die Datei in iCloud Drive landet, und „Sicherung laden“ sie wieder einspielt.
 
-### 4. Hilfsskript für neue Lektionen
+### 4. Hilfsskript für neue Lektionen – erledigt 11.10.
+
+Offen: `norm_en()` im Skript entscheidet, wann zwei Stichwörter als dasselbe Wort gelten (Dubletten, Id-Wiederverwendung). Baseline ist Kleinschreibung; strenger oder lockerer ist Thomas' Entscheidung.
 
 `tools/add-list.py <claude-antwort.json|.txt> --id theme2 [--title "…"]`:
 - liest Claudes Antwort (reines JSON oder JSON im ```-Block),
