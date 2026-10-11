@@ -28,8 +28,8 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 
 Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleichzeitig** hochzählen, sonst bekommt das iPhone die alte Fassung aus dem Cache:
 
-- `sw.js`: `const CACHE = 'wordbox-v1.2';`
-- `index.html`: Text `Version 1.2` in den Einstellungen (Erfolge → Einstellungen)
+- `sw.js`: `const CACHE = 'wordbox-v1.3';`
+- `index.html`: Text `Version 1.3` in den Einstellungen (Erfolge → Einstellungen)
 
 `tools/check.sh` bricht ab, wenn beide nicht übereinstimmen. Neue Listen in `lists/` brauchen keinen neuen Release.
 
@@ -47,7 +47,7 @@ Abschnitte im Skript (Kommentare `/* ---------- … ---------- */`):
 6. **confetti & toast**
 7. **question building** – `MODES` (mix, de-en, en-de, past, opp, gap, type), Gewichte `MIX_W`. Falsche Antworten: `pickOpts()` nimmt bevorzugt dieselbe Lektion und Wortart plus das ähnlichste Wort (Bigramm-Ähnlichkeit). Simple Past: `pastWrong()` erzeugt typische Fehler (choosed, planed, Grundform, -ing).
 8. **typed answers** – `checkTyped()`: normalisiert (`to`, `sb/sth`, Klammern, `your→one's`), Varianten aus `/` und `(= …)`, 1 Tippfehler erlaubt ab 4 Buchstaben.
-9. **quiz flow** – Runde aus Auswahl, plus 1–3 eingestreute Wörter (`extra`), die schwach oder fällig sind, auch aus nicht gewählten Lektionen. Falsch beantwortete Frage kommt einmal 3 Fragen später wieder. XP: 10 pro richtige Antwort, 15 beim Schreiben, +5 für Extra-Wörter, +10 Rundenbonus, +20 fehlerfrei (ab 5 Fragen). Serie zählt nur bei fertig gespielter Runde.
+9. **quiz flow** – Runde aus Auswahl, plus 1–3 eingestreute Wörter (`extra`), die schwach oder fällig sind, auch aus nicht gewählten Lektionen. Falsch beantwortete Frage kommt einmal 3 Fragen später wieder. XP (seit 1.3 knapp, `econ: 2`): 2 pro richtige Antwort, 3 beim Schreiben, +1 für Extra-Wörter, +5 Rundenbonus, +10 fehlerfrei (ab 5 Fragen). Eine fehlerfreie 10er-Runde bringt etwa 40 XP, das Tagesziel „Normal“ (150) braucht also rund vier fehlerfreie Runden. `migrateProg()` rechnet Lernstände ohne `econ` einmalig um (XP ÷ 5, Ziel auf neue Stufe). Serie zählt nur bei fertig gespielter Runde.
 10. **views** – `viewHome`, `viewPractice`, `viewVocab`, `viewAwards`, `viewQuiz`, `viewResult`, `viewOnboard`. Alles per Template-String und `render()` → `app.innerHTML`.
 11. **adding vocabulary** – `viewImport`, `parseText()` (JSON, JSON in ```-Block, oder Zeilen `en ; de ; past ; Beispielsatz`, auch Tab, ` = `, ` – `), `importPrompt()` (Anleitung für Claude zum Auslesen von Buchfotos).
 12. **lessons from the server** – `syncLists()` lädt `lists/index.json` beim Start und nach 10 min im Hintergrund. Neue `id` → Lektion anhängen und auswählen. Höhere `rev` → Lektion ersetzen. Vom Kind gelöschte Server-Lektionen stehen in `prog.removedLists` und kommen nicht wieder.
@@ -73,7 +73,7 @@ Pflicht: `en`, `de`. `pos` ∈ verb, noun, adj, adv, phrase, other. `gap` muss w
 **Liste** (`lists/<datei>.json`): `{ "title", "pages", "words": [...] }`
 **Index** (`lists/index.json`): `{ "lists": [ { "id", "title", "file", "rev" } ] }`
 
-**Lernstand** `localStorage['wordbox.prog.v1']`: `name, goal, sound, speak, xp, days{YYYY-MM-DD: xp}, streak, best, last, rounds, perfect, typedRight, pastRight, extraRight, bestCombo, photos, goalDays, badges{id: datum}, w{wortId: {l: fach, r, x, s, d: fällig-ms}}, sel[ids], mode, len, onboarded, removedLists[], updatedAt`.
+**Lernstand** `localStorage['wordbox.prog.v1']`: `econ, name, goal, sound, speak, xp, days{YYYY-MM-DD: xp}, streak, best, last, rounds, perfect, typedRight, pastRight, extraRight, bestCombo, photos, goalDays, badges{id: datum}, w{wortId: {l: fach, r, x, s, d: fällig-ms}}, sel[ids], mode, len, onboarded, removedLists[], updatedAt`.
 **Lektionen** `localStorage['wordbox.units.v1']`: Array von Lektionen.
 **Sicherung**: `{ app: "wordbox", v: 1, exported, prog, units }`.
 
