@@ -30,8 +30,8 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 
 Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleichzeitig** hochzählen, sonst bekommt das iPhone die alte Fassung aus dem Cache:
 
-- `sw.js`: `const CACHE = 'wordbox-v1.9';`
-- `index.html`: Text `Version 1.9` in den Einstellungen (Erfolge → Einstellungen)
+- `sw.js`: `const CACHE = 'wordbox-v1.10';`
+- `index.html`: Text `Version 1.10` in den Einstellungen (Erfolge → Einstellungen)
 
 `tools/check.sh` bricht ab, wenn beide nicht übereinstimmen. Neue Listen in `lists/` brauchen keinen neuen Release.
 
@@ -42,14 +42,14 @@ Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleic
 Abschnitte im Skript (Kommentare `/* ---------- … ---------- */`):
 
 1. **helpers** – `esc()` für jedes HTML aus Daten, `icon(name, 'fill')` → `<svg><use href="#i-name(-f)">`.
-2. **words / mastery** – Karteikasten mit 5 Fächern. `INTERVAL = [0,0,1,3,7,14]` Tage. `grade(id, ok)`: richtig und fällig → ein Fach hoch (neu → Fach 2), falsch → Fach 1 und sofort fällig. Gelernt = Fach ≥ 4. `isWeak` = schon mal falsch und Fach ≤ 2.
+2. **words / mastery** – Karteikasten mit 5 Fächern. `INTERVAL = [0,0,1,3,7,14]` Tage. `grade(id, ok)`: richtig und fällig → ein Fach hoch (neu → Fach 2), in Fach 5 bleibt es und bekommt wieder 14 Tage Ruhe (seit 1.10); richtig, aber nicht fällig → nur Zähler `r`. Falsch → Fach 1 und sofort fällig. Gelernt = Fach ≥ 4. `isWeak` = schon mal falsch und Fach ≤ 2 (nur noch Filter-Chip „Fehlerwörter“). „Fällig“ (`dueWords`, Start-Karte, Eingestreute) = Wartezeit abgelaufen, Fach 1 zählt immer.
 3. **levels & badges** – Level-Schwellen `lvlStart(n) = 50(n−1) + 25n(n−1)`, 15 Abzeichen in `BADGES`.
 4. **persistence** – `persist()` schreibt `S.prog`, `saveUnits()` schreibt `S.units`. `downloadFile()` für Sicherungen.
 5. **sound & speech** – iOS: Ton wird im ersten `touchend/click` freigeschaltet (`unlockAudio`), `navigator.audioSession.type = 'playback'`, damit der Stummschalter neuere iPhones nicht stummschaltet. `say()` muss **synchron** aus dem Tipp-Handler laufen, sonst blockiert iOS die Sprachausgabe. Kein `setTimeout` davor. Die Sprachausgabe ignoriert die Audio-Sitzung: Bei Stummschalter an bleibt sie auf iOS stumm, die Töne nicht. Entscheidung Thomas 11.10.: kein Umweg, nur Hinweis in den Einstellungen und beim Ton-Test (ein Versuch mit lautlosem `<audio>` in 1.6 hat nicht geholfen).
 6. **confetti & toast**
 7. **question building** – `MODES` (mix, de-en, en-de, past, opp, gap, type), Gewichte `MIX_W`. Falsche Antworten: `pickOpts()` nimmt bevorzugt dieselbe Lektion und Wortart plus das ähnlichste Wort (Bigramm-Ähnlichkeit). Simple Past: `pastWrong()` erzeugt typische Fehler (choosed, planed, Grundform, -ing).
 8. **typed answers** – `checkTyped()`: normalisiert (`to`, `sb/sth`, Klammern, `your→one's`), Varianten aus `/` und `(= …)`, 1 Tippfehler erlaubt ab 4 Buchstaben.
-9. **quiz flow** – Runde aus Auswahl, plus 1–3 eingestreute Wörter (`extra`), die schwach oder fällig sind, auch aus nicht gewählten Lektionen. Falsch beantwortete Frage kommt einmal 3 Fragen später wieder. XP (seit 1.3 knapp, `econ: 2`): 2 pro richtige Antwort, 3 beim Schreiben, +1 für Extra-Wörter, +5 Rundenbonus, +10 fehlerfrei (ab 5 Fragen). Eine fehlerfreie 10er-Runde bringt etwa 40 XP, das Tagesziel „Normal“ (150) braucht also rund vier fehlerfreie Runden. `migrateProg()` rechnet Lernstände ohne `econ` einmalig um (XP ÷ 5, Ziel auf neue Stufe). Serie zählt nur bei fertig gespielter Runde.
+9. **quiz flow** – Runde aus Auswahl über `composeRound(pool, n)` mit festen Anteilen (seit 1.10, vorher eine Gewichtung `prio()`, bei der Fehlerwörter alles verdrängten): höchstens die Hälfte fällige Wörter (niedriges Fach und länger überfällig zuerst), dann neue Wörter in Buchreihenfolge, dann weitere fällige, zuletzt bekannte nach ältester Abfrage. Heute richtig beantwortete, noch nicht fällige Wörter kommen am selben Tag nicht wieder. Plus 1–3 eingestreute Wörter (`extra`), die fällig sind, aus nicht gewählten Lektionen. Falsch beantwortete Frage kommt einmal 3 Fragen später wieder. XP (seit 1.3 knapp, `econ: 2`): 2 pro richtige Antwort, 3 beim Schreiben, +1 für Extra-Wörter, +5 Rundenbonus, +10 fehlerfrei (ab 5 Fragen). Eine fehlerfreie 10er-Runde bringt etwa 40 XP, das Tagesziel „Normal“ (150) braucht also rund vier fehlerfreie Runden. `migrateProg()` rechnet Lernstände ohne `econ` einmalig um (XP ÷ 5, Ziel auf neue Stufe). Serie zählt nur bei fertig gespielter Runde.
 10. **views** – `viewHome`, `viewPractice`, `viewVocab`, `viewAwards`, `viewQuiz`, `viewResult`, `viewOnboard`. Alles per Template-String und `render()` → `app.innerHTML`.
 11. **adding vocabulary** – `viewImport`, `parseText()` (JSON, JSON in ```-Block, oder Zeilen `en ; de ; past ; Beispielsatz`, auch Tab, ` = `, ` – `), `importPrompt()` (Anleitung für Claude zum Auslesen von Buchfotos).
 12. **lessons from the server** – `syncLists()` lädt `lists/index.json` beim Start und nach 10 min im Hintergrund. Neue `id` → Lektion anhängen und auswählen. Höhere `rev` → Lektion ersetzen. Vom Kind gelöschte Server-Lektionen stehen in `prog.removedLists` und kommen nicht wieder.

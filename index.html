@@ -461,7 +461,7 @@ const fach = id => (ws(id) && ws(id).l) || 0;
 function isDue(id, now = Date.now()) { const s = ws(id); return !!s && s.l >= 1 && (s.d || 0) <= now }
 function isWeak(id) { const s = ws(id); return !!s && s.x > 0 && s.l <= 2 }
 const learnedCount = () => S.words.filter(w => fach(w.id) >= 4).length;
-const dueWords = () => S.words.filter(w => isDue(w.id) || isWeak(w.id));
+const dueWords = () => S.words.filter(w => isDue(w.id));
 
 /* ---------- learning targets (Lernziele) ----------
    A target is a set of word ids plus a due date. A word counts as practised once it has been answered
@@ -516,9 +516,8 @@ function grade(id, ok) {
   let promoted = false;
   if (ok) {
     s.r++;
-    if (s.l === 0) { s.l = 2; promoted = true }
-    else if ((s.d || 0) <= now && s.l < 5) { s.l++; promoted = true }
-    if (promoted) s.d = now + INTERVAL[s.l] * DAY;
+    if (s.l === 0) { s.l = 2; promoted = true; s.d = now + INTERVAL[s.l] * DAY }
+    else if ((s.d || 0) <= now) { if (s.l < 5) { s.l++; promoted = true } s.d = now + INTERVAL[s.l] * DAY }
   } else { s.x++; s.l = 1; s.d = now }
   s.s = now;
   return promoted;
@@ -725,11 +724,24 @@ function pickType(w, m) {
   for (const t of opts) { r -= MIX_W[t]; if (r <= 0) return t }
   return opts[0] || 'de-en';
 }
-function prio(id) {
-  const s = ws(id); let p = Math.random() * 2.5;
-  if (!s || !s.l) p += 2;
-  else { if ((s.d || 0) <= Date.now()) p += 3; if (s.x > 0 && s.l <= 2) p += 4; p -= s.l * .6 }
-  return p;
+/* Round composition. Old approach (a single weighted sort) let error words crowd out new ones:
+   anything ever answered wrong kept a high weight even after being answered correctly the same day.
+   Now a round is built from quotas: at most half due words (waiting time over, errors are due at once),
+   then new words in book order, then due words beyond the half, then known words, oldest first.
+   A word that was right today and is not due again is not asked again today. */
+const seenAt = id => (ws(id) && ws(id).s) || 0;
+const jitter = () => Math.random() * 0.5;
+function composeRound(pool, n) {
+  const now = Date.now();
+  const due = pool.filter(w => isDue(w.id, now)).map(w => [w, fach(w.id) + ((ws(w.id).d || 0) - now) / DAY / 100 + jitter()]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
+  const fresh = pool.filter(w => !fach(w.id));
+  const rest = pool.filter(w => fach(w.id) && !isDue(w.id, now)).map(w => [w, seenAt(w.id) / DAY + fach(w.id) + jitter()]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
+  const half = Math.ceil(n / 2), take = [];
+  take.push(...due.slice(0, half));
+  take.push(...fresh.slice(0, n - take.length));
+  take.push(...due.slice(half, half + Math.max(0, n - take.length)));
+  take.push(...rest.slice(0, Math.max(0, n - take.length)));
+  return take.slice(0, n);
 }
 function bigrams(s) { const a = []; for (let i = 0; i < s.length - 1; i++) a.push(s.slice(i, i + 2)); return a }
 function sim(a, b) {
@@ -795,13 +807,13 @@ function makeQ(w, type, extra) {
 }
 function buildRound(ids, mode, n, extras) {
   const set = new Set(ids);
-  const pool = ids.map(id => S.byId.get(id)).filter(w => w && canDo(w, mode));
-  pool.forEach(w => w._p = prio(w.id)); pool.sort((a, b) => b._p - a._p);
-  let k = extras ? (n >= 15 ? 3 : n >= 10 ? 2 : 1) : 0;
-  const ex = extras ? S.words.filter(w => !set.has(w.id) && canDo(w, mode) && (isWeak(w.id) || isDue(w.id))) : [];
-  ex.forEach(w => w._p = prio(w.id)); ex.sort((a, b) => b._p - a._p);
+  const order = new Map(S.words.map((w, i) => [w.id, i]));
+  const pool = ids.map(id => S.byId.get(id)).filter(w => w && canDo(w, mode)).sort((a, b) => order.get(a.id) - order.get(b.id));
+  const k = extras ? (n >= 15 ? 3 : n >= 10 ? 2 : 1) : 0;
+  const now = Date.now();
+  const ex = extras ? S.words.filter(w => !set.has(w.id) && canDo(w, mode) && isDue(w.id, now)).map(w => [w, (ws(w.id).d || 0) + Math.random() * DAY]).sort((x, y) => x[1] - y[1]).map(x => x[0]) : [];
   const extraPick = ex.slice(0, k);
-  const main = pool.slice(0, Math.max(0, n - extraPick.length));
+  const main = composeRound(pool, Math.max(0, n - extraPick.length));
   const items = main.map(w => [w, false]).concat(extraPick.map(w => [w, true]));
   return shuffle(items).map(([w, e]) => makeQ(w, pickType(w, mode), e));
 }
@@ -1111,7 +1123,7 @@ function viewAwards() {
     <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Voc a Bit in einem normalen Fenster.</div>'}</div></div>
     <div class="row" style="gap:8px;padding-bottom:12px;flex-wrap:wrap"><button class="btn btn-soft btn-sm" data-act="backup">${icon('download')}Sicherung speichern</button><label class="btn btn-line btn-sm" for="restoreFile" style="cursor:pointer">${icon('upload')}Sicherung laden</label><input id="restoreFile" class="sr" type="file" accept=".json,application/json" data-ch="restore-file"></div>
     ${restore}
-    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.9</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
+    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.10</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
   </section>`;
 }
 function viewQuiz() {
