@@ -1078,7 +1078,8 @@ function viewVocab() {
   <button class="import-card" data-act="imp-open"><span class="ic">${icon('library_add')}</span><span class="grow"><b>Neue Vokabeln hinzufügen</b><small>Liste einfügen, Datei öffnen oder aus Buchfotos</small></span>${icon('arrow_forward')}</button>
   ${S.words.length ? `<section class="card"><div class="row between"><h3>Dein Karteikasten</h3>${icon('inventory_2')}</div>
     <div class="kasten" role="img" aria-label="Verteilung der Wörter auf die Fächer">${kasten}</div>
-    <p class="small muted" style="margin-top:12px">Richtig beantwortet wandert ein Wort ein Fach weiter, aber höchstens einmal pro Wiederholung. Falsch heißt: zurück in Fach 1. Ab Fach 4 sitzt ein Wort.</p></section>
+    <p class="small muted" style="margin-top:12px">Richtig beantwortet wandert ein Wort ein Fach weiter, sobald seine Wartezeit vorbei ist: 1, 3, 7 und 14 Tage. Falsch heißt: zurück in Fach 1. Ab Fach 4 sitzt ein Wort.</p>
+    ${c[0] ? `<button class="btn btn-soft btn-sm" style="margin-top:12px" data-act="new-round">${icon('play_arrow')}${c[0] === 1 ? 'Das neue Wort üben' : c[0] + ' neue Wörter üben'}</button>` : ''}</section>
   <div class="search">${icon('search')}<input id="vsearch" type="search" placeholder="Wort suchen, z. B. choose" value="${esc(S.search)}" data-in="search" autocomplete="off" aria-label="Wort suchen"></div>
   <div id="vlist" class="stack">${vocabList()}</div>` : emptyState()}`;
 }
@@ -1123,7 +1124,7 @@ function viewAwards() {
     <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Voc a Bit in einem normalen Fenster.</div>'}</div></div>
     <div class="row" style="gap:8px;padding-bottom:12px;flex-wrap:wrap"><button class="btn btn-soft btn-sm" data-act="backup">${icon('download')}Sicherung speichern</button><label class="btn btn-line btn-sm" for="restoreFile" style="cursor:pointer">${icon('upload')}Sicherung laden</label><input id="restoreFile" class="sr" type="file" accept=".json,application/json" data-ch="restore-file"></div>
     ${restore}
-    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.10</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
+    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.11</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
   </section>`;
 }
 function viewQuiz() {
@@ -1411,6 +1412,7 @@ const ACT = {
   't-del-no': () => { S.delTarget = null; render() },
   't-del-yes': t => { S.prog.targets = targets().filter(x => x.id !== t.dataset.t); S.delTarget = null; persist(); updateBadge(); render(); toast('Lernziel entfernt.', 'delete') },
   review: () => startRound(dueWords().map(w => w.id), 'mix', S.prog.len, { extras: false }),
+  'new-round': () => startRound(S.words.filter(w => !fach(w.id)).map(w => w.id), 'mix', S.prog.len, { extras: false }),
   mode: t => { S.prog.mode = t.dataset.m; persist(); render() },
   len: t => { S.prog.len = +t.dataset.n; persist(); render() },
   ufilter: t => { S.unitFilter = t.dataset.u || null; render() },

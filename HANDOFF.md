@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 11.10.2026 · Version 1.10 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 11.10.2026 · Version 1.11 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -23,6 +23,7 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 - `tools/add-list.py` nimmt Claudes Antwort als Lektion auf (siehe Aufgabe 4), mit Testlauf geprüft.
 - XP knapper (Version 1.3, Wunsch Thomas 11.10.): 2 XP pro richtige Antwort, 3 beim Schreiben, +1 Extra-Wort, Rundenbonus 5, fehlerfrei +10. Tagesziele 100/150/250/400. Eine fehlerfreie 10er-Runde bringt etwa 40 XP, „Normal“ braucht rund vier davon. Alte Lernstände werden einmalig umgerechnet (`migrateProg`, Marker `econ: 2`), im Browser gegen die Pages-Adresse geprüft.
 - Lernziele (Version 1.8, Wunsch Thomas 11.10.): Wortauswahl + Termin, jedes Wort zweimal richtig; Karte auf dem Start mit Ampel (im Plan / Rückstand / letzter Tag / überfällig), Hinweis beim Öffnen, Zahl am App-Icon (braucht einmalig Mitteilungs-Erlaubnis, keine Push-Nachrichten), Abzeichen „Ziel erreicht“. Lokal im Browser durchgespielt, am iPhone bestätigt 11.10. (Datumsfeld und Icon-Zahl funktionieren).
+- Knopf „N neue Wörter üben“ im Karteikasten (Version 1.11): startet eine Runde nur mit nie abgefragten Wörtern, unabhängig von Auswahl und Lernziel. Anlass: 18 Wörter blieben „neu“, obwohl viel geübt wurde (alte Rundenlogik + aktives Lernziel lenkt die Schnelle Runde nur auf Zielwörter).
 - Rundenlogik (Version 1.10, Befund Thomas 11.10.: zu viele Wiederholungen, zu wenig Neues): Zusammenstellung mit festen Anteilen (max. Hälfte fällig, dann neu in Buchreihenfolge), heute schon richtige Wörter kommen nicht nochmal; Fach 5 bekommt nach richtiger Antwort wieder 14 Tage Ruhe (vorher dauerhaft fällig). Lokal geprüft.
 - Seiten-Schalter (Version 1.9, Wunsch Thomas 11.10.): jedes Wort trägt `page`, in „Üben“ wählt ein Chip je Seite alle Wörter der Seite an oder ab. Theme 1 rev 3: S. 224 sicher (t1-a01…a39), Grenze 225/226 von Thomas bestätigt 11.10.: S. 226 beginnt mit „to ask (for sth)“ (rev 4). Anleitung für Claude und `add-list.py` kennen `page`.
 - Umbenennung in „Voc a Bit“ (Version 1.4, 11.10.): Titel, Manifest, Kopfzeile, Onboarding, Sicherungstexte, Dateiname der Sicherung `voc-a-bit-sicherung-*.json`. Neues Icon: angebissene Vokabelkarte, Quelle `icon.svg`, PNGs randlos (iOS füllt transparente Ecken schwarz). Interne Schlüssel, Cache-Präfix und Repo-Name bleiben `wordbox`. Wer die App schon auf dem Home-Bildschirm hat, muss sie einmal entfernen und neu hinzufügen, damit iOS Name und Icon neu liest.
