@@ -17,6 +17,20 @@ Die Seite ist öffentlich erreichbar, wird aber nicht von Suchmaschinen aufgenom
 2. **Teilen → Zum Home-Bildschirm**.
 3. Ab jetzt Voc a Bit über das Icon starten.
 
+## Bildschirmzeit: nur Voc a Bit erlauben
+
+Die App auf dem Home-Bildschirm ist technisch ein Teil von Safari. Ist Safari in der Bildschirmzeit unter „Erlaubte Apps“ ausgeschaltet, startet auch Voc a Bit nicht. Der richtige Weg ist die Website-Liste: Safari bleibt erlaubt, darf aber nur freigegebene Adressen öffnen. Das gilt für Safari und für die App gleichermaßen.
+
+Am iPhone des Kindes, mit Bildschirmzeit-Code:
+
+1. Einstellungen → Bildschirmzeit → Beschränkungen (Inhalt & Datenschutz) → Erlaubte Apps & Funktionen → **Safari einschalten**.
+2. Zurück → Inhaltsbeschränkungen → Webinhalt → **Nur erlaubte Websites**.
+3. „Website hinzufügen“: Titel „Voc a Bit“, URL `https://daddytomsen.github.io/wordbox/`. Vorinstallierte Einträge nach Bedarf löschen.
+4. Optional für die Schrift der App: `https://fonts.googleapis.com` und `https://fonts.gstatic.com` ebenfalls hinzufügen. Ohne sie läuft alles mit Standardschrift.
+5. Einmal in Safari die Adresse öffnen → Teilen → Zum Home-Bildschirm. Danach nur über das Icon starten.
+
+Kein App-Limit für Safari setzen, das kann die App mitsperren. Soll Safari nicht sichtbar sein, das Icon in einen Ordner oder die App-Mediathek schieben. Geprüft am 11.10.2026: App startet, andere Adressen bleiben gesperrt.
+
 ## Neue Vokabeln hinzufügen
 
 Neue Lektionen kommen über den Ordner `lists/`. Die App sieht beim Start nach und lädt neue Lektionen automatisch.

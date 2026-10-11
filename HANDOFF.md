@@ -100,3 +100,4 @@ Gleiches Wort (`norm_en()`, Entscheidung Thomas 11.10.): Groß-/Kleinschreibung,
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
 | 11.10.2026 | iPhone (Thomas), Version 1.5 | Töne ok mit und ohne Stummschalter. Sprachausgabe bei Stummschalter an stumm. Umweg in 1.6 (lautloses `<audio>`) hat nicht geholfen → in 1.7 entfernt, stattdessen Hinweis in Einstellungen und Ton-Test. |
+| 11.10.2026 | iPhone (Sohn), Bildschirmzeit | Safari war über „Erlaubte Apps“ gesperrt → Home-Bildschirm-App startet nicht. Lösung bestätigt: Safari erlaubt, Webinhalt „Nur erlaubte Websites“ mit `https://daddytomsen.github.io/wordbox/`. App läuft, andere Seiten bleiben gesperrt. Anleitung in README. |
