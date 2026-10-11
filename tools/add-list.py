@@ -70,14 +70,16 @@ def norm_en(en):
     (2) beim Ersetzen einer Liste die alte Wort-Id über das Stichwort wiederfinden,
     damit der Karteikasten-Stand des Kindes am Wort hängen bleibt.
 
-    TODO(human): Entscheide, wie streng verglichen wird. Baseline ist nur
-    Kleinschreibung und Rand-Leerzeichen. Überlege, ob z. B. "to choose" und
-    "choose", "a bit (of)" und "a bit", doppelte Leerzeichen oder typografische
-    Apostrophe (’ vs ') als dasselbe Wort gelten sollen. Zu streng → echte
-    Dubletten werden übersehen und ein Wort bekommt beim Ersetzen eine neue Id
-    (Lernstand verloren). Zu lax → zwei verschiedene Wörter teilen sich eine Id.
+    Entscheidung (11.10.2026): Groß-/Kleinschreibung, Apostroph-Form (’ vs ') und
+    mehrfache Leerzeichen sind egal; der Infinitiv-Marker "to " vor Verben zählt nicht
+    ("to choose" = "choose"). Klammerzusätze bleiben Teil des Wortes, weil "a bit" und
+    "a bit (of)" im Buch getrennte Einträge sein können.
     """
-    return en.strip().lower()
+    key = en.strip().lower()
+    key = re.sub(r"[’‘`´]", "'", key)
+    key = re.sub(r'\s+', ' ', key)
+    key = re.sub(r"^to (?=[a-z])", '', key)
+    return key
 
 
 def clean_word(w, file_label, n):

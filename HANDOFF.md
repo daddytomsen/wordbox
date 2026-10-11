@@ -64,7 +64,7 @@ Fertig, wenn auf dem iPhone in der Home-Bildschirm-App „Sicherung speichern“
 
 ### 4. Hilfsskript für neue Lektionen – erledigt 11.10.
 
-Offen: `norm_en()` im Skript entscheidet, wann zwei Stichwörter als dasselbe Wort gelten (Dubletten, Id-Wiederverwendung). Baseline ist Kleinschreibung; strenger oder lockerer ist Thomas' Entscheidung.
+Gleiches Wort (`norm_en()`, Entscheidung Thomas 11.10.): Groß-/Kleinschreibung, Apostroph-Form und Leerzeichen egal, „to “ vor Verben zählt nicht, Klammerzusätze zählen.
 
 `tools/add-list.py <claude-antwort.json|.txt> --id theme2 [--title "…"]`:
 - liest Claudes Antwort (reines JSON oder JSON im ```-Block),
