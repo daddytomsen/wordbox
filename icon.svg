@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
-  <title id="title">Voc a´Bit – Vokabelkarte mit Union Jack</title>
+  <title id="title">Voc a Bit – Vokabelkarte mit Union Jack</title>
   <defs>
     <clipPath id="iconShape"><rect width="512" height="512" rx="116"/></clipPath>
     <filter id="shadow" x="253" y="226" width="230" height="280" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">

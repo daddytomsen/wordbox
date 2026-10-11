@@ -1,707 +1,1095 @@
 {
- "title": "Theme 1: Back to Camden Town",
- "pages": "S. 225–226",
- "words": [
-  {
-   "id": "t1-01",
-   "en": "everything",
-   "de": "alles",
-   "ipa": "/ˈevriθɪŋ/",
-   "pos": "other",
-   "ex": "Everything was fine but then something went wrong.",
-   "gap": "Everything",
-   "sec": "A"
-  },
-  {
-   "id": "t1-02",
-   "en": "to go wrong",
-   "de": "schiefgehen",
-   "ipa": "/ˌɡəʊ ˈrɒŋ/",
-   "pos": "verb",
-   "past": "went wrong",
-   "pp": "gone wrong",
-   "ex": "Everything was fine but then something went wrong.",
-   "gap": "went wrong",
-   "sec": "A"
-  },
-  {
-   "id": "t1-03",
-   "en": "suddenly",
-   "de": "plötzlich",
-   "ipa": "/ˈsʌd(ə)nli/",
-   "pos": "adv",
-   "ex": "Suddenly Lara lost her balance.",
-   "gap": "Suddenly",
-   "sec": "A"
-  },
-  {
-   "id": "t1-04",
-   "en": "to lose one's balance",
-   "de": "das Gleichgewicht verlieren",
-   "ipa": "/ˌluːz wʌnz ˈbæləns/",
-   "pos": "verb",
-   "past": "lost one's balance",
-   "pp": "lost one's balance",
-   "ex": "Suddenly Lara lost her balance.",
-   "gap": "lost her balance",
-   "sec": "A"
-  },
-  {
-   "id": "t1-05",
-   "en": "How to …",
-   "de": "Wie man …",
-   "ipa": "/ˈhaʊ tə/",
-   "pos": "other",
-   "sec": "A"
-  },
-  {
-   "id": "t1-06",
-   "en": "wave",
-   "de": "Welle",
-   "ipa": "/weɪv/",
-   "pos": "noun",
-   "sec": "A"
-  },
-  {
-   "id": "t1-07",
-   "en": "strong",
-   "de": "stark, kräftig, fest",
-   "ipa": "/strɒŋ/",
-   "pos": "adj",
-   "ex": "Rachel is very strong.",
-   "gap": "strong",
-   "sec": "A"
-  },
-  {
-   "id": "t1-08",
-   "en": "to push",
-   "de": "stoßen, schieben, drücken",
-   "ipa": "/pʊʃ/",
-   "pos": "verb",
-   "past": "pushed",
-   "ex": "Fiona pushed Olivia.",
-   "gap": "pushed",
-   "opp": "to pull",
-   "sec": "A"
-  },
-  {
-   "id": "t1-09",
-   "en": "to hurt (sb)",
-   "de": "(jdm) wehtun, (jdn) verletzen",
-   "ipa": "/hɜːt/",
-   "pos": "verb",
-   "past": "hurt",
-   "pp": "hurt",
-   "ex": "When Olivia fell, she hurt her legs.",
-   "gap": "hurt",
-   "note": "simple past: hurt",
-   "sec": "A"
-  },
-  {
-   "id": "t1-10",
-   "en": "dark",
-   "de": "dunkel",
-   "ipa": "/dɑːk/",
-   "pos": "adj",
-   "sec": "A"
-  },
-  {
-   "id": "t1-11",
-   "en": "to pull",
-   "de": "ziehen",
-   "ipa": "/pʊl/",
-   "pos": "verb",
-   "past": "pulled",
-   "opp": "to push",
-   "sec": "A"
-  },
-  {
-   "id": "t1-12",
-   "en": "out of",
-   "de": "aus",
-   "ipa": "/ˈaʊt əv/",
-   "pos": "other",
-   "sec": "A"
-  },
-  {
-   "id": "t1-13",
-   "en": "to remember",
-   "de": "sich erinnern; daran denken",
-   "ipa": "/rɪˈmembə/",
-   "pos": "verb",
-   "past": "remembered",
-   "opp": "to forget",
-   "sec": "A"
-  },
-  {
-   "id": "t1-14",
-   "en": "not … anything",
-   "de": "gar nichts",
-   "ipa": "/nɒt ˈeniθɪŋ/",
-   "pos": "other",
-   "sec": "A"
-  },
-  {
-   "id": "t1-15",
-   "en": "to choose",
-   "de": "(aus)wählen",
-   "ipa": "/tʃuːz/",
-   "pos": "verb",
-   "past": "chose",
-   "pp": "chosen",
-   "ex": "He is choosing a book to read.",
-   "gap": "choosing",
-   "note": "simple past: chose /tʃəʊz/",
-   "sec": "A"
-  },
-  {
-   "id": "t1-16",
-   "en": "wasn't (= was not)",
-   "de": "Vergangenheitsform von „isn't“",
-   "ipa": "/ˈwɒz(ə)nt/",
-   "pos": "other",
-   "ex": "Zoe wasn't in London last year.",
-   "gap": "wasn't",
-   "sec": "A10"
-  },
-  {
-   "id": "t1-17",
-   "en": "weren't (= were not)",
-   "de": "Vergangenheitsform von „aren't“",
-   "ipa": "/ˈwɜːnt/",
-   "pos": "other",
-   "ex": "Kim and Jo weren't happy.",
-   "gap": "weren't",
-   "sec": "A10"
-  },
-  {
-   "id": "t1-18",
-   "en": "to plan",
-   "de": "planen",
-   "ipa": "/plæn/",
-   "pos": "verb",
-   "past": "planned",
-   "ex": "We planned our trip last year.",
-   "gap": "planned",
-   "sec": "A12"
-  },
-  {
-   "id": "t1-19",
-   "en": "plane",
-   "de": "Flugzeug",
-   "ipa": "/pleɪn/",
-   "pos": "noun",
-   "note": "on the plane – im Flugzeug",
-   "sec": "A12"
-  },
-  {
-   "id": "t1-20",
-   "en": "train",
-   "de": "Zug",
-   "ipa": "/treɪn/",
-   "pos": "noun",
-   "sec": "A12"
-  },
-  {
-   "id": "t1-21",
-   "en": "interesting",
-   "de": "interessant",
-   "ipa": "/ˈɪntrəstɪŋ/",
-   "pos": "adj",
-   "opp": "boring",
-   "sec": "A12"
-  },
-  {
-   "id": "t1-22",
-   "en": "annoying",
-   "de": "ärgerlich",
-   "ipa": "/əˈnɔɪɪŋ/",
-   "pos": "adj",
-   "ex": "It's so annoying that our bus is late.",
-   "gap": "annoying",
-   "sec": "A12"
-  },
-  {
-   "id": "t1-23",
-   "en": "trouble",
-   "de": "Schwierigkeiten, Ärger",
-   "ipa": "/ˈtrʌb(ə)l/",
-   "pos": "noun",
-   "note": "kein Plural",
-   "sec": "B1"
-  },
-  {
-   "id": "t1-24",
-   "en": "to make sb do sth",
-   "de": "jdn zu etwas bringen, jdn etwas tun lassen",
-   "ipa": "/ˌmeɪk ˌsʌmbədi ˈduː/",
-   "pos": "verb",
-   "past": "made",
-   "pp": "made",
-   "note": "simple past: made",
-   "sec": "B1"
-  },
-  {
-   "id": "t1-25",
-   "en": "may",
-   "de": "können, dürfen",
-   "ipa": "/meɪ/",
-   "pos": "other",
-   "ex": "You may bring your tablet to school, but you must not use it during the lesson.",
-   "gap": "may",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-26",
-   "en": "to switch off",
-   "de": "ausschalten, abschalten",
-   "ipa": "/ˌswɪtʃ ˈɒf/",
-   "pos": "verb",
-   "past": "switched off",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-27",
-   "en": "if",
-   "de": "wenn, falls, ob",
-   "ipa": "/ɪf/",
-   "pos": "other",
-   "ex": "We can have pizza if you like.",
-   "gap": "if",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-28",
-   "en": "break",
-   "de": "Pause",
-   "ipa": "/breɪk/",
-   "pos": "noun",
-   "ex": "Let's meet in our lunch break.",
-   "gap": "break",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-29",
-   "en": "to record",
-   "de": "aufzeichnen, aufnehmen",
-   "ipa": "/rɪˈkɔːd/",
-   "pos": "verb",
-   "past": "recorded",
-   "ex": "Jack wants to record his first song.",
-   "gap": "record",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-30",
-   "en": "unfriendly",
-   "de": "unfreundlich",
-   "ipa": "/ʌnˈfrendli/",
-   "pos": "adj",
-   "opp": "friendly",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-31",
-   "en": "to call",
-   "de": "(an)rufen, nennen",
-   "ipa": "/kɔːl/",
-   "pos": "verb",
-   "past": "called",
-   "note": "to call = to phone",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-32",
-   "en": "ill",
-   "de": "krank",
-   "ipa": "/ɪl/",
-   "pos": "adj",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-33",
-   "en": "office",
-   "de": "Büro, Amt; hier: Sekretariat",
-   "ipa": "/ˈɒfɪs/",
-   "pos": "noun",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-34",
-   "en": "to break",
-   "de": "(zer)brechen; hier: verstoßen gegen",
-   "ipa": "/breɪk/",
-   "pos": "verb",
-   "past": "broke",
-   "pp": "broken",
-   "ex": "Jack broke the rules when he used his phone in class.",
-   "gap": "broke",
-   "note": "simple past: broke /brəʊk/",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-35",
-   "en": "away",
-   "de": "weg",
-   "ipa": "/əˈweɪ/",
-   "pos": "adv",
-   "ex": "Your teacher can take your phone away.",
-   "gap": "away",
-   "sec": "B2"
-  },
-  {
-   "id": "t1-36",
-   "en": "head teacher",
-   "de": "Schulleiter/in, Direktor/in",
-   "ipa": "/ˌhed ˈtiːtʃə/",
-   "pos": "noun",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-37",
-   "en": "punishment",
-   "de": "Bestrafung, Strafe",
-   "ipa": "/ˈpʌnɪʃmənt/",
-   "pos": "noun",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-38",
-   "en": "message",
-   "de": "Nachricht, Botschaft",
-   "ipa": "/ˈmesɪdʒ/",
-   "pos": "noun",
-   "ex": "Did you read my message?",
-   "gap": "message",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-39",
-   "en": "stupid",
-   "de": "dumm, blöd",
-   "ipa": "/ˈstjuːpɪd/",
-   "pos": "adj",
-   "opp": "great",
-   "note": "a great idea ↔ a stupid idea",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-40",
-   "en": "to leave",
-   "de": "verlassen, weggehen; hier: (zurück)lassen",
-   "ipa": "/liːv/",
-   "pos": "verb",
-   "past": "left",
-   "pp": "left",
-   "ex": "You mustn't leave the classroom during the lesson.",
-   "gap": "leave",
-   "note": "simple past: left",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-41",
-   "en": "most",
-   "de": "(die) meisten",
-   "ipa": "/məʊst/",
-   "pos": "other",
-   "ex": "Most people like chocolate.",
-   "gap": "Most",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-42",
-   "en": "to ask (for sth)",
-   "de": "(um etw) bitten",
-   "ipa": "/ˈɑːsk fə/",
-   "pos": "verb",
-   "past": "asked",
-   "ex": "Can I ask you for some help?",
-   "gap": "ask",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-43",
-   "en": "around",
-   "de": "umher, um, rund um, um … herum",
-   "ipa": "/əˈraʊnd/",
-   "pos": "adv",
-   "ex": "Pia played around with her phone in class.",
-   "gap": "around",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-44",
-   "en": "to go online",
-   "de": "online gehen",
-   "ipa": "/ˌɡəʊ ˌɒnˈlaɪn/",
-   "pos": "verb",
-   "past": "went online",
-   "pp": "gone online",
-   "ex": "I can use my phone to go online.",
-   "gap": "go online",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-45",
-   "en": "recording",
-   "de": "Aufnahme, Aufzeichnen",
-   "ipa": "/rɪˈkɔːdɪŋ/",
-   "pos": "noun",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-46",
-   "en": "bored",
-   "de": "gelangweilt",
-   "ipa": "/bɔːd/",
-   "pos": "adj",
-   "ex": "When are we leaving? I'm bored.",
-   "gap": "bored",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-47",
-   "en": "fault",
-   "de": "Schuld, Fehler",
-   "ipa": "/fɔːlt/",
-   "pos": "noun",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-48",
-   "en": "to agree",
-   "de": "zustimmen; hier: sich einig sein",
-   "ipa": "/əˈɡriː/",
-   "pos": "verb",
-   "past": "agreed",
-   "ex": "Charlie and George agree that football is great.",
-   "gap": "agree",
-   "opp": "to disagree",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-49",
-   "en": "to prepare",
-   "de": "vorbereiten, erstellen",
-   "ipa": "/prɪˈpeə/",
-   "pos": "verb",
-   "past": "prepared",
-   "ex": "My dad is preparing dinner.",
-   "gap": "preparing",
-   "note": "Frz. préparer",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-50",
-   "en": "presentation",
-   "de": "Präsentation",
-   "ipa": "/ˌprez(ə)nˈteɪʃ(ə)n/",
-   "pos": "noun",
-   "ex": "Mark is nervous about the presentation.",
-   "gap": "presentation",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-51",
-   "en": "topic",
-   "de": "Thema",
-   "ipa": "/ˈtɒpɪk/",
-   "pos": "noun",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-52",
-   "en": "(Great) Britain",
-   "de": "Großbritannien",
-   "ipa": "/ˌɡreɪt ˈbrɪt(ə)n/",
-   "pos": "noun",
-   "ex": "Britain is England, Scotland and Wales.",
-   "gap": "Britain",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-53",
-   "en": "another",
-   "de": "noch eine(r, s), ein(e) andere(r)",
-   "ipa": "/əˈnʌðə/",
-   "pos": "other",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-54",
-   "en": "work",
-   "de": "Arbeit",
-   "ipa": "/wɜːk/",
-   "pos": "noun",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-55",
-   "en": "to admit",
-   "de": "zugeben",
-   "ipa": "/ədˈmɪt/",
-   "pos": "verb",
-   "past": "admitted",
-   "sec": "B4"
-  },
-  {
-   "id": "t1-56",
-   "en": "to punish",
-   "de": "(be)strafen",
-   "ipa": "/ˈpʌnɪʃ/",
-   "pos": "verb",
-   "past": "punished",
-   "ex": "The head teacher punished the pupils.",
-   "gap": "punished",
-   "sec": "B6"
-  },
-  {
-   "id": "t1-57",
-   "en": "to highlight",
-   "de": "hervorheben, markieren",
-   "ipa": "/ˈhaɪˌlaɪt/",
-   "pos": "verb",
-   "past": "highlighted",
-   "opt": true,
-   "sec": "B6"
-  },
-  {
-   "id": "t1-58",
-   "en": "note",
-   "de": "Notiz, Mitteilung",
-   "ipa": "/nəʊt/",
-   "pos": "noun",
-   "sec": "B7"
-  },
-  {
-   "id": "t1-59",
-   "en": "You're right.",
-   "de": "Du hast recht. / Ihr habt recht. / Sie haben recht.",
-   "ipa": "/ˌjɔː ˈraɪt/",
-   "pos": "other",
-   "sec": "B7"
-  },
-  {
-   "id": "t1-60",
-   "en": "to disagree",
-   "de": "nicht übereinstimmen, nicht einverstanden sein",
-   "ipa": "/ˌdɪsəˈɡriː/",
-   "pos": "verb",
-   "past": "disagreed",
-   "opp": "to agree",
-   "sec": "B7"
-  },
-  {
-   "id": "t1-61",
-   "en": "to present (sth to sb)",
-   "de": "(jdm etw) präsentieren",
-   "ipa": "/prɪˈzent/",
-   "pos": "verb",
-   "past": "presented",
-   "ex": "Would you like to present your ideas in class?",
-   "gap": "present",
-   "sec": "B8"
-  },
-  {
-   "id": "t1-62",
-   "en": "serious",
-   "de": "ernst",
-   "ipa": "/ˈsɪəriəs/",
-   "pos": "adj",
-   "ex": "We forgot our tickets. – That's a serious problem.",
-   "gap": "serious",
-   "sec": "B8"
-  },
-  {
-   "id": "t1-p01",
-   "en": "Hi …, / Hello …,",
-   "de": "eine Postkarte beginnen",
-   "pos": "phrase",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p02",
-   "en": "Hope to see you soon! Love, …",
-   "de": "eine Postkarte beenden",
-   "pos": "phrase",
-   "note": "Auch: Hope you're having fun, too! Bye, …",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p03",
-   "en": "The weather is fine.",
-   "de": "über das Wetter berichten",
-   "pos": "phrase",
-   "note": "Auch: It's a bit cloudy and not too warm. There's some sunshine, too.",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p04",
-   "en": "We're all having a great time.",
-   "de": "von einem Urlaub berichten",
-   "pos": "phrase",
-   "note": "Auch: We're staying at a nice bed and breakfast. It was fantastic! I loved it.",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p05",
-   "en": "The rules are too strict because …",
-   "de": "über Regeln sprechen",
-   "pos": "phrase",
-   "note": "Auch: The rules are fair because … The rules are like our school rules.",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p06",
-   "en": "That makes me really angry.",
-   "de": "Verärgerung ausdrücken",
-   "pos": "phrase",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p07",
-   "en": "I'm very disappointed.",
-   "de": "Enttäuschung ausdrücken",
-   "pos": "phrase",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p08",
-   "en": "I'm really sorry.",
-   "de": "dich entschuldigen",
-   "pos": "phrase",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p09",
-   "en": "It was my mistake.",
-   "de": "einen Fehler eingestehen",
-   "pos": "phrase",
-   "note": "Auch: It was my fault. It was a stupid thing to do.",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p10",
-   "en": "I think it's not fair that …",
-   "de": "sagen, ob du etwas fair/unfair findest",
-   "pos": "phrase",
-   "note": "Auch: I think it's fair that …",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p11",
-   "en": "That's true.",
-   "de": "jemandem zustimmen",
-   "pos": "phrase",
-   "note": "Auch: You're right. / Good idea. / OK.",
-   "sec": "Say it"
-  },
-  {
-   "id": "t1-p12",
-   "en": "I don't think so.",
-   "de": "sagen, dass du anderer Meinung bist",
-   "pos": "phrase",
-   "sec": "Say it"
-  }
- ]
+  "title": "Theme 1: Back to Camden Town",
+  "pages": "S. 224–226",
+  "words": [
+    {
+      "id": "t1-a01",
+      "en": "coast",
+      "de": "Küste",
+      "ipa": "/kəʊst/",
+      "pos": "noun",
+      "ex": "Dover is on the coast.",
+      "gap": "coast",
+      "sec": "A"
+    },
+    {
+      "id": "t1-a02",
+      "en": "to message sb",
+      "de": "jdm eine (elektronische) Nachricht schicken",
+      "ipa": "/ˈmesɪdʒ/",
+      "pos": "verb",
+      "past": "messaged",
+      "ex": "Is Lea coming to the party? – I don't know. I can message her.",
+      "gap": "message",
+      "sec": "A"
+    },
+    {
+      "id": "t1-a03",
+      "en": "was, were",
+      "de": "Vergangenheitsformen von „be“",
+      "ipa": "/wɒz, wɜː/",
+      "pos": "other",
+      "ex": "Jo was happy. Tia and Leo were happy, too.",
+      "gap": "was",
+      "sec": "A5",
+      "note": "simple past von „be“"
+    },
+    {
+      "id": "t1-a04",
+      "en": "careful",
+      "de": "vorsichtig, sorgfältig",
+      "ipa": "/ˈkeəf(ə)l/",
+      "pos": "adj",
+      "ex": "Be careful! The food is very hot.",
+      "gap": "careful",
+      "sec": "A6"
+    },
+    {
+      "id": "t1-a05",
+      "en": "to go shopping",
+      "de": "einkaufen gehen",
+      "ipa": "/ˌgəʊ ˈʃɒpɪŋ/",
+      "pos": "verb",
+      "past": "went shopping",
+      "pp": "gone shopping",
+      "ex": "We went shopping and bought some new clothes.",
+      "gap": "went shopping",
+      "sec": "A6"
+    },
+    {
+      "id": "t1-a06",
+      "en": "welcome",
+      "de": "willkommen",
+      "ipa": "/ˈwelkəm/",
+      "pos": "other",
+      "ex": "Welcome to Radio Dorset.",
+      "gap": "Welcome",
+      "sec": "A7",
+      "note": "p. 16"
+    },
+    {
+      "id": "t1-a07",
+      "en": "adventure",
+      "de": "Abenteuer, Erlebnis",
+      "ipa": "/ədˈventʃə/",
+      "pos": "noun",
+      "ex": "Our walk at night was a great adventure.",
+      "gap": "adventure",
+      "sec": "A7"
+    },
+    {
+      "id": "t1-a08",
+      "en": "to send",
+      "de": "(zu)schicken",
+      "ipa": "/send/",
+      "pos": "verb",
+      "past": "sent",
+      "pp": "sent",
+      "ex": "My best friend sent me a postcard from Madrid.",
+      "gap": "sent",
+      "sec": "A7",
+      "note": "simple past: sent /sent/"
+    },
+    {
+      "id": "t1-a09",
+      "en": "hospital",
+      "de": "Krankenhaus",
+      "ipa": "/ˈhɒspɪt(ə)l/",
+      "pos": "noun",
+      "ex": "My mum is a doctor. She works at the hospital.",
+      "gap": "hospital",
+      "sec": "A7"
+    },
+    {
+      "id": "t1-a10",
+      "en": "hurt",
+      "de": "verletzt, verwundet",
+      "ipa": "/hɜːt/",
+      "pos": "adj",
+      "ex": "Four people were hurt in an accident on Saturday.",
+      "gap": "hurt",
+      "sec": "A7"
+    },
+    {
+      "id": "t1-a11",
+      "en": "accident",
+      "de": "Unfall",
+      "ipa": "/ˈæksɪd(ə)nt/",
+      "pos": "noun",
+      "ex": "Four people were hurt in an accident on Saturday.",
+      "gap": "accident",
+      "sec": "A7"
+    },
+    {
+      "id": "t1-a12",
+      "en": "to fall",
+      "de": "(um)fallen, stürzen",
+      "ipa": "/fɔːl/",
+      "pos": "verb",
+      "past": "fell",
+      "pp": "fallen",
+      "sec": "A7",
+      "note": "simple past: fell /fel/"
+    },
+    {
+      "id": "t1-a13",
+      "en": "to break one's arm",
+      "de": "sich den Arm brechen",
+      "ipa": "/ˌbreɪk wʌnz ˈɑːm/",
+      "pos": "verb",
+      "past": "broke one's arm",
+      "pp": "broken one's arm",
+      "sec": "A7",
+      "note": "simple past: broke /brəʊk/"
+    },
+    {
+      "id": "t1-a14",
+      "en": "coasteering",
+      "de": "Mischung aus verschiedenen Outdooraktivitäten wie Klettern, Springen, Schwimmen usw.",
+      "ipa": "/ˌkəʊsˈtɪərɪŋ/",
+      "pos": "noun",
+      "sec": "A8",
+      "note": "no pl"
+    },
+    {
+      "id": "t1-a15",
+      "en": "helmet",
+      "de": "Helm",
+      "ipa": "/ˈhelmɪt/",
+      "pos": "noun",
+      "sec": "A8",
+      "opt": true
+    },
+    {
+      "id": "t1-a16",
+      "en": "wetsuit",
+      "de": "Taucheranzug",
+      "ipa": "/ˈwetˌsuːt/",
+      "pos": "noun",
+      "sec": "A8",
+      "opt": true
+    },
+    {
+      "id": "t1-a17",
+      "en": "life jacket",
+      "de": "Schwimmweste",
+      "ipa": "/ˈlaɪf ˌdʒækɪt/",
+      "pos": "noun",
+      "sec": "A8",
+      "opt": true
+    },
+    {
+      "id": "t1-a18",
+      "en": "to jump",
+      "de": "springen",
+      "ipa": "/dʒʌmp/",
+      "pos": "verb",
+      "past": "jumped",
+      "ex": "Lara is jumping into the pool.",
+      "gap": "jumping",
+      "sec": "A8"
+    },
+    {
+      "id": "t1-a19",
+      "en": "rock",
+      "de": "Stein, Fels(en)",
+      "ipa": "/rɒk/",
+      "pos": "noun",
+      "ex": "Don't jump from the rocks, it's dangerous.",
+      "gap": "rocks",
+      "sec": "A8"
+    },
+    {
+      "id": "t1-a20",
+      "en": "cliff",
+      "de": "Klippe, Kliff",
+      "ipa": "/klɪf/",
+      "pos": "noun",
+      "sec": "A8"
+    },
+    {
+      "id": "t1-a21",
+      "en": "to climb (up)",
+      "de": "(hinauf)steigen, klettern (auf), besteigen",
+      "ipa": "/ˌklaɪm ˈʌp/",
+      "pos": "verb",
+      "past": "climbed",
+      "ex": "Mike likes to climb trees.",
+      "gap": "climb",
+      "sec": "A8"
+    },
+    {
+      "id": "t1-a22",
+      "en": "sport",
+      "de": "Sport, Sportart",
+      "ipa": "/spɔːt/",
+      "pos": "noun",
+      "sec": "A8"
+    },
+    {
+      "id": "t1-a23",
+      "en": "to be called",
+      "de": "genannt werden, heißen",
+      "ipa": "/ˌbiː ˈkɔːld/",
+      "pos": "verb",
+      "past": "was called",
+      "pp": "been called",
+      "sec": "A8"
+    },
+    {
+      "id": "t1-a24",
+      "en": "scary",
+      "de": "furchterregend",
+      "ipa": "/ˈskeəri/",
+      "pos": "adj",
+      "sec": "A8"
+    },
+    {
+      "id": "t1-a25",
+      "en": "leader",
+      "de": "Leiter/in, Führer/in",
+      "ipa": "/ˈliːdə/",
+      "pos": "noun",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a26",
+      "en": "group",
+      "de": "Gruppe(n-)",
+      "ipa": "/gruːp/",
+      "pos": "noun",
+      "ex": "The whole group had to work together.",
+      "gap": "group",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a27",
+      "en": "didn't (= did not)",
+      "de": "Vergangenheitsform von „don’t/doesn’t“",
+      "ipa": "/ˈdɪdnt, dɪd nɒt/",
+      "pos": "other",
+      "ex": "I didn't know it was your birthday today.",
+      "gap": "didn't",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a28",
+      "en": "high",
+      "de": "hoch",
+      "ipa": "/haɪ/",
+      "pos": "adj",
+      "ex": "This house is 12 metres high.",
+      "gap": "high",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a29",
+      "en": "at first",
+      "de": "zuerst",
+      "ipa": "/ət ˈfɜːst/",
+      "pos": "adv",
+      "ex": "At first I didn't like Jo but now we're friends.",
+      "gap": "At first",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a30",
+      "en": "jump",
+      "de": "Sprung, Satz",
+      "ipa": "/dʒʌmp/",
+      "pos": "noun",
+      "ex": "Lara wanted to do a last big jump.",
+      "gap": "jump",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a31",
+      "en": "quite",
+      "de": "ziemlich, ganz",
+      "ipa": "/kwaɪt/",
+      "pos": "adv",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a32",
+      "en": "wet",
+      "de": "nass",
+      "ipa": "/wet/",
+      "pos": "adj",
+      "ex": "I got wet because of the rain.",
+      "gap": "wet",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a33",
+      "en": "down",
+      "de": "hinunter, herunter",
+      "ipa": "/daʊn/",
+      "pos": "adv",
+      "ex": "Don't fall down!",
+      "gap": "down",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a34",
+      "en": "to show",
+      "de": "zeigen",
+      "ipa": "/ʃəʊ/",
+      "pos": "verb",
+      "past": "showed",
+      "pp": "shown",
+      "ex": "Charlie didn't want to show that he was scared.",
+      "gap": "show",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a35",
+      "en": "that",
+      "de": "dass",
+      "ipa": "/ðæt/",
+      "pos": "other",
+      "ex": "I know that Paul is 14 years old.",
+      "gap": "that",
+      "sec": "A9",
+      "note": "Achte auf die Wortstellung im Nebensatz mit that: Ich weiß, dass Paul 14 Jahre alt ist."
+    },
+    {
+      "id": "t1-a36",
+      "en": "What a/an …!",
+      "de": "Was für ein(e) …!",
+      "ipa": "/ˈwɒt ə/",
+      "pos": "phrase",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a37",
+      "en": "to cheer",
+      "de": "jubeln",
+      "ipa": "/tʃɪə/",
+      "pos": "verb",
+      "past": "cheered",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a38",
+      "en": "both",
+      "de": "beide",
+      "ipa": "/bəʊθ/",
+      "pos": "other",
+      "ex": "John and Anna both wanted to go swimming.",
+      "gap": "both",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-a39",
+      "en": "to get out of sth",
+      "de": "aus etw herauskommen",
+      "ipa": "/ˌget ˈaʊt əv/",
+      "pos": "verb",
+      "past": "got out of",
+      "pp": "got out of",
+      "sec": "A9"
+    },
+    {
+      "id": "t1-01",
+      "en": "everything",
+      "de": "alles",
+      "ipa": "/ˈevriθɪŋ/",
+      "pos": "other",
+      "ex": "Everything was fine but then something went wrong.",
+      "gap": "Everything",
+      "sec": "A"
+    },
+    {
+      "id": "t1-02",
+      "en": "to go wrong",
+      "de": "schiefgehen",
+      "ipa": "/ˌɡəʊ ˈrɒŋ/",
+      "pos": "verb",
+      "past": "went wrong",
+      "pp": "gone wrong",
+      "ex": "Everything was fine but then something went wrong.",
+      "gap": "went wrong",
+      "sec": "A"
+    },
+    {
+      "id": "t1-03",
+      "en": "suddenly",
+      "de": "plötzlich",
+      "ipa": "/ˈsʌd(ə)nli/",
+      "pos": "adv",
+      "ex": "Suddenly Lara lost her balance.",
+      "gap": "Suddenly",
+      "sec": "A"
+    },
+    {
+      "id": "t1-04",
+      "en": "to lose one's balance",
+      "de": "das Gleichgewicht verlieren",
+      "ipa": "/ˌluːz wʌnz ˈbæləns/",
+      "pos": "verb",
+      "past": "lost one's balance",
+      "pp": "lost one's balance",
+      "ex": "Suddenly Lara lost her balance.",
+      "gap": "lost her balance",
+      "sec": "A"
+    },
+    {
+      "id": "t1-05",
+      "en": "How to …",
+      "de": "Wie man …",
+      "ipa": "/ˈhaʊ tə/",
+      "pos": "other",
+      "sec": "A"
+    },
+    {
+      "id": "t1-06",
+      "en": "wave",
+      "de": "Welle",
+      "ipa": "/weɪv/",
+      "pos": "noun",
+      "sec": "A"
+    },
+    {
+      "id": "t1-07",
+      "en": "strong",
+      "de": "stark, kräftig, fest",
+      "ipa": "/strɒŋ/",
+      "pos": "adj",
+      "ex": "Rachel is very strong.",
+      "gap": "strong",
+      "sec": "A"
+    },
+    {
+      "id": "t1-08",
+      "en": "to push",
+      "de": "stoßen, schieben, drücken",
+      "ipa": "/pʊʃ/",
+      "pos": "verb",
+      "past": "pushed",
+      "ex": "Fiona pushed Olivia.",
+      "gap": "pushed",
+      "opp": "to pull",
+      "sec": "A"
+    },
+    {
+      "id": "t1-09",
+      "en": "to hurt (sb)",
+      "de": "(jdm) wehtun, (jdn) verletzen",
+      "ipa": "/hɜːt/",
+      "pos": "verb",
+      "past": "hurt",
+      "pp": "hurt",
+      "ex": "When Olivia fell, she hurt her legs.",
+      "gap": "hurt",
+      "note": "simple past: hurt",
+      "sec": "A"
+    },
+    {
+      "id": "t1-10",
+      "en": "dark",
+      "de": "dunkel",
+      "ipa": "/dɑːk/",
+      "pos": "adj",
+      "sec": "A"
+    },
+    {
+      "id": "t1-11",
+      "en": "to pull",
+      "de": "ziehen",
+      "ipa": "/pʊl/",
+      "pos": "verb",
+      "past": "pulled",
+      "opp": "to push",
+      "sec": "A"
+    },
+    {
+      "id": "t1-12",
+      "en": "out of",
+      "de": "aus",
+      "ipa": "/ˈaʊt əv/",
+      "pos": "other",
+      "sec": "A"
+    },
+    {
+      "id": "t1-13",
+      "en": "to remember",
+      "de": "sich erinnern; daran denken",
+      "ipa": "/rɪˈmembə/",
+      "pos": "verb",
+      "past": "remembered",
+      "opp": "to forget",
+      "sec": "A"
+    },
+    {
+      "id": "t1-14",
+      "en": "not … anything",
+      "de": "gar nichts",
+      "ipa": "/nɒt ˈeniθɪŋ/",
+      "pos": "other",
+      "sec": "A"
+    },
+    {
+      "id": "t1-15",
+      "en": "to choose",
+      "de": "(aus)wählen",
+      "ipa": "/tʃuːz/",
+      "pos": "verb",
+      "past": "chose",
+      "pp": "chosen",
+      "ex": "He is choosing a book to read.",
+      "gap": "choosing",
+      "note": "simple past: chose /tʃəʊz/",
+      "sec": "A"
+    },
+    {
+      "id": "t1-16",
+      "en": "wasn't (= was not)",
+      "de": "Vergangenheitsform von „isn't“",
+      "ipa": "/ˈwɒz(ə)nt/",
+      "pos": "other",
+      "ex": "Zoe wasn't in London last year.",
+      "gap": "wasn't",
+      "sec": "A10"
+    },
+    {
+      "id": "t1-17",
+      "en": "weren't (= were not)",
+      "de": "Vergangenheitsform von „aren't“",
+      "ipa": "/ˈwɜːnt/",
+      "pos": "other",
+      "ex": "Kim and Jo weren't happy.",
+      "gap": "weren't",
+      "sec": "A10"
+    },
+    {
+      "id": "t1-18",
+      "en": "to plan",
+      "de": "planen",
+      "ipa": "/plæn/",
+      "pos": "verb",
+      "past": "planned",
+      "ex": "We planned our trip last year.",
+      "gap": "planned",
+      "sec": "A12"
+    },
+    {
+      "id": "t1-19",
+      "en": "plane",
+      "de": "Flugzeug",
+      "ipa": "/pleɪn/",
+      "pos": "noun",
+      "note": "on the plane – im Flugzeug",
+      "sec": "A12"
+    },
+    {
+      "id": "t1-20",
+      "en": "train",
+      "de": "Zug",
+      "ipa": "/treɪn/",
+      "pos": "noun",
+      "sec": "A12"
+    },
+    {
+      "id": "t1-21",
+      "en": "interesting",
+      "de": "interessant",
+      "ipa": "/ˈɪntrəstɪŋ/",
+      "pos": "adj",
+      "opp": "boring",
+      "sec": "A12"
+    },
+    {
+      "id": "t1-22",
+      "en": "annoying",
+      "de": "ärgerlich",
+      "ipa": "/əˈnɔɪɪŋ/",
+      "pos": "adj",
+      "ex": "It's so annoying that our bus is late.",
+      "gap": "annoying",
+      "sec": "A12"
+    },
+    {
+      "id": "t1-23",
+      "en": "trouble",
+      "de": "Schwierigkeiten, Ärger",
+      "ipa": "/ˈtrʌb(ə)l/",
+      "pos": "noun",
+      "note": "kein Plural",
+      "sec": "B1"
+    },
+    {
+      "id": "t1-24",
+      "en": "to make sb do sth",
+      "de": "jdn zu etwas bringen, jdn etwas tun lassen",
+      "ipa": "/ˌmeɪk ˌsʌmbədi ˈduː/",
+      "pos": "verb",
+      "past": "made",
+      "pp": "made",
+      "note": "simple past: made",
+      "sec": "B1"
+    },
+    {
+      "id": "t1-25",
+      "en": "may",
+      "de": "können, dürfen",
+      "ipa": "/meɪ/",
+      "pos": "other",
+      "ex": "You may bring your tablet to school, but you must not use it during the lesson.",
+      "gap": "may",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-26",
+      "en": "to switch off",
+      "de": "ausschalten, abschalten",
+      "ipa": "/ˌswɪtʃ ˈɒf/",
+      "pos": "verb",
+      "past": "switched off",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-27",
+      "en": "if",
+      "de": "wenn, falls, ob",
+      "ipa": "/ɪf/",
+      "pos": "other",
+      "ex": "We can have pizza if you like.",
+      "gap": "if",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-28",
+      "en": "break",
+      "de": "Pause",
+      "ipa": "/breɪk/",
+      "pos": "noun",
+      "ex": "Let's meet in our lunch break.",
+      "gap": "break",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-29",
+      "en": "to record",
+      "de": "aufzeichnen, aufnehmen",
+      "ipa": "/rɪˈkɔːd/",
+      "pos": "verb",
+      "past": "recorded",
+      "ex": "Jack wants to record his first song.",
+      "gap": "record",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-30",
+      "en": "unfriendly",
+      "de": "unfreundlich",
+      "ipa": "/ʌnˈfrendli/",
+      "pos": "adj",
+      "opp": "friendly",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-31",
+      "en": "to call",
+      "de": "(an)rufen, nennen",
+      "ipa": "/kɔːl/",
+      "pos": "verb",
+      "past": "called",
+      "note": "to call = to phone",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-32",
+      "en": "ill",
+      "de": "krank",
+      "ipa": "/ɪl/",
+      "pos": "adj",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-33",
+      "en": "office",
+      "de": "Büro, Amt; hier: Sekretariat",
+      "ipa": "/ˈɒfɪs/",
+      "pos": "noun",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-34",
+      "en": "to break",
+      "de": "(zer)brechen; hier: verstoßen gegen",
+      "ipa": "/breɪk/",
+      "pos": "verb",
+      "past": "broke",
+      "pp": "broken",
+      "ex": "Jack broke the rules when he used his phone in class.",
+      "gap": "broke",
+      "note": "simple past: broke /brəʊk/",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-35",
+      "en": "away",
+      "de": "weg",
+      "ipa": "/əˈweɪ/",
+      "pos": "adv",
+      "ex": "Your teacher can take your phone away.",
+      "gap": "away",
+      "sec": "B2"
+    },
+    {
+      "id": "t1-36",
+      "en": "head teacher",
+      "de": "Schulleiter/in, Direktor/in",
+      "ipa": "/ˌhed ˈtiːtʃə/",
+      "pos": "noun",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-37",
+      "en": "punishment",
+      "de": "Bestrafung, Strafe",
+      "ipa": "/ˈpʌnɪʃmənt/",
+      "pos": "noun",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-38",
+      "en": "message",
+      "de": "Nachricht, Botschaft",
+      "ipa": "/ˈmesɪdʒ/",
+      "pos": "noun",
+      "ex": "Did you read my message?",
+      "gap": "message",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-39",
+      "en": "stupid",
+      "de": "dumm, blöd",
+      "ipa": "/ˈstjuːpɪd/",
+      "pos": "adj",
+      "opp": "great",
+      "note": "a great idea ↔ a stupid idea",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-40",
+      "en": "to leave",
+      "de": "verlassen, weggehen; hier: (zurück)lassen",
+      "ipa": "/liːv/",
+      "pos": "verb",
+      "past": "left",
+      "pp": "left",
+      "ex": "You mustn't leave the classroom during the lesson.",
+      "gap": "leave",
+      "note": "simple past: left",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-41",
+      "en": "most",
+      "de": "(die) meisten",
+      "ipa": "/məʊst/",
+      "pos": "other",
+      "ex": "Most people like chocolate.",
+      "gap": "Most",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-42",
+      "en": "to ask (for sth)",
+      "de": "(um etw) bitten",
+      "ipa": "/ˈɑːsk fə/",
+      "pos": "verb",
+      "past": "asked",
+      "ex": "Can I ask you for some help?",
+      "gap": "ask",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-43",
+      "en": "around",
+      "de": "umher, um, rund um, um … herum",
+      "ipa": "/əˈraʊnd/",
+      "pos": "adv",
+      "ex": "Pia played around with her phone in class.",
+      "gap": "around",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-44",
+      "en": "to go online",
+      "de": "online gehen",
+      "ipa": "/ˌɡəʊ ˌɒnˈlaɪn/",
+      "pos": "verb",
+      "past": "went online",
+      "pp": "gone online",
+      "ex": "I can use my phone to go online.",
+      "gap": "go online",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-45",
+      "en": "recording",
+      "de": "Aufnahme, Aufzeichnen",
+      "ipa": "/rɪˈkɔːdɪŋ/",
+      "pos": "noun",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-46",
+      "en": "bored",
+      "de": "gelangweilt",
+      "ipa": "/bɔːd/",
+      "pos": "adj",
+      "ex": "When are we leaving? I'm bored.",
+      "gap": "bored",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-47",
+      "en": "fault",
+      "de": "Schuld, Fehler",
+      "ipa": "/fɔːlt/",
+      "pos": "noun",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-48",
+      "en": "to agree",
+      "de": "zustimmen; hier: sich einig sein",
+      "ipa": "/əˈɡriː/",
+      "pos": "verb",
+      "past": "agreed",
+      "ex": "Charlie and George agree that football is great.",
+      "gap": "agree",
+      "opp": "to disagree",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-49",
+      "en": "to prepare",
+      "de": "vorbereiten, erstellen",
+      "ipa": "/prɪˈpeə/",
+      "pos": "verb",
+      "past": "prepared",
+      "ex": "My dad is preparing dinner.",
+      "gap": "preparing",
+      "note": "Frz. préparer",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-50",
+      "en": "presentation",
+      "de": "Präsentation",
+      "ipa": "/ˌprez(ə)nˈteɪʃ(ə)n/",
+      "pos": "noun",
+      "ex": "Mark is nervous about the presentation.",
+      "gap": "presentation",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-51",
+      "en": "topic",
+      "de": "Thema",
+      "ipa": "/ˈtɒpɪk/",
+      "pos": "noun",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-52",
+      "en": "(Great) Britain",
+      "de": "Großbritannien",
+      "ipa": "/ˌɡreɪt ˈbrɪt(ə)n/",
+      "pos": "noun",
+      "ex": "Britain is England, Scotland and Wales.",
+      "gap": "Britain",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-53",
+      "en": "another",
+      "de": "noch eine(r, s), ein(e) andere(r)",
+      "ipa": "/əˈnʌðə/",
+      "pos": "other",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-54",
+      "en": "work",
+      "de": "Arbeit",
+      "ipa": "/wɜːk/",
+      "pos": "noun",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-55",
+      "en": "to admit",
+      "de": "zugeben",
+      "ipa": "/ədˈmɪt/",
+      "pos": "verb",
+      "past": "admitted",
+      "sec": "B4"
+    },
+    {
+      "id": "t1-56",
+      "en": "to punish",
+      "de": "(be)strafen",
+      "ipa": "/ˈpʌnɪʃ/",
+      "pos": "verb",
+      "past": "punished",
+      "ex": "The head teacher punished the pupils.",
+      "gap": "punished",
+      "sec": "B6"
+    },
+    {
+      "id": "t1-57",
+      "en": "to highlight",
+      "de": "hervorheben, markieren",
+      "ipa": "/ˈhaɪˌlaɪt/",
+      "pos": "verb",
+      "past": "highlighted",
+      "opt": true,
+      "sec": "B6"
+    },
+    {
+      "id": "t1-58",
+      "en": "note",
+      "de": "Notiz, Mitteilung",
+      "ipa": "/nəʊt/",
+      "pos": "noun",
+      "sec": "B7"
+    },
+    {
+      "id": "t1-59",
+      "en": "You're right.",
+      "de": "Du hast recht. / Ihr habt recht. / Sie haben recht.",
+      "ipa": "/ˌjɔː ˈraɪt/",
+      "pos": "other",
+      "sec": "B7"
+    },
+    {
+      "id": "t1-60",
+      "en": "to disagree",
+      "de": "nicht übereinstimmen, nicht einverstanden sein",
+      "ipa": "/ˌdɪsəˈɡriː/",
+      "pos": "verb",
+      "past": "disagreed",
+      "opp": "to agree",
+      "sec": "B7"
+    },
+    {
+      "id": "t1-61",
+      "en": "to present (sth to sb)",
+      "de": "(jdm etw) präsentieren",
+      "ipa": "/prɪˈzent/",
+      "pos": "verb",
+      "past": "presented",
+      "ex": "Would you like to present your ideas in class?",
+      "gap": "present",
+      "sec": "B8"
+    },
+    {
+      "id": "t1-62",
+      "en": "serious",
+      "de": "ernst",
+      "ipa": "/ˈsɪəriəs/",
+      "pos": "adj",
+      "ex": "We forgot our tickets. – That's a serious problem.",
+      "gap": "serious",
+      "sec": "B8"
+    },
+    {
+      "id": "t1-p01",
+      "en": "Hi …, / Hello …,",
+      "de": "eine Postkarte beginnen",
+      "pos": "phrase",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p02",
+      "en": "Hope to see you soon! Love, …",
+      "de": "eine Postkarte beenden",
+      "pos": "phrase",
+      "note": "Auch: Hope you're having fun, too! Bye, …",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p03",
+      "en": "The weather is fine.",
+      "de": "über das Wetter berichten",
+      "pos": "phrase",
+      "note": "Auch: It's a bit cloudy and not too warm. There's some sunshine, too.",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p04",
+      "en": "We're all having a great time.",
+      "de": "von einem Urlaub berichten",
+      "pos": "phrase",
+      "note": "Auch: We're staying at a nice bed and breakfast. It was fantastic! I loved it.",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p05",
+      "en": "The rules are too strict because …",
+      "de": "über Regeln sprechen",
+      "pos": "phrase",
+      "note": "Auch: The rules are fair because … The rules are like our school rules.",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p06",
+      "en": "That makes me really angry.",
+      "de": "Verärgerung ausdrücken",
+      "pos": "phrase",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p07",
+      "en": "I'm very disappointed.",
+      "de": "Enttäuschung ausdrücken",
+      "pos": "phrase",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p08",
+      "en": "I'm really sorry.",
+      "de": "dich entschuldigen",
+      "pos": "phrase",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p09",
+      "en": "It was my mistake.",
+      "de": "einen Fehler eingestehen",
+      "pos": "phrase",
+      "note": "Auch: It was my fault. It was a stupid thing to do.",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p10",
+      "en": "I think it's not fair that …",
+      "de": "sagen, ob du etwas fair/unfair findest",
+      "pos": "phrase",
+      "note": "Auch: I think it's fair that …",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p11",
+      "en": "That's true.",
+      "de": "jemandem zustimmen",
+      "pos": "phrase",
+      "note": "Auch: You're right. / Good idea. / OK.",
+      "sec": "Say it"
+    },
+    {
+      "id": "t1-p12",
+      "en": "I don't think so.",
+      "de": "sagen, dass du anderer Meinung bist",
+      "pos": "phrase",
+      "sec": "Say it"
+    }
+  ]
 }

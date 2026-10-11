@@ -12,7 +12,7 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 - App komplett in `index.html`: Start (Tagesziel, Wochenserie, Level, Lektionen), Üben (7 Abfragearten, Wörter selbst auswählen, Filter), Vokabeln (Karteikasten, Suche, Vorlesen, Lektion löschen), Erfolge (Kacheln, 15 Abzeichen, Einstellungen, Sicherung).
 - Lernlogik: Karteikasten mit 5 Fächern, eingestreute schwache Wörter, Wiederholung falscher Antworten in derselben Runde, XP, Serie, Combo, Konfetti.
-- Theme 1 „Back to Camden Town“ (S. 225–226): 62 Wörter und 12 Redemittel mit Lautschrift, Beispielsätzen, Simple Past und Gegenteilen. In `lists/theme1-camden-town.json` und als `SEED` in `index.html`.
+- Theme 1 „Back to Camden Town“ (S. 224–226, seit 11.10. mit S. 224, rev 2): 101 Wörter und 12 Redemittel mit Lautschrift, Beispielsätzen, Simple Past und Gegenteilen. In `lists/theme1-camden-town.json` und als `SEED` in `index.html`.
 - Neue Vokabeln in der App: Liste einfügen, Datei öffnen (auch iCloud Drive), Anleitung für Claude kopieren (Buchfotos → JSON).
 - Lektionen über `lists/index.json` mit `rev` für Korrekturen.
 - Home-Bildschirm-App: Manifest, Icons, Service Worker (offline), Safe-Areas.
@@ -77,9 +77,9 @@ Gleiches Wort (`norm_en()`, Entscheidung Thomas 11.10.): Groß-/Kleinschreibung,
 - bei schon vorhandener `id`: Liste ersetzen und `rev` hochzählen, bestehende Wort-Ids anhand von `en` wiederverwenden, damit der Lernstand bleibt.
 - Nur Python-Standardbibliothek. Danach `tools/check.sh`.
 
-### 5. Fehlende Seite 224 (Theme 1, A1–A9)
+### 5. Fehlende Seite 224 (Theme 1, A5–A9) – erledigt 11.10.
 
-Sobald Thomas die Fotos schickt: Wörter mit neuen festen Ids (`t1-a01` …) **vor** `t1-01` in `lists/theme1-camden-town.json` einfügen und `rev` in `lists/index.json` auf 2 setzen. Bestehende Ids nicht anfassen. `SEED` in `index.html` muss nicht nachgezogen werden.
+39 Wörter von S. 224 (zwei Zeilen vor A5 als `sec: "A"`, dann A5–A9) mit festen Ids `t1-a01` … `t1-a39` **vor** `t1-01` eingefügt, `rev` auf 2, `pages` auf „S. 224–226“. Bestehende Ids unverändert. `SEED` in `index.html` bewusst nicht nachgezogen (kommt per `rev` vom Server). Drei fakultative Wörter (°) als `opt: true`.
 
 ## Nicht ohne Rückfrage
 
