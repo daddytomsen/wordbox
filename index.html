@@ -152,6 +152,19 @@ p{margin:0}
 .cta .ic .ms{font-size:30px}
 .cta strong{display:block;font:800 23px/1.1 var(--f-display);letter-spacing:-.02em}
 .cta small{display:block;color:var(--royal-ink-2);font-size:14px;margin-top:4px}
+.target h3{font-size:18px;display:flex;align-items:center;gap:6px}
+.target h3 .ms{color:var(--royal)}
+.target p{font-size:15px;color:var(--ink-2);margin:6px 0 10px}
+.target.behind{border-color:var(--marker-deep)}
+.target.behind .bar > span{background:var(--marker-deep)}
+.target.last,.target.late{border-color:var(--bad)}
+.target.last .bar > span,.target.late .bar > span{background:var(--bad)}
+.target.done{border-color:var(--good)}
+.target.done .bar > span{background:var(--good)}
+.target.done h3 .ms{color:var(--good)}
+.target-form h3{font-size:18px}
+.startbar{display:flex;flex-direction:column;gap:8px}
+.startbar .btn-soft{width:100%;min-height:48px}
 .review{display:flex;align-items:center;gap:14px}
 .review .badge-ic{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:var(--marker-soft);color:var(--marker-ink);flex:none}
 .review.calm .badge-ic{background:var(--good-soft);color:var(--good-ink)}
@@ -387,7 +400,7 @@ const store = {
 function freshProg() {
   return { v: 1, econ: 2, name: '', goal: 150, sound: true, speak: true, xp: 0, days: {}, streak: 0, best: 0, last: '',
     rounds: 0, perfect: 0, typedRight: 0, pastRight: 0, extraRight: 0, bestCombo: 0, photos: 0, goalDays: 0,
-    badges: {}, w: {}, sel: null, mode: 'mix', len: 10, onboarded: false, removedLists: [], updatedAt: 0 };
+    badges: {}, w: {}, sel: null, mode: 'mix', len: 10, onboarded: false, removedLists: [], targets: [], updatedAt: 0 };
 }
 
 /* Release 1.3 made XP about five times scarcer (econ 2). Progress saved before that is scaled once,
@@ -410,7 +423,7 @@ const S = {
   view: 'home', words: [], byId: new Map(),
   storageOk: true, restore: null,
   filter: 'all', unitFilter: null, search: '',
-  quiz: null, result: null, imp: null, confirm: null, delUnit: null, resetAsk: false
+  quiz: null, result: null, imp: null, confirm: null, delUnit: null, resetAsk: false, tform: null, delTarget: null
 };
 
 /* ---------- helpers ---------- */
@@ -448,6 +461,53 @@ function isDue(id, now = Date.now()) { const s = ws(id); return !!s && s.l >= 1 
 function isWeak(id) { const s = ws(id); return !!s && s.x > 0 && s.l <= 2 }
 const learnedCount = () => S.words.filter(w => fach(w.id) >= 4).length;
 const dueWords = () => S.words.filter(w => isDue(w.id) || isWeak(w.id));
+
+/* ---------- learning targets (Lernziele) ----------
+   A target is a set of word ids plus a due date. A word counts as practised once it has been answered
+   correctly `need` times (default 2) since the target was created; `base` keeps each word's correct
+   count at creation. Everything lives in prog.targets, so backups and resets include it. */
+function targets() { if (!Array.isArray(S.prog.targets)) S.prog.targets = []; return S.prog.targets }
+const activeTargets = () => targets().filter(t => !t.done);
+function dayDiff(a, b) { return Math.round((new Date(a + 'T00:00:00') - new Date(b + 'T00:00:00')) / DAY) }
+function targetInfo(t) {
+  const need = t.need || 2; let done = 0; const open = [];
+  for (const id of t.ids) { if (!S.byId.has(id)) continue; const r = (ws(id) ? ws(id).r : 0) - (t.base[id] || 0); r >= need ? done++ : open.push(id) }
+  const total = done + open.length, today = todayKey();
+  const left = dayDiff(t.due, today);                       // days until due, 0 = today, negative = overdue
+  const span = Math.max(1, dayDiff(t.due, t.created) + 1);  // days from creation to due, inclusive
+  const elapsed = Math.min(span, Math.max(0, dayDiff(today, t.created)));
+  const expected = Math.round(total * elapsed / span);      // words that should be done by this morning
+  const perDay = left > 0 ? Math.ceil(open.length / (left + 1)) : open.length;
+  const todayDue = Math.min(open.length, Math.max(perDay, expected + perDay - done));
+  const state = !open.length ? 'done' : left < 0 ? 'late' : left === 0 ? 'last' : done < expected ? 'behind' : 'ok';
+  return { done, open, total, left, perDay, todayDue, state, pct: total ? done / total : 0 };
+}
+function dueLabel(due) { try { return new Date(due + 'T00:00:00').toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'numeric' }) } catch (e) { return due } }
+function openTargetIds() { const out = new Set(); for (const t of activeTargets()) for (const id of targetInfo(t).open) out.add(id); return Array.from(out) }
+function checkTargets() {
+  const hit = [];
+  for (const t of activeTargets()) if (!targetInfo(t).open.length) { t.done = todayKey(); hit.push(t) }
+  return hit;
+}
+/* Number on the app icon = open target words. iOS shows it only after notification permission; no messages are ever sent. */
+function updateBadge() {
+  try {
+    if (!navigator.setAppBadge) return;
+    const n = openTargetIds().length;
+    (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {});
+  } catch (e) {}
+}
+function askBadgePermission() {
+  try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().then(updateBadge, () => {}) } catch (e) {}
+}
+function targetReminder() {
+  for (const t of activeTargets()) {
+    const i = targetInfo(t);
+    if (i.state === 'late') { toast('Der Termin für „' + t.title + '“ ist vorbei. ' + i.open.length + ' Wörter fehlen noch.', 'flag'); return }
+    if (i.state === 'last') { toast('Heute ist „' + t.title + '“! Noch ' + i.open.length + ' Wörter.', 'flag'); return }
+    if (i.state === 'behind') { toast('Du liegst zurück: noch ' + i.open.length + ' Wörter bis ' + dueLabel(t.due), 'flag'); return }
+  }
+}
 
 function grade(id, ok) {
   const now = Date.now();
@@ -492,7 +552,8 @@ const BADGES = [
   { id: 'comeback', ic: 'autorenew', t: 'Comeback', d: '10 Wiederholungswörter richtig.', ok: p => p.extraRight >= 10 },
   { id: 'xp500', ic: 'trending_up', t: '500 XP', d: '500 XP gesammelt.', ok: p => p.xp >= 500 },
   { id: 'xp2000', ic: 'auto_awesome', t: '2000 XP', d: '2000 XP gesammelt.', ok: p => p.xp >= 2000 },
-  { id: 'photo', ic: 'library_add', t: 'Sammler', d: 'Eine eigene Lektion hinzugefügt.', ok: p => p.photos >= 1 }
+  { id: 'photo', ic: 'library_add', t: 'Sammler', d: 'Eine eigene Lektion hinzugefügt.', ok: p => p.photos >= 1 },
+  { id: 'target', ic: 'flag', t: 'Ziel erreicht', d: 'Ein Lernziel komplett geübt.', ok: p => (p.targets || []).some(t => t.done) }
 ];
 function checkBadges() {
   const c = { learned: learnedCount() }, fresh = [];
@@ -836,15 +897,16 @@ function finish(quit) {
     p.rounds++; streakUp = streakTick();
   }
   p.xp += bonus; if (addDayXP(bonus)) Q.goalHit = true;
+  const targetsDone = checkTargets();
   const fresh = checkBadges();
-  persist(true);
+  persist(true); updateBadge();
   S.quiz = null; S.confirm = null;
   if (quit) { S.view = 'home'; render(); if (answered) toast('Runde beendet. ' + Q.xp + ' XP gesammelt.', 'bolt'); return }
   S.result = { right: Q.right, wrong: Q.wrong, xp: Q.xp + bonus, bonus, perfect, best: Q.bestCombo, promoted: Q.promoted, mode: Q.mode,
-    streakUp, goalHit: Q.goalHit, fresh, mistakes: Array.from(Q.mistakes.values()) };
+    streakUp, goalHit: Q.goalHit, fresh, targetsDone, mistakes: Array.from(Q.mistakes.values()) };
   S.view = 'result'; render(); window.scrollTo(0, 0);
   SFX.win();
-  if (answered && (Q.right / answered >= .8 || streakUp || Q.goalHit)) confetti();
+  if (answered && (Q.right / answered >= .8 || streakUp || Q.goalHit || targetsDone.length)) confetti();
   if (fresh.length) setTimeout(SFX.badge, 700);
 }
 
@@ -891,10 +953,13 @@ function viewHome() {
   if (!S.words.length) return `<div class="hello"><h1>${p.name ? 'Hi ' + esc(p.name) + '!' : 'Hi!'}</h1><p>${esc(dname)}</p></div>` + emptyState();
   const due = dueWords().length;
   const sel = selIds();
+  const tOpen = openTargetIds();
+  const tcards = targets().filter(t => !t.done || dayDiff(todayKey(), t.done) <= 2).map(t => targetCard(t)).join('');
   const units = S.units.map(u => { const ws_ = (u.words || []).map(w => S.byId.get(w.id)).filter(Boolean); const c = dist(ws_); const learned = c[4] + c[5];
     return `<div class="unit-row"><div class="row between"><b class="grow">${esc(u.title)}</b><span class="small muted">${learned}/${ws_.length} sitzen</span></div>${stackbar(c)}</div>` }).join('');
   return `
   <div class="hello"><h1>${p.name ? 'Hi ' + esc(p.name) + '!' : 'Hi!'}</h1><p>${esc(dname)}</p></div>
+  ${tcards}
   <section class="card goal" aria-label="Tagesziel">
     <div class="ring ${pct >= 1 ? 'done' : ''}"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/><circle class="val" cx="50" cy="50" r="40" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - pct)).toFixed(1)}"/></svg>
       <div class="lab"><b>${today}</b><small>von ${p.goal} XP</small></div></div>
@@ -903,7 +968,7 @@ function viewHome() {
   </section>
   <button class="cta" data-act="quick">
     <span class="ic">${icon('bolt', 'fill')}</span>
-    <span class="grow"><strong>Schnelle Runde</strong><small>${p.len} Fragen · gemischt · aus ${sel.length} gewählten Wörtern</small></span>
+    <span class="grow"><strong>Schnelle Runde</strong><small>${p.len} Fragen · gemischt · ${tOpen.length ? 'aus deinem Lernziel' : 'aus ' + sel.length + ' gewählten Wörtern'}</small></span>
     ${icon('arrow_forward')}
   </button>
   <section class="card review ${due ? '' : 'calm'}">
@@ -919,6 +984,22 @@ function viewHome() {
   </section>
   <section class="card"><div class="row between" style="margin-bottom:8px"><h3>Deine Lektionen</h3><button class="link" data-act="nav" data-v="vocab">Alle</button></div>${units}
     <div class="legend" style="margin-top:10px"><span><i style="background:var(--f0)"></i>neu</span><span><i style="background:var(--f1)"></i>Fach 1</span><span><i style="background:var(--f3)"></i>Fach 3</span><span><i style="background:var(--f5)"></i>Fach 5</span></div></section>`;
+}
+function targetCard(t) {
+  const i = targetInfo(t);
+  const when = dueLabel(t.due);
+  let msg, cls = i.state;
+  if (i.state === 'done') msg = 'Geschafft! Alle ' + i.total + ' Wörter zweimal richtig.';
+  else if (i.state === 'late') msg = 'Der Termin war ' + when + ' Es fehlen noch ' + i.open.length + ' Wörter.';
+  else if (i.state === 'last') msg = 'Heute ist es so weit! Noch ' + i.open.length + ' Wörter.';
+  else msg = (i.state === 'behind' ? 'Du liegst zurück. ' : 'Im Plan. ') + 'Noch ' + i.left + (i.left === 1 ? ' Tag' : ' Tage') + ' · heute dran: ' + i.todayDue + (i.todayDue === 1 ? ' Wort' : ' Wörter');
+  return `<section class="card target ${cls}" aria-label="Lernziel">
+    <div class="row between"><h3>${icon('flag', 'fill')} ${esc(t.title)}</h3><span class="small muted">bis ${esc(when)}</span></div>
+    <p><b>${i.done} von ${i.total}</b> geübt. ${msg}</p>
+    <div class="bar"><span style="width:${(i.pct * 100).toFixed(1)}%"></span></div>
+    <div class="row between" style="margin-top:12px">${i.open.length ? `<button class="btn btn-primary btn-sm" data-act="t-practice" data-t="${esc(t.id)}">${icon('play_arrow')}Jetzt üben</button>` : '<span></span>'}
+      ${S.delTarget === t.id ? `<span class="row" style="gap:6px"><span class="small">Wirklich?</span><button class="btn btn-line btn-sm" data-act="t-del-no">Nein</button><button class="btn btn-danger btn-sm" data-act="t-del-yes" data-t="${esc(t.id)}">Ja</button></span>` : `<button class="link" data-act="t-del-ask" data-t="${esc(t.id)}">Entfernen</button>`}</div>
+  </section>`;
 }
 function secName(s) { if (!s) return 'Ohne Abschnitt'; if (s === 'Say it') return 'Say it in English'; if (s === 'A') return 'Teil A'; return 'Abschnitt ' + s }
 function visibleWords() {
@@ -949,6 +1030,14 @@ function viewPractice() {
   S._groups = groups;
   const m = p.mode, avail = selWords.filter(w => canDo(w, m)).length;
   const count = Math.min(p.len, avail);
+  const T = S.tform;
+  const minD = todayKey(); const dflt = new Date(); dflt.setDate(dflt.getDate() + 3);
+  const tform = T ? `<section class="card target-form"><h3>Lernziel aus dieser Auswahl</h3>
+    <p class="small muted" style="margin:4px 0 10px">${sel.size} Wörter, jedes muss bis zum Termin zweimal richtig beantwortet sein. Die App zeigt dir jeden Tag, wie viele dran sind.</p>
+    <div class="stack" style="gap:8px"><input id="tTitle" class="field" maxlength="30" placeholder="Wofür? z. B. Vokabeltest" value="${esc(T.title || '')}">
+    <input id="tDue" class="field" type="date" min="${minD}" value="${esc(T.due || ymd(dflt))}">
+    ${T.err ? `<div class="err">${esc(T.err)}</div>` : ''}
+    <div class="row" style="gap:8px"><button class="btn btn-primary" data-act="t-save">${icon('flag')}Lernziel speichern</button><button class="btn btn-line" data-act="t-cancel">Abbrechen</button></div></div></section>` : '';
   return `
   <div class="sec-h"><h2>Was willst du üben?</h2></div>
   <div class="modes">${modes}</div>
@@ -958,7 +1047,9 @@ function viewPractice() {
   <div class="chipbar" role="group" aria-label="Filter">${fchips}</div>
   <div class="row between"><span class="small muted">${vis.length} Wörter angezeigt</span><span class="row" style="gap:4px"><button class="link" data-act="selvis" data-on="1">Alle wählen</button><button class="link" data-act="selvis" data-on="0">Keine</button></span></div>
   ${vis.length ? `<div class="wlist">${list}</div>` : `<div class="card empty"><h3>Keine Wörter für diesen Filter</h3><p>Probier einen anderen Filter.</p></div>`}
-  <div class="startbar"><button class="btn btn-primary" data-act="start">${icon('play_arrow')}${count ? `Los geht's · ${count} Fragen` : 'Wähle passende Wörter'}</button></div>`;
+  ${tform}
+  <div class="startbar"><button class="btn btn-primary" data-act="start">${icon('play_arrow')}${count ? `Los geht's · ${count} Fragen` : 'Wähle passende Wörter'}</button>
+    ${T || !sel.size ? '' : `<button class="btn btn-soft" data-act="t-open">${icon('flag')}Als Lernziel bis …</button>`}</div>`;
 }
 function viewVocab() {
   const c = dist(S.words), max = Math.max(1, ...c);
@@ -1013,7 +1104,7 @@ function viewAwards() {
     <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Voc a Bit in einem normalen Fenster.</div>'}</div></div>
     <div class="row" style="gap:8px;padding-bottom:12px;flex-wrap:wrap"><button class="btn btn-soft btn-sm" data-act="backup">${icon('download')}Sicherung speichern</button><label class="btn btn-line btn-sm" for="restoreFile" style="cursor:pointer">${icon('upload')}Sicherung laden</label><input id="restoreFile" class="sr" type="file" accept=".json,application/json" data-ch="restore-file"></div>
     ${restore}
-    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.7</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
+    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.8</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
   </section>`;
 }
 function viewQuiz() {
@@ -1074,6 +1165,8 @@ function viewResult() {
   const streak = R.streakUp ? `<div class="streakbox">${icon('local_fire_department', 'fill')}<div><b>${p.streak} ${p.streak === 1 ? 'Tag' : 'Tage'} Serie</b><span class="small">Komm morgen wieder, damit deine Flamme weiterbrennt.</span></div></div>` : '';
   const goal = R.goalHit ? `<div class="notice" style="background:var(--good-soft);color:var(--good-ink)">${icon('emoji_events', 'fill')}<div><b>Tagesziel geschafft!</b> ${today} von ${p.goal} XP heute.</div></div>`
     : `<div class="card row"><div class="grow"><b>Heute ${today} von ${p.goal} XP</b><div class="bar" style="margin-top:8px"><span style="width:${Math.min(100, today / p.goal * 100).toFixed(1)}%;background:var(--marker-deep)"></span></div></div></div>`;
+  const tdone = (R.targetsDone || []).map(t => `<div class="notice" style="background:var(--good-soft);color:var(--good-ink)">${icon('flag', 'fill')}<div><b>Lernziel „${esc(t.title)}“ geschafft!</b> Alle Wörter zweimal richtig.</div></div>`).join('');
+  const tlive = activeTargets().map(t => { const i = targetInfo(t); return `<div class="card row"><div class="grow"><b>${esc(t.title)}: ${i.done} von ${i.total} geübt</b><div class="bar" style="margin-top:8px"><span style="width:${(i.pct * 100).toFixed(1)}%"></span></div></div></div>` }).join('');
   const badges = R.fresh.length ? `<div class="stack"><span class="lbl">Neue Abzeichen</span><div class="badges">${R.fresh.map((b, i) => `<div class="bdg newbadge" style="animation-delay:${.3 + i * .15}s"><span class="medal">${icon(b.ic, 'fill')}</span><div><b>${b.t}</b><small>${b.d}</small></div></div>`).join('')}</div></div>` : '';
   const mist = R.mistakes.length ? `<section class="card"><h3 style="margin-bottom:6px">Das übst du nochmal</h3><div class="mist">${R.mistakes.map(q => { const w = S.byId.get(q.wid) || {};
     return `<div><span class="grow"><b>${esc(q.type === 'gap' ? w.en : q.prompt)}</b> → ${esc(q.answer)}</span><button class="iconbtn sm" data-act="say" data-t="${esc(q.type === 'past' ? w.past : w.en)}" aria-label="Vorlesen">${icon('volume_up')}</button></div>` }).join('')}</div></section>` : '';
@@ -1086,7 +1179,7 @@ function viewResult() {
       <div class="tile"><span class="lbl">Combo</span><b>${R.best}</b></div>
       <div class="tile"><span class="lbl">Fach hoch</span><b>${R.promoted}</b></div>
     </div>
-    ${streak}${goal}${badges}${mist}
+    ${streak}${tdone}${tlive}${goal}${badges}${mist}
     <div class="stack">${R.mistakes.length ? `<button class="btn btn-primary wide" data-act="redo">${icon('autorenew')}Fehler nochmal üben</button>` : ''}
       <button class="btn ${R.mistakes.length ? 'btn-line' : 'btn-primary'} wide" data-act="done">Fertig</button></div>
   </div>`;
@@ -1278,7 +1371,25 @@ function go(v) { S.view = v; S.delUnit = null; S.resetAsk = false; render(); win
 /* ---------- events ---------- */
 const ACT = {
   nav: t => go(t.dataset.v),
-  quick: () => { const ids = selIds(); startRound(ids.length ? ids : S.words.map(w => w.id), 'mix', S.prog.len) },
+  quick: () => { const open = openTargetIds(); if (open.length) { startRound(open, 'mix', S.prog.len, { extras: false }); return } const ids = selIds(); startRound(ids.length ? ids : S.words.map(w => w.id), 'mix', S.prog.len) },
+  't-open': () => { S.tform = { title: '', due: '', err: '' }; render(); const i = document.getElementById('tTitle'); if (i) i.focus() },
+  't-cancel': () => { S.tform = null; render() },
+  't-save': () => {
+    const T = S.tform; if (!T) return;
+    const title = ((document.getElementById('tTitle') || {}).value || '').trim().slice(0, 30) || 'Lernziel';
+    const due = ((document.getElementById('tDue') || {}).value || '').trim();
+    T.title = title; T.due = due;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(due) || due < todayKey()) { T.err = 'Wähle einen Tag ab heute.'; render(); return }
+    const ids = selIds(); if (!ids.length) { T.err = 'Wähle zuerst Wörter aus.'; render(); return }
+    const base = {}; for (const id of ids) base[id] = ws(id) ? ws(id).r : 0;
+    targets().push({ id: 't' + Date.now().toString(36), title, due, ids, base, need: 2, created: todayKey(), done: '' });
+    S.tform = null; persist(); askBadgePermission(); updateBadge(); go('home');
+    toast('Lernziel gespeichert: ' + ids.length + ' Wörter bis ' + dueLabel(due), 'flag');
+  },
+  't-practice': t => { const tg = targets().find(x => x.id === t.dataset.t); if (!tg) return; const open = targetInfo(tg).open; if (!open.length) return; startRound(open, 'mix', S.prog.len, { extras: false }) },
+  't-del-ask': t => { S.delTarget = t.dataset.t; render() },
+  't-del-no': () => { S.delTarget = null; render() },
+  't-del-yes': t => { S.prog.targets = targets().filter(x => x.id !== t.dataset.t); S.delTarget = null; persist(); updateBadge(); render(); toast('Lernziel entfernt.', 'delete') },
   review: () => startRound(dueWords().map(w => w.id), 'mix', S.prog.len, { extras: false }),
   mode: t => { S.prog.mode = t.dataset.m; persist(); render() },
   len: t => { S.prog.len = +t.dataset.n; persist(); render() },
@@ -1453,6 +1564,8 @@ S.storageOk = store.set('wordbox.check', todayKey());
 if (!store.get(LS_UNITS)) store.set(LS_UNITS, S.units);
 index();
 render();
+updateBadge();
+if (S.prog.onboarded) targetReminder();
 syncLists();
 document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - lastSync > 10 * 60 * 1000) syncLists() });
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
