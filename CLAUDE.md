@@ -30,8 +30,8 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 
 Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleichzeitig** hochzählen, sonst bekommt das iPhone die alte Fassung aus dem Cache:
 
-- `sw.js`: `const CACHE = 'wordbox-v1.7';`
-- `index.html`: Text `Version 1.7` in den Einstellungen (Erfolge → Einstellungen)
+- `sw.js`: `const CACHE = 'wordbox-v1.8';`
+- `index.html`: Text `Version 1.8` in den Einstellungen (Erfolge → Einstellungen)
 
 `tools/check.sh` bricht ab, wenn beide nicht übereinstimmen. Neue Listen in `lists/` brauchen keinen neuen Release.
 
@@ -53,7 +53,8 @@ Abschnitte im Skript (Kommentare `/* ---------- … ---------- */`):
 10. **views** – `viewHome`, `viewPractice`, `viewVocab`, `viewAwards`, `viewQuiz`, `viewResult`, `viewOnboard`. Alles per Template-String und `render()` → `app.innerHTML`.
 11. **adding vocabulary** – `viewImport`, `parseText()` (JSON, JSON in ```-Block, oder Zeilen `en ; de ; past ; Beispielsatz`, auch Tab, ` = `, ` – `), `importPrompt()` (Anleitung für Claude zum Auslesen von Buchfotos).
 12. **lessons from the server** – `syncLists()` lädt `lists/index.json` beim Start und nach 10 min im Hintergrund. Neue `id` → Lektion anhängen und auswählen. Höhere `rev` → Lektion ersetzen. Vom Kind gelöschte Server-Lektionen stehen in `prog.removedLists` und kommen nicht wieder.
-13. **events / boot** – Ereignis-Delegation über `data-act` (click, Tabelle `ACT`), `data-ch` (change, `CH`), `data-in` (input, `IN`). Tastatur 1–4 und Enter im Quiz.
+13. **learning targets (Lernziele)** – `prog.targets[]`: `{ id, title, due: 'YYYY-MM-DD', ids[], base{wortId: r bei Anlage}, need: 2, created, done }`. Ein Wort gilt als geübt, wenn `w[id].r - base[id] >= need`. `targetInfo(t)` liefert `done/open/total/left/todayDue/state` (`ok`, `behind`, `last`, `late`, `done`); „im Plan“ heißt: erledigte Wörter ≥ anteilig vergangene Tage seit Anlage. Anlegen in `viewPractice` aus der aktuellen Auswahl (`S.tform`), Karten in `viewHome` über dem Tagesziel (`targetCard`), erledigte Ziele bleiben dort 2 Tage. `checkTargets()` in `finish()` setzt `done`, Abzeichen `target`. `targetReminder()` beim Start zeigt einen Toast bei Rückstand, letztem Tag oder Überfälligkeit. `updateBadge()` setzt die Zahl am App-Icon (`navigator.setAppBadge`, iOS zeigt sie erst nach Mitteilungs-Erlaubnis, die `askBadgePermission()` beim ersten Ziel anfragt; es werden nie Mitteilungen gesendet). Schnelle Runde und „Jetzt üben“ nehmen offene Zielwörter ohne Extras.
+14. **events / boot** – Ereignis-Delegation über `data-act` (click, Tabelle `ACT`), `data-ch` (change, `CH`), `data-in` (input, `IN`). Tastatur 1–4 und Enter im Quiz.
 
 Theme 1 ist zusätzlich als `SEED` eingebettet, damit die App beim allerersten Start auch offline Vokabeln hat.
 
@@ -75,7 +76,7 @@ Pflicht: `en`, `de`. `pos` ∈ verb, noun, adj, adv, phrase, other. `gap` muss w
 **Liste** (`lists/<datei>.json`): `{ "title", "pages", "words": [...] }`
 **Index** (`lists/index.json`): `{ "lists": [ { "id", "title", "file", "rev" } ] }`
 
-**Lernstand** `localStorage['wordbox.prog.v1']`: `econ, name, goal, sound, speak, xp, days{YYYY-MM-DD: xp}, streak, best, last, rounds, perfect, typedRight, pastRight, extraRight, bestCombo, photos, goalDays, badges{id: datum}, w{wortId: {l: fach, r, x, s, d: fällig-ms}}, sel[ids], mode, len, onboarded, removedLists[], updatedAt`.
+**Lernstand** `localStorage['wordbox.prog.v1']`: `econ, name, goal, sound, speak, xp, days{YYYY-MM-DD: xp}, streak, best, last, rounds, perfect, typedRight, pastRight, extraRight, bestCombo, photos, goalDays, badges{id: datum}, w{wortId: {l: fach, r, x, s, d: fällig-ms}}, sel[ids], mode, len, onboarded, removedLists[], targets[] (siehe 13), updatedAt`.
 **Lektionen** `localStorage['wordbox.units.v1']`: Array von Lektionen.
 **Sicherung**: `{ app: "wordbox", v: 1, exported, prog, units }`.
 
