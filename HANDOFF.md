@@ -22,6 +22,7 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 - Sicherung speichern nutzt auf iOS das Teilen-Menü (`navigator.share` mit Datei), sonst Download wie bisher (Version 1.2).
 - `tools/add-list.py` nimmt Claudes Antwort als Lektion auf (siehe Aufgabe 4), mit Testlauf geprüft.
 - XP knapper (Version 1.3, Wunsch Thomas 11.10.): 2 XP pro richtige Antwort, 3 beim Schreiben, +1 Extra-Wort, Rundenbonus 5, fehlerfrei +10. Tagesziele 100/150/250/400. Eine fehlerfreie 10er-Runde bringt etwa 40 XP, „Normal“ braucht rund vier davon. Alte Lernstände werden einmalig umgerechnet (`migrateProg`, Marker `econ: 2`), im Browser gegen die Pages-Adresse geprüft.
+- Umbenennung in „Voc a Bit“ (Version 1.4, 11.10.): Titel, Manifest, Kopfzeile, Onboarding, Sicherungstexte, Dateiname der Sicherung `voc-a-bit-sicherung-*.json`. Neues Icon: angebissene Vokabelkarte, Quelle `icon.svg`, PNGs randlos (iOS füllt transparente Ecken schwarz). Interne Schlüssel, Cache-Präfix und Repo-Name bleiben `wordbox`. Wer die App schon auf dem Home-Bildschirm hat, muss sie einmal entfernen und neu hinzufügen, damit iOS Name und Icon neu liest.
 
 **Nicht auf echtem iPhone getestet.** Alles oben ist nur im Code geprüft.
 
