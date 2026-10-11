@@ -1,4 +1,4 @@
-# Word Box – Vokabeltrainer Englisch
+# Voc a Bit – Vokabeltrainer Englisch
 
 Eine Lern-App für die Vokabeln aus dem Englischbuch (Klasse 6). Sie läuft als Web-App im Safari auf dem iPhone und lässt sich wie eine normale App auf den Home-Bildschirm legen. Nach dem ersten Öffnen funktioniert sie auch ohne Internet.
 
@@ -15,7 +15,7 @@ Die Seite ist öffentlich erreichbar, wird aber nicht von Suchmaschinen aufgenom
 
 1. Die Adresse in **Safari** öffnen.
 2. **Teilen → Zum Home-Bildschirm**.
-3. Ab jetzt Word Box über das Icon starten.
+3. Ab jetzt Voc a Bit über das Icon starten.
 
 ## Neue Vokabeln hinzufügen
 

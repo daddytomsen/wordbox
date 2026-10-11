@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Prüft Word Box vor jedem Commit: JS-Syntax, JSON-Dateien, Listen-Index, gleiche Versionsnummer in sw.js und index.html.
+# Prüft Voc a Bit vor jedem Commit: JS-Syntax, JSON-Dateien, Listen-Index, gleiche Versionsnummer in sw.js und index.html.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 tmp="$(mktemp -d "${TMPDIR:-/tmp}/wordbox.XXXXXX")"

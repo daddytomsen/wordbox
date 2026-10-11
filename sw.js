@@ -1,5 +1,5 @@
-// Word Box service worker: lets the app start without internet and picks up new versions on the next launch.
-const CACHE = 'wordbox-v1.3';
+// Voc a Bit service worker: lets the app start without internet and picks up new versions on the next launch.
+const CACHE = 'wordbox-v1.4';
 const CORE = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './lists/index.json'];
 
 self.addEventListener('install', event => {

@@ -2,6 +2,7 @@
 *.local.*
 # Sicherungen und Buchfotos gehören nicht ins öffentliche Repo
 wordbox-sicherung-*.json
+voc-a-bit-sicherung-*.json
 fotos/
 *.heic
 *.HEIC

@@ -1,6 +1,6 @@
 {
-  "name": "Word Box Vokabeltrainer",
-  "short_name": "Word Box",
+  "name": "Voc a Bit – Vokabeltrainer",
+  "short_name": "Voc a Bit",
   "lang": "de",
   "start_url": "./",
   "scope": "./",

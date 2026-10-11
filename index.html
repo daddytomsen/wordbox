@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Word Box Vokabeltrainer</title>
+<title>Voc a Bit – Vokabeltrainer</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Word Box">
+<meta name="apple-mobile-web-app-title" content="Voc a Bit">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#EDF0F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0D1128" media="(prefers-color-scheme: dark)">
@@ -390,7 +390,7 @@ function freshProg() {
     badges: {}, w: {}, sel: null, mode: 'mix', len: 10, onboarded: false, removedLists: [], updatedAt: 0 };
 }
 
-/* Version 1.3 made XP about five times scarcer (econ 2). Progress saved before that is scaled once,
+/* Release 1.3 made XP about five times scarcer (econ 2). Progress saved before that is scaled once,
    and the daily goal moves to the matching new step, so levels and goal stay meaningful. */
 function migrateProg(p) {
   if (!p || typeof p !== 'object') return {};
@@ -429,7 +429,8 @@ const capFirst = s => s ? s[0].toUpperCase() + s.slice(1) : s;
 const lowFirst = s => s ? s[0].toLowerCase() + s.slice(1) : s;
 
 function logo(cls = 'logo') {
-  return `<svg class="${cls}" viewBox="0 0 32 32" aria-hidden="true"><rect x="6.5" y="3.5" width="16" height="13" rx="3" fill="var(--hl)" transform="rotate(-9 14.5 10)"/><rect x="10" y="5.5" width="15.5" height="13" rx="3" fill="var(--surface)" stroke="var(--royal)" stroke-width="2"/><path d="M13.5 10h8.5M13.5 13.5h5.5" stroke="var(--royal)" stroke-width="1.8" stroke-linecap="round"/><rect x="3" y="14.5" width="26" height="14.5" rx="4.5" fill="var(--royal)"/><rect x="11" y="19.5" width="10" height="3.4" rx="1.7" fill="var(--royal-ink)"/></svg>`;
+  // Angebissene Vokabelkarte, kleine Fassung von icon.svg. Die Maske schneidet den Biss durch beide Karten.
+  return `<svg class="${cls}" viewBox="0 0 32 32" aria-hidden="true"><defs><mask id="logo-bite"><rect width="32" height="32" fill="#fff"/><circle cx="25.5" cy="10.5" r="4.2"/><circle cx="21.8" cy="8.6" r="2.5"/><circle cx="27" cy="14.6" r="2.5"/></mask></defs><g mask="url(#logo-bite)"><rect x="5" y="8" width="17" height="13" rx="3" fill="var(--hl)" transform="rotate(-10 13.5 14.5)"/><g transform="rotate(3 17 16)"><rect x="8.5" y="9.5" width="17" height="13" rx="3" fill="var(--surface)" stroke="var(--royal)" stroke-width="2"/><path d="M12.5 14.5h8M12.5 18h5" stroke="var(--royal)" stroke-width="1.8" stroke-linecap="round"/></g></g><circle cx="28.3" cy="6.3" r="1.1" fill="var(--royal)"/><circle cx="30" cy="9.6" r=".8" fill="var(--marker-deep)"/></svg>`;
 }
 
 /* ---------- words / mastery ---------- */
@@ -850,7 +851,7 @@ function finish(quit) {
 function topbar() {
   const p = S.prog, st = shownStreak();
   return `<header class="top"><div class="top-in">
-    <button class="brand" data-act="nav" data-v="home" aria-label="Word Box, zur Startseite">${logo()}<span>Word Box</span></button>
+    <button class="brand" data-act="nav" data-v="home" aria-label="Voc a Bit, zur Startseite">${logo()}<span>Voc a Bit</span></button>
     <div class="chips">
       <span class="chip chip-flame ${p.last === todayKey() ? 'on' : ''}" title="Serie: ${st} Tage">${icon('local_fire_department', 'fill')}<b>${st}</b><span class="sr">Tage Serie</span></span>
       <span class="chip chip-xp" title="XP gesamt">${icon('bolt', 'fill')}<b>${fmt(p.xp)}</b><span class="sr">XP</span></span>
@@ -1008,10 +1009,10 @@ function viewAwards() {
     <div class="setting"><div class="grow"><b>Soundeffekte</b><div class="small muted">Töne bei richtig, falsch und Erfolgen</div></div><button class="switch" role="switch" aria-checked="${p.sound}" data-act="tog" data-k="sound" aria-label="Soundeffekte"></button></div>
     <div class="setting"><div class="grow"><b>Vorlesen</b><div class="small muted">Das englische Wort nach jeder Antwort hören</div></div><button class="switch" role="switch" aria-checked="${p.speak}" data-act="tog" data-k="speak" aria-label="Vorlesen"></button></div>
     <div class="setting"><div class="grow"><b>Ton testen</b><div class="small muted">Nichts zu hören? Lautstärke hochdrehen. Auf älteren iPhones schaltet der Stumm-Schalter die Töne ab.</div></div><button class="btn btn-soft btn-sm" data-act="sound-test">${icon('volume_up')}Test</button></div>
-    <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Word Box in einem normalen Fenster.</div>'}</div></div>
+    <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Voc a Bit in einem normalen Fenster.</div>'}</div></div>
     <div class="row" style="gap:8px;padding-bottom:12px;flex-wrap:wrap"><button class="btn btn-soft btn-sm" data-act="backup">${icon('download')}Sicherung speichern</button><label class="btn btn-line btn-sm" for="restoreFile" style="cursor:pointer">${icon('upload')}Sicherung laden</label><input id="restoreFile" class="sr" type="file" accept=".json,application/json" data-ch="restore-file"></div>
     ${restore}
-    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.3</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
+    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.4</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
   </section>`;
 }
 function viewQuiz() {
@@ -1092,7 +1093,7 @@ function viewResult() {
 function viewOnboard() {
   const goals = [[100, 'Locker'], [150, 'Normal'], [250, 'Fleißig']].map(([n, t]) => `<button data-act="ob-goal" data-n="${n}" aria-pressed="${S.prog.goal === n}">${t}<br><span class="small muted">${n} XP</span></button>`).join('');
   return `<div class="overlay"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="obT">${logo('logo')}
-    <h2 id="obT">Welcome to Word Box!</h2>
+    <h2 id="obT">Welcome to Voc a Bit!</h2>
     <p class="muted">Hier übst du deine Englisch-Vokabeln: mit Karteikasten, Tagesziel, Serie und Abzeichen.</p>
     <label for="obName" class="lbl">Wie heißt du?</label><input id="obName" class="field" maxlength="24" placeholder="Dein Vorname" value="${esc(S.prog.name)}" autocomplete="given-name">
     <span class="lbl">Wie viel willst du am Tag üben?</span><div class="seg" role="group" aria-label="Tagesziel">${goals}</div>
@@ -1128,7 +1129,7 @@ function viewImport() {
       ${I.err ? `<div class="err" role="alert">${esc(I.err)}</div>` : ''}
       <button class="btn btn-primary wide" data-act="imp-parse">${icon('check')}Vokabeln prüfen</button>
     </section>
-    <label class="drop" for="impFile">${icon('file')}<b>Datei öffnen</b><small>Word-Box-Datei (.json) oder Textliste (.txt), auch aus iCloud Drive</small></label>
+    <label class="drop" for="impFile">${icon('file')}<b>Datei öffnen</b><small>Voc-a-Bit-Datei (.json) oder Textliste (.txt), auch aus iCloud Drive</small></label>
     <input id="impFile" class="sr" type="file" accept=".json,.txt,.csv,.tsv,application/json,text/plain" data-ch="imp-file">
     <section class="card stack">
       <div class="row">${icon('add_a_photo')}<h3>Aus Fotos vom Buch</h3></div>
@@ -1211,7 +1212,7 @@ function parseText(text) {
 }
 function startReview(res, fileTitle) {
   const I = S.imp;
-  if (res && res.data && res.data.app === 'wordbox') { I.err = 'Das ist eine Word-Box-Sicherung. Spiel sie unter Erfolge → Sicherung laden ein.'; render(); return }
+  if (res && res.data && res.data.app === 'wordbox') { I.err = 'Das ist eine Voc-a-Bit-Sicherung. Spiel sie unter Erfolge → Sicherung laden ein.'; render(); return }
   if (!res || !res.words.length) { I.err = 'Keine Vokabeln erkannt. Schreib eine pro Zeile, zum Beispiel: to choose ; (aus)wählen ; chose'; render(); return }
   const d = res.data;
   I.words = res.words; I.err = '';
@@ -1315,7 +1316,7 @@ const ACT = {
     let json;
     try { json = JSON.stringify({ app: 'wordbox', v: 1, exported: new Date().toISOString(), prog: S.prog, units: S.units }) }
     catch (e) { toast('Sicherung konnte nicht erstellt werden.', 'info'); return }
-    downloadFile('wordbox-sicherung-' + todayKey() + '.json', json)
+    downloadFile('voc-a-bit-sicherung-' + todayKey() + '.json', json)
       .then(how => { if (how === 'shared') toast('Sicherung gesichert.', 'check_circle'); else if (how === 'download') toast('Sicherung wird gespeichert.', 'download') })
       .catch(() => toast('Sicherung konnte nicht gespeichert werden.', 'info'));
   },
@@ -1367,7 +1368,7 @@ const CH = {
     readFile(f, (text, err) => {
       let d = null;
       try { d = JSON.parse(text) } catch (e) { d = null }
-      if (err || !d || d.app !== 'wordbox' || !d.prog || !Array.isArray(d.units)) { toast('Das ist keine Word-Box-Sicherung.', 'info'); return }
+      if (err || !d || d.app !== 'wordbox' || !d.prog || !Array.isArray(d.units)) { toast('Das ist keine Voc-a-Bit-Sicherung.', 'info'); return }
       const dt = d.exported ? new Date(d.exported) : null;
       S.restore = { date: dt && !isNaN(dt) ? dt.toLocaleDateString('de-DE') : 'unbekanntem Datum', data: d };
       render();

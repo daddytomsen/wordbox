@@ -1,6 +1,6 @@
-# Übergabe an Claude Code – Word Box
+# Übergabe an Claude Code – Voc a Bit
 
-Stand: 11.10.2026 · Version 1.3 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 11.10.2026 · Version 1.4 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
