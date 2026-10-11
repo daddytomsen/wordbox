@@ -30,8 +30,8 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 
 Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleichzeitig** hochzählen, sonst bekommt das iPhone die alte Fassung aus dem Cache:
 
-- `sw.js`: `const CACHE = 'wordbox-v1.5';`
-- `index.html`: Text `Version 1.5` in den Einstellungen (Erfolge → Einstellungen)
+- `sw.js`: `const CACHE = 'wordbox-v1.6';`
+- `index.html`: Text `Version 1.6` in den Einstellungen (Erfolge → Einstellungen)
 
 `tools/check.sh` bricht ab, wenn beide nicht übereinstimmen. Neue Listen in `lists/` brauchen keinen neuen Release.
 
@@ -45,7 +45,7 @@ Abschnitte im Skript (Kommentare `/* ---------- … ---------- */`):
 2. **words / mastery** – Karteikasten mit 5 Fächern. `INTERVAL = [0,0,1,3,7,14]` Tage. `grade(id, ok)`: richtig und fällig → ein Fach hoch (neu → Fach 2), falsch → Fach 1 und sofort fällig. Gelernt = Fach ≥ 4. `isWeak` = schon mal falsch und Fach ≤ 2.
 3. **levels & badges** – Level-Schwellen `lvlStart(n) = 50(n−1) + 25n(n−1)`, 15 Abzeichen in `BADGES`.
 4. **persistence** – `persist()` schreibt `S.prog`, `saveUnits()` schreibt `S.units`. `downloadFile()` für Sicherungen.
-5. **sound & speech** – iOS: Ton wird im ersten `touchend/click` freigeschaltet (`unlockAudio`), `navigator.audioSession.type = 'playback'`, damit der Stummschalter neuere iPhones nicht stummschaltet. `say()` muss **synchron** aus dem Tipp-Handler laufen, sonst blockiert iOS die Sprachausgabe. Kein `setTimeout` davor.
+5. **sound & speech** – iOS: Ton wird im ersten `touchend/click` freigeschaltet (`unlockAudio`), `navigator.audioSession.type = 'playback'`, damit der Stummschalter neuere iPhones nicht stummschaltet. `say()` muss **synchron** aus dem Tipp-Handler laufen, sonst blockiert iOS die Sprachausgabe. Kein `setTimeout` davor. Die Sprachausgabe ignoriert die Audio-Sitzung und ist bei Stummschalter stumm, solange kein Medium spielt: darum läuft auf iOS während des Sprechens ein lautloses `<audio>` in Schleife (`keeperOn()`/`keeperOff()`, `SILENT_WAV`), nur für die Dauer der Ausgabe.
 6. **confetti & toast**
 7. **question building** – `MODES` (mix, de-en, en-de, past, opp, gap, type), Gewichte `MIX_W`. Falsche Antworten: `pickOpts()` nimmt bevorzugt dieselbe Lektion und Wortart plus das ähnlichste Wort (Bigramm-Ähnlichkeit). Simple Past: `pastWrong()` erzeugt typische Fehler (choosed, planed, Grundform, -ing).
 8. **typed answers** – `checkTyped()`: normalisiert (`to`, `sb/sth`, Klammern, `your→one's`), Varianten aus `/` und `(= …)`, 1 Tippfehler erlaubt ab 4 Buchstaben.
