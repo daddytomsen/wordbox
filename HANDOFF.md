@@ -105,5 +105,6 @@ Gleiches Wort (`norm_en()`, Entscheidung Thomas 11.10.): Groß-/Kleinschreibung,
 |---|---|---|
 | 11.10.2026 | iPhone (Thomas), Version 1.5 | Töne ok mit und ohne Stummschalter. Sprachausgabe bei Stummschalter an stumm. Umweg in 1.6 (lautloses `<audio>`) hat nicht geholfen → in 1.7 entfernt, stattdessen Hinweis in Einstellungen und Ton-Test. |
 | 11.10.2026 | iPhone, Version 1.8 | Lernziel: Datumsfeld und rote Zahl am Icon funktionieren. |
+| 11.10.2026 | iPhone, Version 1.11 | Knopf „neue Wörter üben“ da, die 18 nie abgefragten Wörter sind durch. Rundenlogik 1.10 und Fach-5-Ruhezeit im Einsatz. |
 | 11.10.2026 | iPhone, Version 1.9 | Seiten-Schalter in „Üben“ funktionieren. Hinweis: Nach einem Update muss die Home-Bildschirm-App einmal komplett geschlossen und zweimal neu gestartet werden, sonst zeigt sie noch die alte Fassung. |
 | 11.10.2026 | iPhone (Sohn), Bildschirmzeit | Safari war über „Erlaubte Apps“ gesperrt → Home-Bildschirm-App startet nicht. Lösung bestätigt: Safari erlaubt, Webinhalt „Nur erlaubte Websites“ mit `https://daddytomsen.github.io/wordbox/`. App läuft, andere Seiten bleiben gesperrt. Anleitung in README. |
