@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 11.10.2026 · Version 1.8 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 11.10.2026 · Version 1.9 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -22,7 +22,8 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 - Sicherung speichern nutzt auf iOS das Teilen-Menü (`navigator.share` mit Datei), sonst Download wie bisher (Version 1.2).
 - `tools/add-list.py` nimmt Claudes Antwort als Lektion auf (siehe Aufgabe 4), mit Testlauf geprüft.
 - XP knapper (Version 1.3, Wunsch Thomas 11.10.): 2 XP pro richtige Antwort, 3 beim Schreiben, +1 Extra-Wort, Rundenbonus 5, fehlerfrei +10. Tagesziele 100/150/250/400. Eine fehlerfreie 10er-Runde bringt etwa 40 XP, „Normal“ braucht rund vier davon. Alte Lernstände werden einmalig umgerechnet (`migrateProg`, Marker `econ: 2`), im Browser gegen die Pages-Adresse geprüft.
-- Lernziele (Version 1.8, Wunsch Thomas 11.10.): Wortauswahl + Termin, jedes Wort zweimal richtig; Karte auf dem Start mit Ampel (im Plan / Rückstand / letzter Tag / überfällig), Hinweis beim Öffnen, Zahl am App-Icon (braucht einmalig Mitteilungs-Erlaubnis, keine Push-Nachrichten), Abzeichen „Ziel erreicht“. Lokal im Browser komplett durchgespielt; am iPhone offen: Datumsfeld, Icon-Zahl.
+- Lernziele (Version 1.8, Wunsch Thomas 11.10.): Wortauswahl + Termin, jedes Wort zweimal richtig; Karte auf dem Start mit Ampel (im Plan / Rückstand / letzter Tag / überfällig), Hinweis beim Öffnen, Zahl am App-Icon (braucht einmalig Mitteilungs-Erlaubnis, keine Push-Nachrichten), Abzeichen „Ziel erreicht“. Lokal im Browser durchgespielt, am iPhone bestätigt 11.10. (Datumsfeld und Icon-Zahl funktionieren).
+- Seiten-Schalter (Version 1.9, Wunsch Thomas 11.10.): jedes Wort trägt `page`, in „Üben“ wählt ein Chip je Seite alle Wörter der Seite an oder ab. Theme 1 rev 3: S. 224 sicher (t1-a01…a39), **Grenze 225/226 vorläufig** nach Abschnitt B2 gesetzt (t1-01…t1-35 = 225, t1-36…t1-62 und Say it = 226), Thomas bestätigt das erste Wort auf S. 226. Anleitung für Claude und `add-list.py` kennen `page`.
 - Umbenennung in „Voc a Bit“ (Version 1.4, 11.10.): Titel, Manifest, Kopfzeile, Onboarding, Sicherungstexte, Dateiname der Sicherung `voc-a-bit-sicherung-*.json`. Neues Icon: angebissene Vokabelkarte, Quelle `icon.svg`, PNGs randlos (iOS füllt transparente Ecken schwarz). Interne Schlüssel, Cache-Präfix und Repo-Name bleiben `wordbox`. Wer die App schon auf dem Home-Bildschirm hat, muss sie einmal entfernen und neu hinzufügen, damit iOS Name und Icon neu liest.
 - Icon endgültig (Version 1.5, Entwurf Thomas): Union Jack mit Vokabelkarte „a“ und gelbem Haken, `icon.svg` → drei PNGs; Kopfzeilen-Logo angepasst. Bildentwürfe (Bulldogge) liegen lokal in `entwurf/`, nicht im Repo.
 
@@ -101,4 +102,5 @@ Gleiches Wort (`norm_en()`, Entscheidung Thomas 11.10.): Groß-/Kleinschreibung,
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
 | 11.10.2026 | iPhone (Thomas), Version 1.5 | Töne ok mit und ohne Stummschalter. Sprachausgabe bei Stummschalter an stumm. Umweg in 1.6 (lautloses `<audio>`) hat nicht geholfen → in 1.7 entfernt, stattdessen Hinweis in Einstellungen und Ton-Test. |
+| 11.10.2026 | iPhone, Version 1.8 | Lernziel: Datumsfeld und rote Zahl am Icon funktionieren. |
 | 11.10.2026 | iPhone (Sohn), Bildschirmzeit | Safari war über „Erlaubte Apps“ gesperrt → Home-Bildschirm-App startet nicht. Lösung bestätigt: Safari erlaubt, Webinhalt „Nur erlaubte Websites“ mit `https://daddytomsen.github.io/wordbox/`. App läuft, andere Seiten bleiben gesperrt. Anleitung in README. |

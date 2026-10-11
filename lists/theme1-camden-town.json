@@ -10,7 +10,8 @@
       "pos": "noun",
       "ex": "Dover is on the coast.",
       "gap": "coast",
-      "sec": "A"
+      "sec": "A",
+      "page": "224"
     },
     {
       "id": "t1-a02",
@@ -21,7 +22,8 @@
       "past": "messaged",
       "ex": "Is Lea coming to the party? – I don't know. I can message her.",
       "gap": "message",
-      "sec": "A"
+      "sec": "A",
+      "page": "224"
     },
     {
       "id": "t1-a03",
@@ -32,6 +34,7 @@
       "ex": "Jo was happy. Tia and Leo were happy, too.",
       "gap": "was",
       "sec": "A5",
+      "page": "224",
       "note": "simple past von „be“"
     },
     {
@@ -42,7 +45,8 @@
       "pos": "adj",
       "ex": "Be careful! The food is very hot.",
       "gap": "careful",
-      "sec": "A6"
+      "sec": "A6",
+      "page": "224"
     },
     {
       "id": "t1-a05",
@@ -54,7 +58,8 @@
       "pp": "gone shopping",
       "ex": "We went shopping and bought some new clothes.",
       "gap": "went shopping",
-      "sec": "A6"
+      "sec": "A6",
+      "page": "224"
     },
     {
       "id": "t1-a06",
@@ -65,6 +70,7 @@
       "ex": "Welcome to Radio Dorset.",
       "gap": "Welcome",
       "sec": "A7",
+      "page": "224",
       "note": "p. 16"
     },
     {
@@ -75,7 +81,8 @@
       "pos": "noun",
       "ex": "Our walk at night was a great adventure.",
       "gap": "adventure",
-      "sec": "A7"
+      "sec": "A7",
+      "page": "224"
     },
     {
       "id": "t1-a08",
@@ -88,6 +95,7 @@
       "ex": "My best friend sent me a postcard from Madrid.",
       "gap": "sent",
       "sec": "A7",
+      "page": "224",
       "note": "simple past: sent /sent/"
     },
     {
@@ -98,7 +106,8 @@
       "pos": "noun",
       "ex": "My mum is a doctor. She works at the hospital.",
       "gap": "hospital",
-      "sec": "A7"
+      "sec": "A7",
+      "page": "224"
     },
     {
       "id": "t1-a10",
@@ -108,7 +117,8 @@
       "pos": "adj",
       "ex": "Four people were hurt in an accident on Saturday.",
       "gap": "hurt",
-      "sec": "A7"
+      "sec": "A7",
+      "page": "224"
     },
     {
       "id": "t1-a11",
@@ -118,7 +128,8 @@
       "pos": "noun",
       "ex": "Four people were hurt in an accident on Saturday.",
       "gap": "accident",
-      "sec": "A7"
+      "sec": "A7",
+      "page": "224"
     },
     {
       "id": "t1-a12",
@@ -129,6 +140,7 @@
       "past": "fell",
       "pp": "fallen",
       "sec": "A7",
+      "page": "224",
       "note": "simple past: fell /fel/"
     },
     {
@@ -140,6 +152,7 @@
       "past": "broke one's arm",
       "pp": "broken one's arm",
       "sec": "A7",
+      "page": "224",
       "note": "simple past: broke /brəʊk/"
     },
     {
@@ -149,6 +162,7 @@
       "ipa": "/ˌkəʊsˈtɪərɪŋ/",
       "pos": "noun",
       "sec": "A8",
+      "page": "224",
       "note": "no pl"
     },
     {
@@ -158,6 +172,7 @@
       "ipa": "/ˈhelmɪt/",
       "pos": "noun",
       "sec": "A8",
+      "page": "224",
       "opt": true
     },
     {
@@ -167,6 +182,7 @@
       "ipa": "/ˈwetˌsuːt/",
       "pos": "noun",
       "sec": "A8",
+      "page": "224",
       "opt": true
     },
     {
@@ -176,6 +192,7 @@
       "ipa": "/ˈlaɪf ˌdʒækɪt/",
       "pos": "noun",
       "sec": "A8",
+      "page": "224",
       "opt": true
     },
     {
@@ -187,7 +204,8 @@
       "past": "jumped",
       "ex": "Lara is jumping into the pool.",
       "gap": "jumping",
-      "sec": "A8"
+      "sec": "A8",
+      "page": "224"
     },
     {
       "id": "t1-a19",
@@ -197,7 +215,8 @@
       "pos": "noun",
       "ex": "Don't jump from the rocks, it's dangerous.",
       "gap": "rocks",
-      "sec": "A8"
+      "sec": "A8",
+      "page": "224"
     },
     {
       "id": "t1-a20",
@@ -205,7 +224,8 @@
       "de": "Klippe, Kliff",
       "ipa": "/klɪf/",
       "pos": "noun",
-      "sec": "A8"
+      "sec": "A8",
+      "page": "224"
     },
     {
       "id": "t1-a21",
@@ -216,7 +236,8 @@
       "past": "climbed",
       "ex": "Mike likes to climb trees.",
       "gap": "climb",
-      "sec": "A8"
+      "sec": "A8",
+      "page": "224"
     },
     {
       "id": "t1-a22",
@@ -224,7 +245,8 @@
       "de": "Sport, Sportart",
       "ipa": "/spɔːt/",
       "pos": "noun",
-      "sec": "A8"
+      "sec": "A8",
+      "page": "224"
     },
     {
       "id": "t1-a23",
@@ -234,7 +256,8 @@
       "pos": "verb",
       "past": "was called",
       "pp": "been called",
-      "sec": "A8"
+      "sec": "A8",
+      "page": "224"
     },
     {
       "id": "t1-a24",
@@ -242,7 +265,8 @@
       "de": "furchterregend",
       "ipa": "/ˈskeəri/",
       "pos": "adj",
-      "sec": "A8"
+      "sec": "A8",
+      "page": "224"
     },
     {
       "id": "t1-a25",
@@ -250,7 +274,8 @@
       "de": "Leiter/in, Führer/in",
       "ipa": "/ˈliːdə/",
       "pos": "noun",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a26",
@@ -260,7 +285,8 @@
       "pos": "noun",
       "ex": "The whole group had to work together.",
       "gap": "group",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a27",
@@ -270,7 +296,8 @@
       "pos": "other",
       "ex": "I didn't know it was your birthday today.",
       "gap": "didn't",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a28",
@@ -280,7 +307,8 @@
       "pos": "adj",
       "ex": "This house is 12 metres high.",
       "gap": "high",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a29",
@@ -290,7 +318,8 @@
       "pos": "adv",
       "ex": "At first I didn't like Jo but now we're friends.",
       "gap": "At first",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a30",
@@ -300,7 +329,8 @@
       "pos": "noun",
       "ex": "Lara wanted to do a last big jump.",
       "gap": "jump",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a31",
@@ -308,7 +338,8 @@
       "de": "ziemlich, ganz",
       "ipa": "/kwaɪt/",
       "pos": "adv",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a32",
@@ -318,7 +349,8 @@
       "pos": "adj",
       "ex": "I got wet because of the rain.",
       "gap": "wet",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a33",
@@ -328,7 +360,8 @@
       "pos": "adv",
       "ex": "Don't fall down!",
       "gap": "down",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a34",
@@ -340,7 +373,8 @@
       "pp": "shown",
       "ex": "Charlie didn't want to show that he was scared.",
       "gap": "show",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a35",
@@ -351,6 +385,7 @@
       "ex": "I know that Paul is 14 years old.",
       "gap": "that",
       "sec": "A9",
+      "page": "224",
       "note": "Achte auf die Wortstellung im Nebensatz mit that: Ich weiß, dass Paul 14 Jahre alt ist."
     },
     {
@@ -359,7 +394,8 @@
       "de": "Was für ein(e) …!",
       "ipa": "/ˈwɒt ə/",
       "pos": "phrase",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a37",
@@ -368,7 +404,8 @@
       "ipa": "/tʃɪə/",
       "pos": "verb",
       "past": "cheered",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a38",
@@ -378,7 +415,8 @@
       "pos": "other",
       "ex": "John and Anna both wanted to go swimming.",
       "gap": "both",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-a39",
@@ -388,7 +426,8 @@
       "pos": "verb",
       "past": "got out of",
       "pp": "got out of",
-      "sec": "A9"
+      "sec": "A9",
+      "page": "224"
     },
     {
       "id": "t1-01",
@@ -398,7 +437,8 @@
       "pos": "other",
       "ex": "Everything was fine but then something went wrong.",
       "gap": "Everything",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-02",
@@ -410,7 +450,8 @@
       "pp": "gone wrong",
       "ex": "Everything was fine but then something went wrong.",
       "gap": "went wrong",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-03",
@@ -420,7 +461,8 @@
       "pos": "adv",
       "ex": "Suddenly Lara lost her balance.",
       "gap": "Suddenly",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-04",
@@ -432,7 +474,8 @@
       "pp": "lost one's balance",
       "ex": "Suddenly Lara lost her balance.",
       "gap": "lost her balance",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-05",
@@ -440,7 +483,8 @@
       "de": "Wie man …",
       "ipa": "/ˈhaʊ tə/",
       "pos": "other",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-06",
@@ -448,7 +492,8 @@
       "de": "Welle",
       "ipa": "/weɪv/",
       "pos": "noun",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-07",
@@ -458,7 +503,8 @@
       "pos": "adj",
       "ex": "Rachel is very strong.",
       "gap": "strong",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-08",
@@ -470,7 +516,8 @@
       "ex": "Fiona pushed Olivia.",
       "gap": "pushed",
       "opp": "to pull",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-09",
@@ -482,8 +529,9 @@
       "pp": "hurt",
       "ex": "When Olivia fell, she hurt her legs.",
       "gap": "hurt",
-      "note": "simple past: hurt",
-      "sec": "A"
+      "sec": "A",
+      "page": "225",
+      "note": "simple past: hurt"
     },
     {
       "id": "t1-10",
@@ -491,7 +539,8 @@
       "de": "dunkel",
       "ipa": "/dɑːk/",
       "pos": "adj",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-11",
@@ -501,7 +550,8 @@
       "pos": "verb",
       "past": "pulled",
       "opp": "to push",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-12",
@@ -509,7 +559,8 @@
       "de": "aus",
       "ipa": "/ˈaʊt əv/",
       "pos": "other",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-13",
@@ -519,7 +570,8 @@
       "pos": "verb",
       "past": "remembered",
       "opp": "to forget",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-14",
@@ -527,7 +579,8 @@
       "de": "gar nichts",
       "ipa": "/nɒt ˈeniθɪŋ/",
       "pos": "other",
-      "sec": "A"
+      "sec": "A",
+      "page": "225"
     },
     {
       "id": "t1-15",
@@ -539,8 +592,9 @@
       "pp": "chosen",
       "ex": "He is choosing a book to read.",
       "gap": "choosing",
-      "note": "simple past: chose /tʃəʊz/",
-      "sec": "A"
+      "sec": "A",
+      "page": "225",
+      "note": "simple past: chose /tʃəʊz/"
     },
     {
       "id": "t1-16",
@@ -550,7 +604,8 @@
       "pos": "other",
       "ex": "Zoe wasn't in London last year.",
       "gap": "wasn't",
-      "sec": "A10"
+      "sec": "A10",
+      "page": "225"
     },
     {
       "id": "t1-17",
@@ -560,7 +615,8 @@
       "pos": "other",
       "ex": "Kim and Jo weren't happy.",
       "gap": "weren't",
-      "sec": "A10"
+      "sec": "A10",
+      "page": "225"
     },
     {
       "id": "t1-18",
@@ -571,7 +627,8 @@
       "past": "planned",
       "ex": "We planned our trip last year.",
       "gap": "planned",
-      "sec": "A12"
+      "sec": "A12",
+      "page": "225"
     },
     {
       "id": "t1-19",
@@ -579,8 +636,9 @@
       "de": "Flugzeug",
       "ipa": "/pleɪn/",
       "pos": "noun",
-      "note": "on the plane – im Flugzeug",
-      "sec": "A12"
+      "sec": "A12",
+      "page": "225",
+      "note": "on the plane – im Flugzeug"
     },
     {
       "id": "t1-20",
@@ -588,7 +646,8 @@
       "de": "Zug",
       "ipa": "/treɪn/",
       "pos": "noun",
-      "sec": "A12"
+      "sec": "A12",
+      "page": "225"
     },
     {
       "id": "t1-21",
@@ -597,7 +656,8 @@
       "ipa": "/ˈɪntrəstɪŋ/",
       "pos": "adj",
       "opp": "boring",
-      "sec": "A12"
+      "sec": "A12",
+      "page": "225"
     },
     {
       "id": "t1-22",
@@ -607,7 +667,8 @@
       "pos": "adj",
       "ex": "It's so annoying that our bus is late.",
       "gap": "annoying",
-      "sec": "A12"
+      "sec": "A12",
+      "page": "225"
     },
     {
       "id": "t1-23",
@@ -615,8 +676,9 @@
       "de": "Schwierigkeiten, Ärger",
       "ipa": "/ˈtrʌb(ə)l/",
       "pos": "noun",
-      "note": "kein Plural",
-      "sec": "B1"
+      "sec": "B1",
+      "page": "225",
+      "note": "kein Plural"
     },
     {
       "id": "t1-24",
@@ -626,8 +688,9 @@
       "pos": "verb",
       "past": "made",
       "pp": "made",
-      "note": "simple past: made",
-      "sec": "B1"
+      "sec": "B1",
+      "page": "225",
+      "note": "simple past: made"
     },
     {
       "id": "t1-25",
@@ -637,7 +700,8 @@
       "pos": "other",
       "ex": "You may bring your tablet to school, but you must not use it during the lesson.",
       "gap": "may",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225"
     },
     {
       "id": "t1-26",
@@ -646,7 +710,8 @@
       "ipa": "/ˌswɪtʃ ˈɒf/",
       "pos": "verb",
       "past": "switched off",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225"
     },
     {
       "id": "t1-27",
@@ -656,7 +721,8 @@
       "pos": "other",
       "ex": "We can have pizza if you like.",
       "gap": "if",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225"
     },
     {
       "id": "t1-28",
@@ -666,7 +732,8 @@
       "pos": "noun",
       "ex": "Let's meet in our lunch break.",
       "gap": "break",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225"
     },
     {
       "id": "t1-29",
@@ -677,7 +744,8 @@
       "past": "recorded",
       "ex": "Jack wants to record his first song.",
       "gap": "record",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225"
     },
     {
       "id": "t1-30",
@@ -686,7 +754,8 @@
       "ipa": "/ʌnˈfrendli/",
       "pos": "adj",
       "opp": "friendly",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225"
     },
     {
       "id": "t1-31",
@@ -695,8 +764,9 @@
       "ipa": "/kɔːl/",
       "pos": "verb",
       "past": "called",
-      "note": "to call = to phone",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225",
+      "note": "to call = to phone"
     },
     {
       "id": "t1-32",
@@ -704,7 +774,8 @@
       "de": "krank",
       "ipa": "/ɪl/",
       "pos": "adj",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225"
     },
     {
       "id": "t1-33",
@@ -712,7 +783,8 @@
       "de": "Büro, Amt; hier: Sekretariat",
       "ipa": "/ˈɒfɪs/",
       "pos": "noun",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225"
     },
     {
       "id": "t1-34",
@@ -724,8 +796,9 @@
       "pp": "broken",
       "ex": "Jack broke the rules when he used his phone in class.",
       "gap": "broke",
-      "note": "simple past: broke /brəʊk/",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225",
+      "note": "simple past: broke /brəʊk/"
     },
     {
       "id": "t1-35",
@@ -735,7 +808,8 @@
       "pos": "adv",
       "ex": "Your teacher can take your phone away.",
       "gap": "away",
-      "sec": "B2"
+      "sec": "B2",
+      "page": "225"
     },
     {
       "id": "t1-36",
@@ -743,7 +817,8 @@
       "de": "Schulleiter/in, Direktor/in",
       "ipa": "/ˌhed ˈtiːtʃə/",
       "pos": "noun",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-37",
@@ -751,7 +826,8 @@
       "de": "Bestrafung, Strafe",
       "ipa": "/ˈpʌnɪʃmənt/",
       "pos": "noun",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-38",
@@ -761,7 +837,8 @@
       "pos": "noun",
       "ex": "Did you read my message?",
       "gap": "message",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-39",
@@ -770,8 +847,9 @@
       "ipa": "/ˈstjuːpɪd/",
       "pos": "adj",
       "opp": "great",
-      "note": "a great idea ↔ a stupid idea",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226",
+      "note": "a great idea ↔ a stupid idea"
     },
     {
       "id": "t1-40",
@@ -783,8 +861,9 @@
       "pp": "left",
       "ex": "You mustn't leave the classroom during the lesson.",
       "gap": "leave",
-      "note": "simple past: left",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226",
+      "note": "simple past: left"
     },
     {
       "id": "t1-41",
@@ -794,7 +873,8 @@
       "pos": "other",
       "ex": "Most people like chocolate.",
       "gap": "Most",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-42",
@@ -805,7 +885,8 @@
       "past": "asked",
       "ex": "Can I ask you for some help?",
       "gap": "ask",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-43",
@@ -815,7 +896,8 @@
       "pos": "adv",
       "ex": "Pia played around with her phone in class.",
       "gap": "around",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-44",
@@ -827,7 +909,8 @@
       "pp": "gone online",
       "ex": "I can use my phone to go online.",
       "gap": "go online",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-45",
@@ -835,7 +918,8 @@
       "de": "Aufnahme, Aufzeichnen",
       "ipa": "/rɪˈkɔːdɪŋ/",
       "pos": "noun",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-46",
@@ -845,7 +929,8 @@
       "pos": "adj",
       "ex": "When are we leaving? I'm bored.",
       "gap": "bored",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-47",
@@ -853,7 +938,8 @@
       "de": "Schuld, Fehler",
       "ipa": "/fɔːlt/",
       "pos": "noun",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-48",
@@ -865,7 +951,8 @@
       "ex": "Charlie and George agree that football is great.",
       "gap": "agree",
       "opp": "to disagree",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-49",
@@ -876,8 +963,9 @@
       "past": "prepared",
       "ex": "My dad is preparing dinner.",
       "gap": "preparing",
-      "note": "Frz. préparer",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226",
+      "note": "Frz. préparer"
     },
     {
       "id": "t1-50",
@@ -887,7 +975,8 @@
       "pos": "noun",
       "ex": "Mark is nervous about the presentation.",
       "gap": "presentation",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-51",
@@ -895,7 +984,8 @@
       "de": "Thema",
       "ipa": "/ˈtɒpɪk/",
       "pos": "noun",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-52",
@@ -905,7 +995,8 @@
       "pos": "noun",
       "ex": "Britain is England, Scotland and Wales.",
       "gap": "Britain",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-53",
@@ -913,7 +1004,8 @@
       "de": "noch eine(r, s), ein(e) andere(r)",
       "ipa": "/əˈnʌðə/",
       "pos": "other",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-54",
@@ -921,7 +1013,8 @@
       "de": "Arbeit",
       "ipa": "/wɜːk/",
       "pos": "noun",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-55",
@@ -930,7 +1023,8 @@
       "ipa": "/ədˈmɪt/",
       "pos": "verb",
       "past": "admitted",
-      "sec": "B4"
+      "sec": "B4",
+      "page": "226"
     },
     {
       "id": "t1-56",
@@ -941,7 +1035,8 @@
       "past": "punished",
       "ex": "The head teacher punished the pupils.",
       "gap": "punished",
-      "sec": "B6"
+      "sec": "B6",
+      "page": "226"
     },
     {
       "id": "t1-57",
@@ -950,8 +1045,9 @@
       "ipa": "/ˈhaɪˌlaɪt/",
       "pos": "verb",
       "past": "highlighted",
-      "opt": true,
-      "sec": "B6"
+      "sec": "B6",
+      "page": "226",
+      "opt": true
     },
     {
       "id": "t1-58",
@@ -959,7 +1055,8 @@
       "de": "Notiz, Mitteilung",
       "ipa": "/nəʊt/",
       "pos": "noun",
-      "sec": "B7"
+      "sec": "B7",
+      "page": "226"
     },
     {
       "id": "t1-59",
@@ -967,7 +1064,8 @@
       "de": "Du hast recht. / Ihr habt recht. / Sie haben recht.",
       "ipa": "/ˌjɔː ˈraɪt/",
       "pos": "other",
-      "sec": "B7"
+      "sec": "B7",
+      "page": "226"
     },
     {
       "id": "t1-60",
@@ -977,7 +1075,8 @@
       "pos": "verb",
       "past": "disagreed",
       "opp": "to agree",
-      "sec": "B7"
+      "sec": "B7",
+      "page": "226"
     },
     {
       "id": "t1-61",
@@ -988,7 +1087,8 @@
       "past": "presented",
       "ex": "Would you like to present your ideas in class?",
       "gap": "present",
-      "sec": "B8"
+      "sec": "B8",
+      "page": "226"
     },
     {
       "id": "t1-62",
@@ -998,98 +1098,111 @@
       "pos": "adj",
       "ex": "We forgot our tickets. – That's a serious problem.",
       "gap": "serious",
-      "sec": "B8"
+      "sec": "B8",
+      "page": "226"
     },
     {
       "id": "t1-p01",
       "en": "Hi …, / Hello …,",
       "de": "eine Postkarte beginnen",
       "pos": "phrase",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226"
     },
     {
       "id": "t1-p02",
       "en": "Hope to see you soon! Love, …",
       "de": "eine Postkarte beenden",
       "pos": "phrase",
-      "note": "Auch: Hope you're having fun, too! Bye, …",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226",
+      "note": "Auch: Hope you're having fun, too! Bye, …"
     },
     {
       "id": "t1-p03",
       "en": "The weather is fine.",
       "de": "über das Wetter berichten",
       "pos": "phrase",
-      "note": "Auch: It's a bit cloudy and not too warm. There's some sunshine, too.",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226",
+      "note": "Auch: It's a bit cloudy and not too warm. There's some sunshine, too."
     },
     {
       "id": "t1-p04",
       "en": "We're all having a great time.",
       "de": "von einem Urlaub berichten",
       "pos": "phrase",
-      "note": "Auch: We're staying at a nice bed and breakfast. It was fantastic! I loved it.",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226",
+      "note": "Auch: We're staying at a nice bed and breakfast. It was fantastic! I loved it."
     },
     {
       "id": "t1-p05",
       "en": "The rules are too strict because …",
       "de": "über Regeln sprechen",
       "pos": "phrase",
-      "note": "Auch: The rules are fair because … The rules are like our school rules.",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226",
+      "note": "Auch: The rules are fair because … The rules are like our school rules."
     },
     {
       "id": "t1-p06",
       "en": "That makes me really angry.",
       "de": "Verärgerung ausdrücken",
       "pos": "phrase",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226"
     },
     {
       "id": "t1-p07",
       "en": "I'm very disappointed.",
       "de": "Enttäuschung ausdrücken",
       "pos": "phrase",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226"
     },
     {
       "id": "t1-p08",
       "en": "I'm really sorry.",
       "de": "dich entschuldigen",
       "pos": "phrase",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226"
     },
     {
       "id": "t1-p09",
       "en": "It was my mistake.",
       "de": "einen Fehler eingestehen",
       "pos": "phrase",
-      "note": "Auch: It was my fault. It was a stupid thing to do.",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226",
+      "note": "Auch: It was my fault. It was a stupid thing to do."
     },
     {
       "id": "t1-p10",
       "en": "I think it's not fair that …",
       "de": "sagen, ob du etwas fair/unfair findest",
       "pos": "phrase",
-      "note": "Auch: I think it's fair that …",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226",
+      "note": "Auch: I think it's fair that …"
     },
     {
       "id": "t1-p11",
       "en": "That's true.",
       "de": "jemandem zustimmen",
       "pos": "phrase",
-      "note": "Auch: You're right. / Good idea. / OK.",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226",
+      "note": "Auch: You're right. / Good idea. / OK."
     },
     {
       "id": "t1-p12",
       "en": "I don't think so.",
       "de": "sagen, dass du anderer Meinung bist",
       "pos": "phrase",
-      "sec": "Say it"
+      "sec": "Say it",
+      "page": "226"
     }
   ]
 }

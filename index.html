@@ -208,6 +208,7 @@ p{margin:0}
 .chipbar::-webkit-scrollbar{display:none}
 .fchip{flex:none;border:1.5px solid var(--line-2);background:var(--surface);border-radius:999px;padding:8px 14px;font:600 14px var(--f-body);color:var(--ink-2);white-space:nowrap;min-height:40px}
 .fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.fchip .ms{width:16px;height:16px;vertical-align:-3px;margin-right:4px}
 .wlist{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
 .ghead{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface-2);border-top:1.5px solid var(--line);position:relative;cursor:pointer}
 .ghead:first-child{border-top:0}
@@ -1015,16 +1016,21 @@ function viewPractice() {
   const lens = [10, 15, 20].map(n => `<button data-act="len" data-n="${n}" aria-pressed="${p.len === n}">${n} Fragen</button>`).join('');
   const uchips = [`<button class="fchip" data-act="ufilter" data-u="" aria-pressed="${!S.unitFilter}">Alle Lektionen</button>`]
     .concat(S.units.map(u => `<button class="fchip" data-act="ufilter" data-u="${esc(u.id)}" aria-pressed="${S.unitFilter === u.id}">${esc(u.title)}</button>`)).join('');
+  const pages = Array.from(new Set(S.words.filter(w => !S.unitFilter || w.unit === S.unitFilter).map(w => String(w.page || '')).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'de', { numeric: true }));
+  // Seiten-Schalter: ein Tipp wählt alle Wörter der Seite aus oder ab (an = alle Wörter der Seite sind gewählt)
+  const pageWords = pg => S.words.filter(w => (!S.unitFilter || w.unit === S.unitFilter) && String(w.page || '') === pg);
+  const pchips = pages.length > 1 ? `<div class="row between" style="margin-top:2px"><span class="small muted">Seiten an- und abschalten</span></div><div class="chipbar" role="group" aria-label="Seiten">${pages.map(pg => { const pw = pageWords(pg), on = pw.length && pw.every(w => sel.has(w.id)); return `<button class="fchip" data-act="ptoggle" data-p="${esc(pg)}" aria-pressed="${!!on}">${on ? icon('check') : ''}S. ${esc(pg)}<span class="small" style="opacity:.7"> · ${pw.length}</span></button>` }).join('')}</div>` : '';
   const F = [['all', 'Alle'], ['new', 'Neu'], ['weak', 'Fehlerwörter'], ['due', 'Fällig'], ['verbs', 'Verben'], ['phrases', 'Redemittel']];
   const fchips = F.map(([k, t]) => `<button class="fchip" data-act="filter" data-f="${k}" aria-pressed="${S.filter === k}">${t}</button>`).join('');
   const vis = visibleWords();
   let groups = [], cur = null;
-  for (const w of vis) { const key = w.unit + '|' + (w.sec || ''); if (!cur || cur.key !== key) { cur = { key, unit: w.unitTitle, sec: w.sec, words: [] }; groups.push(cur) } cur.words.push(w) }
+  for (const w of vis) { const key = w.unit + '|' + (w.page || '') + '|' + (w.sec || ''); if (!cur || cur.key !== key) { cur = { key, unit: w.unitTitle, sec: w.sec, page: w.page || '', words: [] }; groups.push(cur) } cur.words.push(w) }
+  const showPage = pages.length > 1;
   const multi = !S.unitFilter && S.units.length > 1;
   let list = '';
   groups.forEach((g, gi) => {
     const all = g.words.every(w => sel.has(w.id));
-    list += `<label class="ghead"><input type="checkbox" data-ch="tg" data-g="${gi}" ${all ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="lbl">${multi ? esc(g.unit) + ' · ' : ''}${esc(secName(g.sec))}</span><span class="small muted">${g.words.length}</span></label>`;
+    list += `<label class="ghead"><input type="checkbox" data-ch="tg" data-g="${gi}" ${all ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="lbl">${multi ? esc(g.unit) + ' · ' : ''}${showPage && g.page ? 'S. ' + esc(g.page) + ' · ' : ''}${esc(secName(g.sec))}</span><span class="small muted">${g.words.length}</span></label>`;
     for (const w of g.words) list += `<label class="wrow"><input type="checkbox" data-ch="tw" data-id="${esc(w.id)}" ${sel.has(w.id) ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="wtxt"><b>${esc(w.en)}${w.opt ? '<span class="opt-mark" title="fakultativ">°</span>' : ''}</b><span>${esc(w.de)}</span></span>${pips(w.id)}</label>`;
   });
   S._groups = groups;
@@ -1044,6 +1050,7 @@ function viewPractice() {
   <div class="seg" role="group" aria-label="Rundenlänge">${lens}</div>
   <div class="sec-h"><h2>Welche Wörter?</h2><span class="small muted">${sel.size} gewählt</span></div>
   <div class="chipbar" role="group" aria-label="Lektion">${uchips}</div>
+  ${pchips}
   <div class="chipbar" role="group" aria-label="Filter">${fchips}</div>
   <div class="row between"><span class="small muted">${vis.length} Wörter angezeigt</span><span class="row" style="gap:4px"><button class="link" data-act="selvis" data-on="1">Alle wählen</button><button class="link" data-act="selvis" data-on="0">Keine</button></span></div>
   ${vis.length ? `<div class="wlist">${list}</div>` : `<div class="card empty"><h3>Keine Wörter für diesen Filter</h3><p>Probier einen anderen Filter.</p></div>`}
@@ -1104,7 +1111,7 @@ function viewAwards() {
     <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Voc a Bit in einem normalen Fenster.</div>'}</div></div>
     <div class="row" style="gap:8px;padding-bottom:12px;flex-wrap:wrap"><button class="btn btn-soft btn-sm" data-act="backup">${icon('download')}Sicherung speichern</button><label class="btn btn-line btn-sm" for="restoreFile" style="cursor:pointer">${icon('upload')}Sicherung laden</label><input id="restoreFile" class="sr" type="file" accept=".json,application/json" data-ch="restore-file"></div>
     ${restore}
-    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.8</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
+    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.9</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
   </section>`;
 }
 function viewQuiz() {
@@ -1244,7 +1251,7 @@ You are reading photos of the vocabulary pages ("Word lists") of a German school
 Each vocabulary row has three columns: (1) the English headword, usually followed by its IPA pronunciation in slashes and sometimes by "simple past: …"; (2) the German meaning; (3) optionally an English example sentence, an opposite written as "X ↔ Y", or a short note. Small boxed labels such as "A10" or "B4" mark textbook sections; a label applies to its row and all following rows until the next label.
 
 Reply with ONE JSON object and nothing else, shaped like:
-{"title":"Theme 2: …","pages":"S. 227–228","words":[{"en":"to choose","de":"(aus)wählen","ipa":"/tʃuːz/","pos":"verb","past":"chose","pp":"chosen","ex":"He is choosing a book to read.","gap":"choosing","opp":"","sec":"A10","note":""}]}
+{"title":"Theme 2: …","pages":"S. 227–228","words":[{"en":"to choose","de":"(aus)wählen","ipa":"/tʃuːz/","pos":"verb","past":"chose","pp":"chosen","ex":"He is choosing a book to read.","gap":"choosing","opp":"","sec":"A10","page":"227","note":""}]}
 
 Rules for the fields:
 - title: the theme or unit heading printed on the page, or "". pages: the page numbers as "S. x–y", or "".
@@ -1258,6 +1265,7 @@ Rules for the fields:
 - gap: the exact part of ex that is the headword (usually bold, possibly inflected, e.g. "chose"); "" if there is none.
 - opp: if column 3 shows "X ↔ Y" for this word, the other side; else "".
 - sec: the section label that applies, or "".
+- page: the page number printed at the bottom of the photo the entry comes from, as digits only, e.g. "227".
 - note: other short info from column 3 that is not an example sentence (e.g. "to call = to phone"), else "".
 If a "Say it in English" box is visible, add one entry per row with pos "phrase", de = the German situation on the left, en = the first English phrase on the right, note = "Auch: " plus the other English variants, sec "Say it".
 Ignore page numbers, headers, pictures, exercises and text from neighbouring pages at the image edges. Copy spelling exactly and do not invent entries you cannot read.`;
@@ -1270,7 +1278,7 @@ function normalizeImport(data) {
   for (const o of arr) {
     if (!o || typeof o !== 'object') continue;
     const s = k => typeof o[k] === 'string' ? o[k].trim() : '';
-    const w = { en: s('en'), de: s('de'), ipa: s('ipa'), pos: POS.indexOf(s('pos')) >= 0 ? s('pos') : 'other', past: s('past'), pp: s('pp'), ex: s('ex'), gap: s('gap'), opp: s('opp'), sec: s('sec'), note: s('note') };
+    const w = { en: s('en'), de: s('de'), ipa: s('ipa'), pos: POS.indexOf(s('pos')) >= 0 ? s('pos') : 'other', past: s('past'), pp: s('pp'), ex: s('ex'), gap: s('gap'), opp: s('opp'), sec: s('sec'), page: s('page'), note: s('note') };
     if (w.pos !== 'verb') { w.past = ''; w.pp = '' }
     if (w.gap && w.ex.indexOf(w.gap) < 0) w.gap = '';
     if (!w.en || !w.de || w.en.length > 90 || w.de.length > 140) continue;
@@ -1324,7 +1332,7 @@ function saveImport() {
   const words = chosen.map((w, i) => {
     const o = { id: id + '-' + String(i + 1).padStart(3, '0'), en: w.en.trim(), de: w.de.trim(), pos: w.pos };
     if (o.pos !== 'verb' && w.past && w.past.trim()) o.pos = 'verb';
-    for (const k of ['ipa', 'past', 'pp', 'ex', 'gap', 'opp', 'sec', 'note']) if (w[k] && String(w[k]).trim()) o[k] = String(w[k]).trim();
+    for (const k of ['ipa', 'past', 'pp', 'ex', 'gap', 'opp', 'sec', 'page', 'note']) if (w[k] && String(w[k]).trim()) o[k] = String(w[k]).trim();
     if (o.gap && (!o.ex || o.ex.indexOf(o.gap) < 0)) delete o.gap;
     if (o.pos !== 'verb') { delete o.past; delete o.pp }
     return o;
@@ -1394,6 +1402,7 @@ const ACT = {
   mode: t => { S.prog.mode = t.dataset.m; persist(); render() },
   len: t => { S.prog.len = +t.dataset.n; persist(); render() },
   ufilter: t => { S.unitFilter = t.dataset.u || null; render() },
+  ptoggle: t => { const pg = t.dataset.p, sel = new Set(selIds()); const pw = S.words.filter(w => (!S.unitFilter || w.unit === S.unitFilter) && String(w.page || '') === pg); const on = pw.length && pw.every(w => sel.has(w.id)); for (const w of pw) on ? sel.delete(w.id) : sel.add(w.id); S.prog.sel = Array.from(sel); persist(); render() },
   filter: t => { S.filter = t.dataset.f; render() },
   selvis: t => { const on = t.dataset.on === '1', sel = new Set(selIds()); for (const w of visibleWords()) on ? sel.add(w.id) : sel.delete(w.id); S.prog.sel = Array.from(sel); persist(); render() },
   start: () => { const ids = selIds(); if (!ids.length) { toast('Wähle zuerst Wörter aus.', 'info'); return } startRound(ids, S.prog.mode, S.prog.len) },
@@ -1519,7 +1528,7 @@ function listToUnit(L, data) {
     if (ids.has(id)) id = L.id + '-' + String(i + 1).padStart(3, '0') + 'x';
     ids.add(id);
     const w = { id, en: o.en.trim(), de: o.de.trim(), pos: POS.indexOf(o.pos) >= 0 ? o.pos : 'other' };
-    for (const k of ['ipa', 'past', 'pp', 'ex', 'gap', 'opp', 'sec', 'note']) if (typeof o[k] === 'string' && o[k].trim()) w[k] = o[k].trim();
+    for (const k of ['ipa', 'past', 'pp', 'ex', 'gap', 'opp', 'sec', 'page', 'note']) if (typeof o[k] === 'string' && o[k].trim()) w[k] = o[k].trim();
     if (o.opt) w.opt = true;
     if (w.pos !== 'verb' && w.past) w.pos = 'verb';
     if (w.gap && (!w.ex || w.ex.indexOf(w.gap) < 0)) delete w.gap;

@@ -25,7 +25,7 @@ INDEX = LISTS / 'index.json'
 
 POS = ('verb', 'noun', 'adj', 'adv', 'phrase', 'other')
 # Reihenfolge der Felder in der Ausgabedatei; alles andere wird verworfen.
-FIELDS = ('id', 'en', 'de', 'ipa', 'pos', 'past', 'pp', 'ex', 'gap', 'opp', 'sec', 'note', 'opt')
+FIELDS = ('id', 'en', 'de', 'ipa', 'pos', 'past', 'pp', 'ex', 'gap', 'opp', 'sec', 'page', 'note', 'opt')
 
 
 def warn(msg):

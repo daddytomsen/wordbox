@@ -30,8 +30,8 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 
 Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleichzeitig** hochzählen, sonst bekommt das iPhone die alte Fassung aus dem Cache:
 
-- `sw.js`: `const CACHE = 'wordbox-v1.8';`
-- `index.html`: Text `Version 1.8` in den Einstellungen (Erfolge → Einstellungen)
+- `sw.js`: `const CACHE = 'wordbox-v1.9';`
+- `index.html`: Text `Version 1.9` in den Einstellungen (Erfolge → Einstellungen)
 
 `tools/check.sh` bricht ab, wenn beide nicht übereinstimmen. Neue Listen in `lists/` brauchen keinen neuen Release.
 
@@ -66,10 +66,10 @@ Theme 1 ist zusätzlich als `SEED` eingebettet, damit die App beim allerersten S
 { "id": "t1-15", "en": "to choose", "de": "(aus)wählen", "pos": "verb",
   "ipa": "/tʃuːz/", "past": "chose", "pp": "chosen",
   "ex": "He is choosing a book to read.", "gap": "choosing",
-  "opp": "", "sec": "A", "note": "simple past: chose /tʃəʊz/", "opt": false }
+  "opp": "", "sec": "A", "page": "225", "note": "simple past: chose /tʃəʊz/", "opt": false }
 ```
 
-Pflicht: `en`, `de`. `pos` ∈ verb, noun, adj, adv, phrase, other. `gap` muss wörtlich in `ex` vorkommen. `opt: true` = fakultatives Wort (°).
+Pflicht: `en`, `de`. `pos` ∈ verb, noun, adj, adv, phrase, other. `gap` muss wörtlich in `ex` vorkommen. `opt: true` = fakultatives Wort (°). `page` = Buchseite als Ziffern (seit 1.9): In „Üben“ gibt es je Seite einen Schalter, der alle Wörter der Seite an- oder abwählt (`ptoggle`), sobald eine Lektion mehr als eine Seite hat; die Gruppenköpfe zeigen „S. 225 · Abschnitt B2“.
 
 **Wichtig:** Der Lernstand hängt an der Wort-`id`. Ids nie ändern. Fehlt die `id`, vergibt die App `<listen-id>-001`, `-002` … nach Position. Wer in eine solche Liste etwas einfügt, verschiebt alle Ids danach. Darum neue Listen immer mit festen Ids anlegen.
 
