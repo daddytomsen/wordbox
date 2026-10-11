@@ -27,8 +27,8 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 
 Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleichzeitig** hochzählen, sonst bekommt das iPhone die alte Fassung aus dem Cache:
 
-- `sw.js`: `const CACHE = 'wordbox-v1.1';`
-- `index.html`: Text `Version 1.1` in den Einstellungen (Erfolge → Einstellungen)
+- `sw.js`: `const CACHE = 'wordbox-v1.2';`
+- `index.html`: Text `Version 1.2` in den Einstellungen (Erfolge → Einstellungen)
 
 `tools/check.sh` bricht ab, wenn beide nicht übereinstimmen. Neue Listen in `lists/` brauchen keinen neuen Release.
 
