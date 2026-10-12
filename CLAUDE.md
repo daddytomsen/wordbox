@@ -30,8 +30,8 @@ Englisch-Vokabeltrainer für ein Kind in Klasse 6, als Web-App für das iPhone (
 
 Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleichzeitig** hochzählen, sonst bekommt das iPhone die alte Fassung aus dem Cache:
 
-- `sw.js`: `const CACHE = 'wordbox-v1.11';`
-- `index.html`: Text `Version 1.11` in den Einstellungen (Erfolge → Einstellungen)
+- `sw.js`: `const CACHE = 'wordbox-v1.12';`
+- `index.html`: Text `Version 1.12` in den Einstellungen (Erfolge → Einstellungen)
 
 `tools/check.sh` bricht ab, wenn beide nicht übereinstimmen. Neue Listen in `lists/` brauchen keinen neuen Release.
 
@@ -42,7 +42,7 @@ Bei jeder Änderung an `index.html` oder den Icons **beide Versionsnummern gleic
 Abschnitte im Skript (Kommentare `/* ---------- … ---------- */`):
 
 1. **helpers** – `esc()` für jedes HTML aus Daten, `icon(name, 'fill')` → `<svg><use href="#i-name(-f)">`.
-2. **words / mastery** – Karteikasten mit 5 Fächern. `INTERVAL = [0,0,1,3,7,14]` Tage. `grade(id, ok)`: richtig und fällig → ein Fach hoch (neu → Fach 2), in Fach 5 bleibt es und bekommt wieder 14 Tage Ruhe (seit 1.10); richtig, aber nicht fällig → nur Zähler `r`. Falsch → Fach 1 und sofort fällig. Gelernt = Fach ≥ 4. `isWeak` = schon mal falsch und Fach ≤ 2 (nur noch Filter-Chip „Fehlerwörter“). „Fällig“ (`dueWords`, Start-Karte, Eingestreute) = Wartezeit abgelaufen, Fach 1 zählt immer.
+2. **words / mastery** – Karteikasten mit 5 Fächern. Wartetage je Fach aus `TEMPOS[prog.tempo]` (seit 1.12): `fast = [0,0,1,1,1,7]` (Standard, wie der Karteikasten der Familie: jeden Tag ein Fach, neu → Fach 5 in vier Tagen) oder `long = [0,0,1,3,7,14]`. Umschalten unter Erfolge → Einstellungen → Lerntempo; `reschedule(p, von, nach)` verschiebt dabei alle Termine. **Gerechnet wird in Kalendertagen** (`dayStart`, `dayShift` mit `setDate`, damit die Zeitumstellung nichts verschiebt): Fällig ist ein Wort ab 0 Uhr des Zieltags. Bis 1.11 lief die Wartezeit stundengenau, abends Geübtes war am nächsten Morgen nicht fällig. `grade(id, ok)`: richtig und fällig → ein Fach hoch (neu → Fach 2), in Fach 5 bleibt es und bekommt wieder 14 Tage Ruhe (seit 1.10); richtig, aber nicht fällig → nur Zähler `r`. Falsch → Fach 1 und sofort fällig. Gelernt = Fach ≥ 4. `isWeak` = schon mal falsch und Fach ≤ 2 (nur noch Filter-Chip „Fehlerwörter“). „Fällig“ (`dueWords`, Start-Karte, Eingestreute) = Wartezeit abgelaufen, Fach 1 zählt immer.
 3. **levels & badges** – Level-Schwellen `lvlStart(n) = 50(n−1) + 25n(n−1)`, 15 Abzeichen in `BADGES`.
 4. **persistence** – `persist()` schreibt `S.prog`, `saveUnits()` schreibt `S.units`. `downloadFile()` für Sicherungen.
 5. **sound & speech** – iOS: Ton wird im ersten `touchend/click` freigeschaltet (`unlockAudio`), `navigator.audioSession.type = 'playback'`, damit der Stummschalter neuere iPhones nicht stummschaltet. `say()` muss **synchron** aus dem Tipp-Handler laufen, sonst blockiert iOS die Sprachausgabe. Kein `setTimeout` davor. Die Sprachausgabe ignoriert die Audio-Sitzung: Bei Stummschalter an bleibt sie auf iOS stumm, die Töne nicht. Entscheidung Thomas 11.10.: kein Umweg, nur Hinweis in den Einstellungen und beim Ton-Test (ein Versuch mit lautlosem `<audio>` in 1.6 hat nicht geholfen).
@@ -76,7 +76,7 @@ Pflicht: `en`, `de`. `pos` ∈ verb, noun, adj, adv, phrase, other. `gap` muss w
 **Liste** (`lists/<datei>.json`): `{ "title", "pages", "words": [...] }`
 **Index** (`lists/index.json`): `{ "lists": [ { "id", "title", "file", "rev" } ] }`
 
-**Lernstand** `localStorage['wordbox.prog.v1']`: `econ, name, goal, sound, speak, xp, days{YYYY-MM-DD: xp}, streak, best, last, rounds, perfect, typedRight, pastRight, extraRight, bestCombo, photos, goalDays, badges{id: datum}, w{wortId: {l: fach, r, x, s, d: fällig-ms}}, sel[ids], mode, len, onboarded, removedLists[], targets[] (siehe 13), updatedAt`.
+**Lernstand** `localStorage['wordbox.prog.v1']`: `econ, tempo, name, goal, sound, speak, xp, days{YYYY-MM-DD: xp}, streak, best, last, rounds, perfect, typedRight, pastRight, extraRight, bestCombo, photos, goalDays, badges{id: datum}, w{wortId: {l: fach, r, x, s, d: fällig-ms}}, sel[ids], mode, len, onboarded, removedLists[], targets[] (siehe 13), updatedAt`.
 **Lektionen** `localStorage['wordbox.units.v1']`: Array von Lektionen.
 **Sicherung**: `{ app: "wordbox", v: 1, exported, prog, units }`.
 
