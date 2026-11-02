@@ -784,15 +784,17 @@ function verbBase(en) { return String(en).replace(/\([^)]*\)/g, ' ').trim().repl
 const third = v => /(s|sh|ch|x|o|z)$/.test(v) ? v + 'es' : /[^aeiou]y$/.test(v) ? v.slice(0, -1) + 'ies' : v + 's';
 const ingF = v => /ie$/.test(v) ? v.slice(0, -2) + 'ying' : /[^e]e$/.test(v) ? v.slice(0, -1) + 'ing' : v + 'ing';
 const regPast = v => /e$/.test(v) ? v + 'd' : /[^aeiou]y$/.test(v) ? v.slice(0, -1) + 'ied' : v + 'ed';
+/* Simple past may hold alternatives like "was / were" or "burnt / burned" (spaced slash, as in typed answers). */
+function pastAlts(w) { return String(w.past || '').split(/\s\/\s/).map(x => x.trim()).filter(Boolean) }
 function pastWrong(w) {
-  const pw = String(w.past).split(' '), tail = pw.slice(1).join(' '), p0 = pw[0].toLowerCase();
+  const alts = pastAlts(w), pw = alts[0].split(' '), tail = pw.slice(1).join(' '), p0 = pw[0].toLowerCase();
   const v = verbBase(w.en), T = s => tail ? s + ' ' + tail : s;
   const reg = regPast(v), dbl = v + v.slice(-1) + 'ed';
   let first = [], rest;
   if (p0 === reg) rest = [v, third(v), ingF(v)];
   else if (p0 === dbl) { first = [reg]; rest = [v, third(v), ingF(v)] }
   else { first = [reg]; rest = [w.pp ? String(w.pp).split(' ')[0] : '', v, third(v), ingF(v)] }
-  const seen = new Set([nk(w.past)]), out = [];
+  const seen = new Set(alts.map(nk)), out = [];
   for (const c of first.concat(shuffle(rest))) { if (!c) continue; const s = T(c); if (seen.has(nk(s))) continue; seen.add(nk(s)); out.push(s) }
   return out.slice(0, 3);
 }
@@ -802,7 +804,7 @@ function makeQ(w, type, extra) {
   const q = { wid: w.id, type, extra: !!extra, unitTitle: w.unitTitle, say: w.en };
   if (type === 'de-en') { q.label = ph ? 'Was sagst du auf Englisch?' : 'Wie heißt das auf Englisch?'; q.prompt = w.de; q.answer = w.en; q.options = pickOpts(w.en, tiersOf(w, x => x.en)) }
   else if (type === 'en-de') { q.label = ph ? 'Was drückst du damit aus?' : 'Was bedeutet das?'; q.prompt = w.en; q.showSay = true; q.answer = w.de; q.options = pickOpts(w.de, tiersOf(w, x => x.de)) }
-  else if (type === 'past') { q.label = 'Wie heißt das Simple Past?'; q.prompt = w.en; q.showSay = true; q.hint = w.de; q.answer = w.past; q.say = w.past; q.options = shuffle([w.past].concat(pastWrong(w))) }
+  else if (type === 'past') { q.label = 'Wie heißt das Simple Past?'; q.prompt = w.en; q.showSay = true; q.hint = w.de; const pa = pastAlts(w)[0]; q.answer = pa; q.say = w.past; q.options = shuffle([pa].concat(pastWrong(w))) }
   else if (type === 'opp') { q.label = 'Was ist das Gegenteil?'; q.prompt = w.en; q.showSay = true; q.answer = w.opp; q.say = w.opp; q.options = pickOpts(w.opp, tiersOf(w, x => x.en)) }
   else if (type === 'gap') {
     const start = w.ex.indexOf(w.gap) === 0;
@@ -1027,7 +1029,7 @@ function targetCard(t) {
       ${S.delTarget === t.id ? `<span class="row" style="gap:6px"><span class="small">Wirklich?</span><button class="btn btn-line btn-sm" data-act="t-del-no">Nein</button><button class="btn btn-danger btn-sm" data-act="t-del-yes" data-t="${esc(t.id)}">Ja</button></span>` : `<button class="link" data-act="t-del-ask" data-t="${esc(t.id)}">Entfernen</button>`}</div>
   </section>`;
 }
-function secName(s) { if (!s) return 'Ohne Abschnitt'; if (s === 'Say it') return 'Say it in English'; if (s === 'A') return 'Teil A'; return 'Abschnitt ' + s }
+function secName(s) { if (!s) return 'Ohne Abschnitt'; if (s === 'Say it') return 'Say it in English'; if (s === 'A') return 'Teil A'; return /^[A-Z]\d+$/.test(s) ? 'Abschnitt ' + s : s }
 function visibleWords() {
   const f = S.filter, now = Date.now();
   return S.words.filter(w => (!S.unitFilter || w.unit === S.unitFilter) &&
@@ -1055,7 +1057,7 @@ function viewPractice() {
   let list = '';
   groups.forEach((g, gi) => {
     const all = g.words.every(w => sel.has(w.id));
-    list += `<label class="ghead"><input type="checkbox" data-ch="tg" data-g="${gi}" ${all ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="lbl">${multi ? esc(g.unit) + ' · ' : ''}${showPage && g.page ? 'S. ' + esc(g.page) + ' · ' : ''}${esc(secName(g.sec))}</span><span class="small muted">${g.words.length}</span></label>`;
+    list += `<label class="ghead"><input type="checkbox" data-ch="tg" data-g="${gi}" ${all ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="lbl">${esc([multi ? g.unit : '', showPage && g.page ? 'S. ' + g.page : '', g.sec ? secName(g.sec) : ''].filter(Boolean).join(' · ') || secName(''))}</span><span class="small muted">${g.words.length}</span></label>`;
     for (const w of g.words) list += `<label class="wrow"><input type="checkbox" data-ch="tw" data-id="${esc(w.id)}" ${sel.has(w.id) ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="wtxt"><b>${esc(w.en)}${w.opt ? '<span class="opt-mark" title="fakultativ">°</span>' : ''}</b><span>${esc(w.de)}</span></span>${pips(w.id)}</label>`;
   });
   S._groups = groups;
@@ -1141,7 +1143,7 @@ function viewAwards() {
     <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Voc a Bit in einem normalen Fenster.</div>'}</div></div>
     <div class="row" style="gap:8px;padding-bottom:12px;flex-wrap:wrap"><button class="btn btn-soft btn-sm" data-act="backup">${icon('download')}Sicherung speichern</button><label class="btn btn-line btn-sm" for="restoreFile" style="cursor:pointer">${icon('upload')}Sicherung laden</label><input id="restoreFile" class="sr" type="file" accept=".json,application/json" data-ch="restore-file"></div>
     ${restore}
-    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.12</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
+    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.13</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
   </section>`;
 }
 function viewQuiz() {
@@ -1592,7 +1594,7 @@ async function syncLists() {
     }
     if (!added.length && !updated.length) return;
     saveUnits();
-    if (added.length) { S.prog.sel = added[added.length - 1].words.map(w => w.id); persist() }
+    if (added.length) { S.prog.sel = added.reduce((a, u) => a.concat(u.words.map(w => w.id)), []); persist() }
     if (S.view !== 'quiz' && S.view !== 'import') render();
     if (added.length) toast(added.length === 1 ? 'Neue Lektion: ' + added[0].title : added.length + ' neue Lektionen geladen', 'library_add');
     else toast(updated.map(u => u.title).join(', ') + ' wurde aktualisiert.', 'autorenew');

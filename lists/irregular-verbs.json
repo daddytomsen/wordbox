@@ -1,0 +1,416 @@
+{
+  "title": "Irregular verbs",
+  "pages": "S. 292",
+  "words": [
+    {
+      "id": "irregular-verbs-001",
+      "en": "to be",
+      "de": "sein",
+      "ipa": "/biː/",
+      "pos": "verb",
+      "past": "was / were",
+      "page": "292",
+      "note": "simple past: was/were /wɒz/wɜː/"
+    },
+    {
+      "id": "irregular-verbs-002",
+      "en": "to become",
+      "de": "werden",
+      "ipa": "/bɪˈkʌm/",
+      "pos": "verb",
+      "past": "became",
+      "page": "292",
+      "note": "simple past: became /bɪˈkeɪm/"
+    },
+    {
+      "id": "irregular-verbs-003",
+      "en": "to begin",
+      "de": "anfangen",
+      "ipa": "/bɪˈgɪn/",
+      "pos": "verb",
+      "past": "began",
+      "page": "292",
+      "note": "simple past: began /bɪˈgæn/"
+    },
+    {
+      "id": "irregular-verbs-004",
+      "en": "to bet",
+      "de": "wetten",
+      "ipa": "/bet/",
+      "pos": "verb",
+      "past": "bet",
+      "page": "292",
+      "note": "simple past: bet /bet/"
+    },
+    {
+      "id": "irregular-verbs-005",
+      "en": "to bite",
+      "de": "beißen",
+      "ipa": "/baɪt/",
+      "pos": "verb",
+      "past": "bit",
+      "page": "292",
+      "note": "simple past: bit /bɪt/"
+    },
+    {
+      "id": "irregular-verbs-006",
+      "en": "to blow up",
+      "de": "in die Luft sprengen",
+      "ipa": "/ˌbləʊ ˈʌp/",
+      "pos": "verb",
+      "past": "blew up",
+      "page": "292",
+      "note": "simple past: blew up /ˌbluː ˈʌp/"
+    },
+    {
+      "id": "irregular-verbs-007",
+      "en": "to break",
+      "de": "(zer)brechen",
+      "ipa": "/breɪk/",
+      "pos": "verb",
+      "past": "broke",
+      "page": "292",
+      "note": "simple past: broke /brəʊk/"
+    },
+    {
+      "id": "irregular-verbs-008",
+      "en": "to bring",
+      "de": "(mit)bringen",
+      "ipa": "/brɪŋ/",
+      "pos": "verb",
+      "past": "brought",
+      "page": "292",
+      "note": "simple past: brought /brɔːt/"
+    },
+    {
+      "id": "irregular-verbs-009",
+      "en": "to build",
+      "de": "bauen",
+      "ipa": "/bɪld/",
+      "pos": "verb",
+      "past": "built",
+      "page": "292",
+      "note": "simple past: built /bɪlt/"
+    },
+    {
+      "id": "irregular-verbs-010",
+      "en": "to burn",
+      "de": "(ab)brennen",
+      "ipa": "/bɜːn/",
+      "pos": "verb",
+      "past": "burnt / burned",
+      "page": "292",
+      "note": "simple past: burnt/burned /bɜːnt/bɜːnd/"
+    },
+    {
+      "id": "irregular-verbs-011",
+      "en": "to buy",
+      "de": "kaufen",
+      "ipa": "/baɪ/",
+      "pos": "verb",
+      "past": "bought",
+      "page": "292",
+      "note": "simple past: bought /bɔːt/"
+    },
+    {
+      "id": "irregular-verbs-012",
+      "en": "to catch",
+      "de": "(auf)fangen",
+      "ipa": "/kætʃ/",
+      "pos": "verb",
+      "past": "caught",
+      "page": "292",
+      "note": "simple past: caught /kɔːt/"
+    },
+    {
+      "id": "irregular-verbs-013",
+      "en": "to choose",
+      "de": "(aus)wählen",
+      "ipa": "/tʃuːz/",
+      "pos": "verb",
+      "past": "chose",
+      "page": "292",
+      "note": "simple past: chose /tʃəʊz/"
+    },
+    {
+      "id": "irregular-verbs-014",
+      "en": "to come",
+      "de": "kommen",
+      "ipa": "/kʌm/",
+      "pos": "verb",
+      "past": "came",
+      "page": "292",
+      "note": "simple past: came /keɪm/"
+    },
+    {
+      "id": "irregular-verbs-015",
+      "en": "to cost",
+      "de": "kosten",
+      "ipa": "/kɒst/",
+      "pos": "verb",
+      "past": "cost",
+      "page": "292",
+      "note": "simple past: cost /kɒst/"
+    },
+    {
+      "id": "irregular-verbs-016",
+      "en": "to creep",
+      "de": "schleichen",
+      "ipa": "/kriːp/",
+      "pos": "verb",
+      "past": "crept",
+      "page": "292",
+      "note": "simple past: crept /krept/"
+    },
+    {
+      "id": "irregular-verbs-017",
+      "en": "to cut",
+      "de": "schneiden",
+      "ipa": "/kʌt/",
+      "pos": "verb",
+      "past": "cut",
+      "page": "292",
+      "note": "simple past: cut /kʌt/"
+    },
+    {
+      "id": "irregular-verbs-018",
+      "en": "to do",
+      "de": "machen; tun",
+      "ipa": "/duː/",
+      "pos": "verb",
+      "past": "did",
+      "page": "292",
+      "note": "simple past: did /dɪd/"
+    },
+    {
+      "id": "irregular-verbs-019",
+      "en": "to draw",
+      "de": "zeichnen",
+      "ipa": "/drɔː/",
+      "pos": "verb",
+      "past": "drew",
+      "page": "292",
+      "note": "simple past: drew /druː/"
+    },
+    {
+      "id": "irregular-verbs-020",
+      "en": "to drink",
+      "de": "trinken",
+      "ipa": "/drɪŋk/",
+      "pos": "verb",
+      "past": "drank",
+      "page": "292",
+      "note": "simple past: drank /dræŋk/"
+    },
+    {
+      "id": "irregular-verbs-021",
+      "en": "to drive",
+      "de": "fahren",
+      "ipa": "/draɪv/",
+      "pos": "verb",
+      "past": "drove",
+      "page": "292",
+      "note": "simple past: drove /drəʊv/"
+    },
+    {
+      "id": "irregular-verbs-022",
+      "en": "to eat",
+      "de": "essen; fressen",
+      "ipa": "/iːt/",
+      "pos": "verb",
+      "past": "ate",
+      "page": "292",
+      "note": "simple past: ate /et/"
+    },
+    {
+      "id": "irregular-verbs-023",
+      "en": "to fall",
+      "de": "(um)fallen",
+      "ipa": "/fɔːl/",
+      "pos": "verb",
+      "past": "fell",
+      "page": "292",
+      "note": "simple past: fell /fel/"
+    },
+    {
+      "id": "irregular-verbs-024",
+      "en": "to feed",
+      "de": "(zu) essen geben; füttern",
+      "ipa": "/fiːd/",
+      "pos": "verb",
+      "past": "fed",
+      "page": "292",
+      "note": "simple past: fed /fed/"
+    },
+    {
+      "id": "irregular-verbs-025",
+      "en": "to feel",
+      "de": "(sich) fühlen",
+      "ipa": "/fiːl/",
+      "pos": "verb",
+      "past": "felt",
+      "page": "292",
+      "note": "simple past: felt /felt/"
+    },
+    {
+      "id": "irregular-verbs-026",
+      "en": "to fight",
+      "de": "(be)kämpfen",
+      "ipa": "/faɪt/",
+      "pos": "verb",
+      "past": "fought",
+      "page": "292",
+      "note": "simple past: fought /fɔːt/"
+    },
+    {
+      "id": "irregular-verbs-027",
+      "en": "to find",
+      "de": "finden",
+      "ipa": "/faɪnd/",
+      "pos": "verb",
+      "past": "found",
+      "page": "292",
+      "note": "simple past: found /faʊnd/"
+    },
+    {
+      "id": "irregular-verbs-028",
+      "en": "to fly",
+      "de": "fliegen",
+      "ipa": "/flaɪ/",
+      "pos": "verb",
+      "past": "flew",
+      "page": "292",
+      "note": "simple past: flew /fluː/"
+    },
+    {
+      "id": "irregular-verbs-029",
+      "en": "to forget",
+      "de": "vergessen",
+      "ipa": "/fəˈget/",
+      "pos": "verb",
+      "past": "forgot",
+      "page": "292",
+      "note": "simple past: forgot /fəˈgɒt/"
+    },
+    {
+      "id": "irregular-verbs-030",
+      "en": "to get",
+      "de": "bekommen",
+      "ipa": "/get/",
+      "pos": "verb",
+      "past": "got",
+      "page": "292",
+      "note": "simple past: got /gɒt/"
+    },
+    {
+      "id": "irregular-verbs-031",
+      "en": "to give",
+      "de": "geben",
+      "ipa": "/gɪv/",
+      "pos": "verb",
+      "past": "gave",
+      "page": "292",
+      "note": "simple past: gave /geɪv/"
+    },
+    {
+      "id": "irregular-verbs-032",
+      "en": "to go",
+      "de": "fahren; gehen",
+      "ipa": "/gəʊ/",
+      "pos": "verb",
+      "past": "went",
+      "page": "292",
+      "note": "simple past: went /went/"
+    },
+    {
+      "id": "irregular-verbs-033",
+      "en": "to hang up",
+      "de": "aufhängen",
+      "ipa": "/ˌhæŋ ˈʌp/",
+      "pos": "verb",
+      "past": "hung up",
+      "page": "292",
+      "note": "simple past: hung up /ˌhʌŋ ˈʌp/"
+    },
+    {
+      "id": "irregular-verbs-034",
+      "en": "to have",
+      "de": "haben",
+      "ipa": "/hæv/",
+      "pos": "verb",
+      "past": "had",
+      "page": "292",
+      "note": "simple past: had /hæd/"
+    },
+    {
+      "id": "irregular-verbs-035",
+      "en": "to hear",
+      "de": "hören",
+      "ipa": "/hɪə/",
+      "pos": "verb",
+      "past": "heard",
+      "page": "292",
+      "note": "simple past: heard /hɜːd/"
+    },
+    {
+      "id": "irregular-verbs-036",
+      "en": "to hide",
+      "de": "(sich) verstecken",
+      "ipa": "/haɪd/",
+      "pos": "verb",
+      "past": "hid",
+      "page": "292",
+      "note": "simple past: hid /hɪd/"
+    },
+    {
+      "id": "irregular-verbs-037",
+      "en": "to hold up",
+      "de": "hochhalten",
+      "ipa": "/ˌhəʊld ˈʌp/",
+      "pos": "verb",
+      "past": "held up",
+      "page": "292",
+      "note": "simple past: held up /ˌheld ˈʌp/"
+    },
+    {
+      "id": "irregular-verbs-038",
+      "en": "to hold",
+      "de": "halten",
+      "ipa": "/həʊld/",
+      "pos": "verb",
+      "past": "held",
+      "page": "292",
+      "note": "simple past: held /held/"
+    },
+    {
+      "id": "irregular-verbs-039",
+      "en": "to hurt",
+      "de": "wehtun; verletzen",
+      "ipa": "/hɜːt/",
+      "pos": "verb",
+      "past": "hurt",
+      "page": "292",
+      "note": "simple past: hurt /hɜːt/"
+    },
+    {
+      "id": "irregular-verbs-040",
+      "en": "to keep",
+      "de": "(bei)behalten",
+      "ipa": "/kiːp/",
+      "pos": "verb",
+      "past": "kept",
+      "page": "292",
+      "note": "simple past: kept /kept/"
+    },
+    {
+      "id": "irregular-verbs-041",
+      "en": "to know",
+      "de": "kennen; wissen",
+      "ipa": "/nəʊ/",
+      "pos": "verb",
+      "past": "knew",
+      "page": "292",
+      "note": "simple past: knew /njuː/"
+    }
+  ]
+}

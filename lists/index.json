@@ -5,6 +5,18 @@
       "title": "Theme 1: Back to Camden Town",
       "file": "theme1-camden-town.json",
       "rev": 4
+    },
+    {
+      "id": "theme2-celebrations",
+      "title": "Theme 2: Celebrations",
+      "file": "theme2-celebrations.json",
+      "rev": 1
+    },
+    {
+      "id": "irregular-verbs",
+      "title": "Irregular verbs",
+      "file": "irregular-verbs.json",
+      "rev": 1
     }
   ]
 }
