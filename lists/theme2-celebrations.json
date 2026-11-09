@@ -1,6 +1,6 @@
 {
   "title": "Theme 2: Celebrations",
-  "pages": "S. 227",
+  "pages": "S. 227–228",
   "words": [
     {
       "id": "theme2-celebrations-001",
@@ -10,7 +10,6 @@
       "pos": "noun",
       "ex": "Everything is ready for the big celebration.",
       "gap": "celebration",
-      "sec": "A",
       "page": "227",
       "note": "p. 30"
     },
@@ -22,7 +21,6 @@
       "pos": "noun",
       "ex": "My favourite festival is Easter.",
       "gap": "festival",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -34,7 +32,6 @@
       "past": "guessed",
       "ex": "Guess what happened at my birthday party!",
       "gap": "Guess",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -45,7 +42,6 @@
       "pos": "noun",
       "ex": "Lara spends Christmas with her family.",
       "gap": "Christmas",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -56,7 +52,6 @@
       "pos": "noun",
       "ex": "That is my favourite part of Easter!",
       "gap": "Easter",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -65,7 +60,6 @@
       "de": "Silvester",
       "ipa": "/ˌnjuː jɪəz ˈiːv/",
       "pos": "noun",
-      "sec": "A",
       "page": "227",
       "note": "New Year's Eve = 31st December"
     },
@@ -77,7 +71,6 @@
       "pos": "noun",
       "ex": "Valentine's Day is on 14th February.",
       "gap": "Valentine's Day",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -86,7 +79,6 @@
       "de": "Kostüm",
       "ipa": "/ˈkɒstjuːm/",
       "pos": "noun",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -97,7 +89,6 @@
       "pos": "noun",
       "ex": "I feel sick. I ate too many chocolate eggs.",
       "gap": "eggs",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -106,7 +97,6 @@
       "de": "Geist, Gespenst",
       "ipa": "/gəʊst/",
       "pos": "noun",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -115,7 +105,6 @@
       "de": "Maske, Fassade",
       "ipa": "/mɑːsk/",
       "pos": "noun",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -126,7 +115,6 @@
       "pos": "noun",
       "ex": "I have to buy Kim a present for her birthday.",
       "gap": "present",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -137,7 +125,6 @@
       "pos": "noun",
       "ex": "Yesterday we bought a Christmas tree.",
       "gap": "tree",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -146,7 +133,6 @@
       "de": "Hexe",
       "ipa": "/wɪtʃ/",
       "pos": "noun",
-      "sec": "A",
       "page": "227"
     },
     {
@@ -155,7 +141,7 @@
       "de": "Videoblog (Blog in Form von Videos)",
       "ipa": "/vlɒg, ˈvɪdiəʊ blɒg/",
       "pos": "noun",
-      "sec": "A2",
+      "sec": "2",
       "page": "227"
     },
     {
@@ -167,7 +153,7 @@
       "past": "took notes",
       "ex": "He is taking notes.",
       "gap": "taking notes",
-      "sec": "A2",
+      "sec": "2",
       "page": "227"
     },
     {
@@ -176,7 +162,7 @@
       "de": "Strumpf",
       "ipa": "/ˈstɒkɪŋ/",
       "pos": "noun",
-      "sec": "A2",
+      "sec": "2",
       "page": "227"
     },
     {
@@ -187,7 +173,7 @@
       "pos": "other",
       "ex": "Where would you like to go on holiday?",
       "gap": "Where",
-      "sec": "A2",
+      "sec": "2",
       "page": "227"
     },
     {
@@ -198,7 +184,7 @@
       "pos": "adv",
       "ex": "It's cold. Let's go inside!",
       "gap": "inside",
-      "sec": "A2",
+      "sec": "2",
       "page": "227"
     },
     {
@@ -207,7 +193,7 @@
       "de": "Knallbonbon",
       "ipa": "/ˌkrɪsməs ˈkrækə/",
       "pos": "noun",
-      "sec": "A2",
+      "sec": "2",
       "page": "227"
     },
     {
@@ -216,7 +202,7 @@
       "de": "hinduistisches Lichterfest",
       "ipa": "/dɪˈwɑːli/",
       "pos": "noun",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -227,7 +213,7 @@
       "pos": "noun",
       "ex": "Diwali is the festival of lights.",
       "gap": "lights",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -236,7 +222,7 @@
       "de": "Hindu, hinduistisch, Hindu-",
       "ipa": "/ˈhɪnduː/",
       "pos": "other",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -245,7 +231,7 @@
       "de": "Göttin",
       "ipa": "/ˈgɒdes/",
       "pos": "noun",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -254,7 +240,7 @@
       "de": "Glück",
       "ipa": "/ˌgʊd ˈlʌk/",
       "pos": "noun",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -263,7 +249,7 @@
       "de": "Reichtum, Vermögen, Fülle",
       "ipa": "/welθ/",
       "pos": "noun",
-      "sec": "A3",
+      "sec": "3",
       "page": "227",
       "note": "no pl"
     },
@@ -274,7 +260,7 @@
       "ipa": "/laɪt/",
       "pos": "verb",
       "past": "lit",
-      "sec": "A3",
+      "sec": "3",
       "page": "227",
       "note": "simple past: lit /lɪt/"
     },
@@ -286,7 +272,8 @@
       "pos": "other",
       "ex": "Let's start! There's a lot of work to do.",
       "gap": "a lot of",
-      "sec": "A3",
+      "opp": "a few",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -297,7 +284,7 @@
       "pos": "noun",
       "ex": "We light the candles on the birthday cake.",
       "gap": "candles",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -308,7 +295,7 @@
       "pos": "adv",
       "ex": "I have a cat and also a dog.",
       "gap": "also",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -319,7 +306,7 @@
       "pos": "other",
       "ex": "My brother and I always help each other with our homework.",
       "gap": "each other",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -330,7 +317,7 @@
       "pos": "noun",
       "ex": "Sweets can be bad for your teeth.",
       "gap": "Sweets",
-      "sec": "A3",
+      "sec": "3",
       "page": "227",
       "note": "pl"
     },
@@ -342,7 +329,7 @@
       "pos": "noun",
       "ex": "We celebrate Guy Fawkes' Night with fireworks.",
       "gap": "fireworks",
-      "sec": "A3",
+      "sec": "3",
       "page": "227",
       "note": "pl"
     },
@@ -352,7 +339,7 @@
       "de": "Chanukka (jüdisches Fest)",
       "ipa": "/ˈhɑːnəkə/",
       "pos": "noun",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -363,7 +350,7 @@
       "pos": "other",
       "ex": "I think ice cream is better than chocolate.",
       "gap": "than",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -374,7 +361,7 @@
       "pos": "adv",
       "ex": "A week ago I went to visit my grandma.",
       "gap": "ago",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -383,7 +370,7 @@
       "de": "Grieche/Griechin, griechisch",
       "ipa": "/griːk/",
       "pos": "other",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -393,7 +380,7 @@
       "ipa": "/ˈɒkjʊpaɪ/",
       "pos": "verb",
       "past": "occupied",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -402,7 +389,7 @@
       "de": "jüdisch",
       "ipa": "/ˈdʒuːɪʃ/",
       "pos": "adj",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -413,7 +400,7 @@
       "pos": "noun",
       "ex": "The Jewish people fought for their land.",
       "gap": "people",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
     },
     {
@@ -423,7 +410,7 @@
       "ipa": "/faɪt/",
       "pos": "verb",
       "past": "fought",
-      "sec": "A3",
+      "sec": "3",
       "page": "227",
       "note": "simple past: fought /fɔːt/"
     },
@@ -436,8 +423,406 @@
       "past": "thanked",
       "ex": "Don't forget to thank your grandparents for your present.",
       "gap": "thank",
-      "sec": "A3",
+      "sec": "3",
       "page": "227"
+    },
+    {
+      "id": "theme2-celebrations-043",
+      "en": "God",
+      "de": "Gott",
+      "ipa": "/gɒd/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-044",
+      "en": "temple",
+      "de": "Tempel",
+      "ipa": "/ˈtemp(ə)l/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-045",
+      "en": "to pray",
+      "de": "beten",
+      "ipa": "/preɪ/",
+      "pos": "verb",
+      "past": "prayed",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-046",
+      "en": "oil",
+      "de": "(Erd)öl",
+      "ipa": "/ɔɪl/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-047",
+      "en": "to burn",
+      "de": "(ab)brennen, verbrennen",
+      "ipa": "/bɜːn/",
+      "pos": "verb",
+      "past": "burnt / burned",
+      "sec": "3",
+      "page": "228",
+      "note": "simple past: burnt/burned /bɜːnt/bɜːnd/"
+    },
+    {
+      "id": "theme2-celebrations-048",
+      "en": "miracle",
+      "de": "Wunder",
+      "ipa": "/ˈmɪrək(ə)l/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-049",
+      "en": "every",
+      "de": "jede(r, s)",
+      "ipa": "/ˈevri/",
+      "pos": "other",
+      "ex": "Almost every child likes chocolate.",
+      "gap": "every",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-050",
+      "en": "holder",
+      "de": "Halter",
+      "ipa": "/ˈhəʊldə/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-051",
+      "en": "middle",
+      "de": "Mitte",
+      "ipa": "/ˈmɪd(ə)l/",
+      "pos": "noun",
+      "ex": "Don't stop in the middle of the road.",
+      "gap": "middle",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-052",
+      "en": "bonfire",
+      "de": "Freudenfeuer, Scheiterhaufen",
+      "ipa": "/ˈbɒnˌfaɪə/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-053",
+      "en": "to blow up",
+      "de": "aufblasen, hier: in die Luft sprengen",
+      "ipa": "/ˌbləʊ ˈʌp/",
+      "pos": "verb",
+      "past": "blew up",
+      "sec": "3",
+      "page": "228",
+      "note": "simple past: blew up /ˌbluː ˈʌp/",
+      "opt": true
+    },
+    {
+      "id": "theme2-celebrations-054",
+      "en": "Houses of Parliament",
+      "de": "das Parlament (von Großbritannien)",
+      "ipa": "/ˌhaʊzɪz əv ˈpɑː(r)ləmənt/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-055",
+      "en": "to kill",
+      "de": "töten, umbringen",
+      "ipa": "/kɪl/",
+      "pos": "verb",
+      "past": "killed",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-056",
+      "en": "king",
+      "de": "König",
+      "ipa": "/kɪŋ/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-057",
+      "en": "safe",
+      "de": "sicher, hier: in Sicherheit",
+      "ipa": "/seɪf/",
+      "pos": "adj",
+      "ex": "When people found out that the king was safe, they lit bonfires to celebrate.",
+      "gap": "safe",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-058",
+      "en": "tradition",
+      "de": "Tradition, Brauch",
+      "ipa": "/trəˈdɪʃ(ə)n/",
+      "pos": "noun",
+      "ex": "It is a tradition to remember this event on 5th November.",
+      "gap": "tradition",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-059",
+      "en": "event",
+      "de": "Ereignis, Veranstaltung, Event",
+      "ipa": "/ɪˈvent/",
+      "pos": "noun",
+      "ex": "It is a tradition to remember this event on 5th November.",
+      "gap": "event",
+      "sec": "3",
+      "page": "228",
+      "note": "Frz. évènement"
+    },
+    {
+      "id": "theme2-celebrations-060",
+      "en": "dummy",
+      "de": "Puppe",
+      "ipa": "/ˈdʌmi/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228",
+      "opt": true
+    },
+    {
+      "id": "theme2-celebrations-061",
+      "en": "penny",
+      "de": "Penny (Untereinheit des brit. Pfunds)",
+      "ipa": "/ˈpeni, pens, ˈpeniz/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228",
+      "note": "pl pence or pennies"
+    },
+    {
+      "id": "theme2-celebrations-062",
+      "en": "the Guy",
+      "de": "Puppe, die Guy Fawkes verkörpert",
+      "ipa": "/ðə ˈgaɪ/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228",
+      "opt": true
+    },
+    {
+      "id": "theme2-celebrations-063",
+      "en": "baked potato",
+      "de": "Ofenkartoffel",
+      "ipa": "/ˌbeɪkt pəˈteɪtəʊ/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-064",
+      "en": "toffee apple",
+      "de": "kandierter Apfel",
+      "ipa": "/ˈtɒfi ˌæp(ə)l/",
+      "pos": "noun",
+      "sec": "3",
+      "page": "228",
+      "opt": true
+    },
+    {
+      "id": "theme2-celebrations-065",
+      "en": "to copy",
+      "de": "abschreiben, kopieren",
+      "ipa": "/ˈkɒpi/",
+      "pos": "verb",
+      "past": "copied",
+      "ex": "No, you can't copy my homework.",
+      "gap": "copy",
+      "sec": "4",
+      "page": "228",
+      "note": "p. 31"
+    },
+    {
+      "id": "theme2-celebrations-066",
+      "en": "to complete",
+      "de": "vervollständigen, ausfüllen",
+      "ipa": "/kəmˈpliːt/",
+      "pos": "verb",
+      "past": "completed",
+      "ex": "Please complete the grid.",
+      "gap": "complete",
+      "sec": "4",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-067",
+      "en": "would like to",
+      "de": "würde(n/st/t) gern",
+      "ipa": "/wʊd ˈlaɪk tə/",
+      "pos": "other",
+      "ex": "I would like to go swimming this weekend.",
+      "gap": "would like to",
+      "sec": "4",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-068",
+      "en": "to design",
+      "de": "entwerfen, gestalten",
+      "ipa": "/dɪˈzaɪn/",
+      "pos": "verb",
+      "past": "designed",
+      "sec": "6",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-069",
+      "en": "to note down",
+      "de": "(sich) notieren",
+      "ipa": "/ˌnəʊt ˈdaʊn/",
+      "pos": "verb",
+      "past": "noted down",
+      "sec": "6",
+      "page": "228",
+      "note": "to note down = to write down"
+    },
+    {
+      "id": "theme2-celebrations-070",
+      "en": "to exchange",
+      "de": "austauschen, umtauschen, wechseln",
+      "ipa": "/ɪksˈtʃeɪndʒ/",
+      "pos": "verb",
+      "past": "exchanged",
+      "sec": "6",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-071",
+      "en": "to get ready (for sth)",
+      "de": "sich (für etw) fertig machen",
+      "ipa": "/ˌget ˈredi fɔː/",
+      "pos": "verb",
+      "past": "got ready",
+      "ex": "It's 8 o'clock. Let's get ready for the party!",
+      "gap": "get ready for",
+      "sec": "A1",
+      "page": "228",
+      "note": "p. 32"
+    },
+    {
+      "id": "theme2-celebrations-072",
+      "en": "ready",
+      "de": "fertig, bereit",
+      "ipa": "/ˈredi/",
+      "pos": "adj",
+      "ex": "Are you ready? Let's go!",
+      "gap": "ready",
+      "sec": "A1",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-073",
+      "en": "to invite",
+      "de": "einladen",
+      "ipa": "/ɪnˈvaɪt/",
+      "pos": "verb",
+      "past": "invited",
+      "ex": "Helen invited all her friends to the party.",
+      "gap": "invited",
+      "sec": "A2",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-074",
+      "en": "Me too!",
+      "de": "Ich (mir/mich) auch!",
+      "ipa": "/miː ˈtuː/",
+      "pos": "phrase",
+      "sec": "A2",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-075",
+      "en": "to sound",
+      "de": "klingen",
+      "ipa": "/saʊnd/",
+      "pos": "verb",
+      "past": "sounded",
+      "ex": "Let's have a party. – Sounds great!",
+      "gap": "Sounds",
+      "sec": "A2",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-076",
+      "en": "anyone",
+      "de": "(irgend)jemand",
+      "ipa": "/ˈeniˌwʌn/",
+      "pos": "other",
+      "ex": "Is there anyone at home?",
+      "gap": "anyone",
+      "sec": "A2",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-077",
+      "en": "might",
+      "de": "könnte, vielleicht",
+      "ipa": "/maɪt/",
+      "pos": "other",
+      "sec": "A2",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-078",
+      "en": "to seem",
+      "de": "scheinen",
+      "ipa": "/siːm/",
+      "pos": "verb",
+      "past": "seemed",
+      "ex": "He seems happy.",
+      "gap": "seems",
+      "sec": "A2",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-079",
+      "en": "to blush",
+      "de": "erröten, rot werden",
+      "ipa": "/blʌʃ/",
+      "pos": "verb",
+      "past": "blushed",
+      "sec": "A2",
+      "page": "228"
+    },
+    {
+      "id": "theme2-celebrations-080",
+      "en": "to promise",
+      "de": "versprechen",
+      "ipa": "/ˈprɒmɪs/",
+      "pos": "verb",
+      "past": "promised",
+      "ex": "I promise not to tell anyone.",
+      "gap": "promise",
+      "sec": "A2",
+      "page": "228"
     }
   ]
 }

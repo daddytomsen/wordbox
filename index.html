@@ -1095,7 +1095,7 @@ function targetCard(t) {
       ${S.delTarget === t.id ? `<span class="row" style="gap:6px"><span class="small">Wirklich?</span><button class="btn btn-line btn-sm" data-act="t-del-no">Nein</button><button class="btn btn-danger btn-sm" data-act="t-del-yes" data-t="${esc(t.id)}">Ja</button></span>` : `<button class="link" data-act="t-del-ask" data-t="${esc(t.id)}">Entfernen</button>`}</div>
   </section>`;
 }
-function secName(s) { if (!s) return 'Ohne Abschnitt'; if (s === 'Say it') return 'Say it in English'; if (s === 'A') return 'Teil A'; return /^[A-Z]\d+$/.test(s) ? 'Abschnitt ' + s : s }
+function secName(s) { if (!s) return 'Ohne Abschnitt'; if (s === 'Say it') return 'Say it in English'; if (s === 'A') return 'Teil A'; return /^[A-Z]?\d+$/.test(s) ? 'Abschnitt ' + s : s }
 function visibleWords() {
   const f = S.filter, now = Date.now();
   return S.words.filter(w => (!S.unitFilter || w.unit === S.unitFilter) &&
@@ -1213,7 +1213,7 @@ function viewAwards() {
     <div class="setting"><div class="grow"><b>Sicherung</b><div class="small muted">Dein Fortschritt liegt nur in diesem Browser. Speichere ab und zu eine Sicherung, zum Beispiel bevor du den Verlauf löschst oder das Gerät wechselst.</div>${S.storageOk ? '' : '<div class="err" style="margin-top:8px">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Voc a Bit in einem normalen Fenster.</div>'}</div></div>
     <div class="row" style="gap:8px;padding-bottom:12px;flex-wrap:wrap"><button class="btn btn-soft btn-sm" data-act="backup">${icon('download')}Sicherung speichern</button><label class="btn btn-line btn-sm" for="restoreFile" style="cursor:pointer">${icon('upload')}Sicherung laden</label><input id="restoreFile" class="sr" type="file" accept=".json,application/json" data-ch="restore-file"></div>
     ${restore}
-    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.14</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
+    <div class="setting">${S.resetAsk ? `<span class="grow small">Wirklich alles zurücksetzen? XP, Serie, Abzeichen und Karteikasten gehen verloren.</span><button class="btn btn-line btn-sm" data-act="reset-no">Nein</button><button class="btn btn-danger btn-sm" data-act="reset-yes">Ja</button>` : `<span class="grow small muted">Fortschritt komplett löschen · Version 1.15</span><button class="btn btn-danger btn-sm" data-act="reset-ask">Zurücksetzen</button>`}</div>
   </section>`;
 }
 function viewQuiz() {
@@ -1662,7 +1662,13 @@ async function syncLists() {
       try { const rr = await fetch('lists/' + encodeURIComponent(L.file), { cache: 'no-cache' }); if (!rr.ok) continue; data = await rr.json() } catch (e) { continue }
       const unit = listToUnit(L, data);
       if (!unit.words.length) continue;
-      if (have) { unit.order = have.order; Object.assign(have, unit); updated.push(unit) }
+      if (have) {
+        // Was the whole lesson selected before? Then the words added by this update join the selection.
+        const sel = Array.isArray(S.prog.sel) ? new Set(S.prog.sel) : null;
+        const wasAll = sel && (have.words || []).length && have.words.every(w => sel.has(w.id));
+        unit.order = have.order; Object.assign(have, unit); updated.push(unit);
+        if (wasAll) { for (const w of unit.words) sel.add(w.id); S.prog.sel = Array.from(sel); persist() }
+      }
       else { unit.order = Math.max(0, ...S.units.map(u => u.order || 0)) + 1; S.units.push(unit); added.push(unit) }
     }
     if (!added.length && !updated.length) return;
