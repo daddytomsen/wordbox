@@ -2,6 +2,8 @@
 
 Eine Lern-App für die Vokabeln aus dem Englischbuch (Klasse 6). Sie läuft als Web-App im Safari auf dem iPhone und lässt sich wie eine normale App auf den Home-Bildschirm legen. Nach dem ersten Öffnen funktioniert sie auch ohne Internet.
 
+Gelernt wird wie mit einem Karteikasten mit fünf Fächern. Dazu gibt es einen Lernpfad mit Stationen, Tagesquests, Münzen, Abzeichen und die Manga-Figur Bit mit Skins zum Freischalten.
+
 ## Einrichtung auf GitHub (einmalig)
 
 1. Auf github.com ein neues Repository anlegen, z. B. `wordbox`. GitHub Pages ist nur bei öffentlichen Repositories kostenlos.
@@ -55,7 +57,11 @@ Alternativ kann man im iPhone direkt unter **Neue Vokabeln** eine Liste einfüge
 
 ## Lernstand
 
-Der Fortschritt (XP, Serie, Abzeichen, Karteikasten) wird nur auf dem Gerät gespeichert. Unter **Erfolge → Sicherung speichern** lässt er sich als Datei sichern, z. B. in iCloud Drive, und auf einem anderen Gerät mit **Sicherung laden** wieder einspielen.
+Der Fortschritt (XP, Serie, Münzen, Abzeichen, Karteikasten) wird nur auf dem Gerät gespeichert. Unter **Erfolge → Einstellungen → Sicherung speichern** lässt er sich als Datei sichern, z. B. in iCloud Drive, und auf einem anderen Gerät mit **Sicherung laden** wieder einspielen.
+
+## Updates
+
+Gibt es eine neue Fassung, zeigt die Startseite oben den Hinweis „Version … ist da. Tippe hier zum Aktualisieren.“ Ohne Hinweis hilft: App ganz schließen und zweimal öffnen. Die Versionsnummer steht unter **Erfolge → Einstellungen** ganz unten. Vor einem großen Update lohnt sich eine Sicherung.
 
 ## Dateien
 
@@ -65,4 +71,5 @@ Der Fortschritt (XP, Serie, Abzeichen, Karteikasten) wird nur auf dem Gerät ges
 | `sw.js` | macht die App offline-fähig und lädt Updates |
 | `manifest.webmanifest`, `*.png` | Name und Icon für den Home-Bildschirm |
 | `lists/` | Vokabellisten (Lektionen) |
+| `tools/` | Prüfung vor dem Hochladen (`check.sh`), Tests, Hilfsskript für neue Lektionen |
 | `robots.txt`, `.nojekyll` | keine Suchmaschinen, GitHub Pages ohne Umbau |

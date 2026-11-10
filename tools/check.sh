@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Prüft Voc a Bit vor jedem Commit: JS-Syntax, JSON-Dateien, Listen-Index, gleiche Versionsnummer in sw.js und index.html.
+# Prüft Voc a Bit vor jedem Commit: JS-Syntax, JSON-Dateien, Listen-Index, gleiche Versionsnummer in sw.js (CACHE) und
+# index.html (APP_VERSION), danach die Tests in tools/test/ (Lernlogik, Fragen, Serie, Quests, Lernpfad).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 tmp="$(mktemp -d "${TMPDIR:-/tmp}/wordbox.XXXXXX")"
@@ -31,11 +32,15 @@ for entry in index:
     print(f"  {entry['file']}: {len(words)} Wörter, rev {entry.get('rev', 1)}")
 
 cache = re.search(r"CACHE = 'wordbox-v([\d.]+)'", open('sw.js', encoding='utf-8').read()).group(1)
-shown = re.search(r'Version ([\d.]+)', html).group(1)
-assert cache == shown, f'Version passt nicht: sw.js {cache}, index.html {shown}'
+shown = re.search(r"APP_VERSION = '([\d.]+)'", html).group(1)
+assert cache == shown, f'Version passt nicht: sw.js {cache}, index.html APP_VERSION {shown}'
 print(f'  Version {shown}')
 PY
 
 node --check "$tmp/app.js"
 node --check sw.js
+for t in tools/test/*.test.js; do
+  if ! out="$(node "$t" 2>&1)"; then echo "$out"; echo "FEHLER in $t"; exit 1; fi
+  echo "  $(basename "$t"): $(echo "$out" | tail -1)"
+done
 echo "OK"

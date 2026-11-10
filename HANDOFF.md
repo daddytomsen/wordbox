@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 09.11.2026 · Version 1.15 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 10.11.2026 · Version 2.0 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,13 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.0 (10.11.2026, Wunsch Thomas: flüssiger, mehr wie Duolingo, mehr Anreize; Lernstand und Karteikasten bleiben):** komplette neue Oberfläche und eine Fehlerdurchsicht des gesamten Codes.
+  - Neu zum Spielen: Coach „Bit“ als Manga-Figur mit großem Kopf und blauen Haaren (Wunsch Thomas 10.11., der Sohn ist Manga- und Fortnite-Fan; eigene Zeichnung, keine bekannte Figur) mit sechs Stimmungen, Lernpfad mit Stationen je Lektion (Krone, wenn alle Wörter sitzen), „Weiter lernen“ als ein Knopf, drei Tagesquests mit Tagestruhe, Münzen und Shop (Serien-Schutz für 40 Münzen, sechs blaue Manga-Skins für Bit in den Stufen Selten, Episch, Legendär: Ninja, Neko, Pro-Gamer, Magier, Samurai, Drachenkrieger), Ergebnis als Abfolge (Zusammenfassung, Serie, Level, Quests, Abzeichen, Fehlerliste), 62 Abzeichen in Bronze, Silber, Gold, Töne mit steigender Tonhöhe bei Combos, leichtes Tippen unter dem Finger (iPhone ab iOS 18), Bildschirmübergänge, Einstellung „Aussehen“ (automatisch, hell, dunkel), Hinweis auf der Startseite, wenn eine neuere Version bereitliegt.
+  - Unverändert: Karteikasten mit 5 Fächern und Lerntempo, XP-Regeln, Level, Lernziele, Seiten-Schalter, Listen-Import, Sicherung, alle Lektionen. Der alte Lernstand wird beim ersten Start ergänzt, nichts wird umbenannt oder gelöscht; alte Abzeichen bleiben, neue kommen rückwirkend dazu.
+  - Behobene Fehler (Auswahl): zweite richtige Antwort unter den falschen Antworten (Wörter mit gleicher Übersetzung), Tippfehler-Toleranz ließ ein anderes echtes Wort durchgehen, korrigierte Lektion kam wegen Cache nicht an, Service Worker konnte Caches anderer Apps derselben Pages-Adresse löschen und hing bei schlechtem Netz, Boni für Mini-Runden aus zwei Wörtern, Tagesziel doppelt gezählt, Formulareingaben gingen beim Neuzeichnen verloren, Belohnungen gingen beim Abbrechen still verloren, Wochenanzeige widersprach der Serie, Tageswechsel bei offener App, falsche Antwort kam am Rundenende sofort wieder, Import mit gemischten Trennzeichen, Zurücksetzen vergaß gelöschte Lektionen und Lerntempo.
+  - Lesbarkeit geprüft: Text mindestens 4,5:1, Rahmen von Eingaben 3:1, in hell und dunkel (automatischer Durchlauf über alle Ansichten). Animationen nur ohne „Bewegung reduzieren“.
+  - Tests ohne Browser in `tools/test/`, laufen mit `tools/check.sh`.
+  - **2.0 ist nicht auf dem echten iPhone getestet** (nur im Browser am Mac in iPhone-Größe). Checkliste siehe Aufgabe 6.
 - App komplett in `index.html`: Start (Tagesziel, Wochenserie, Level, Lektionen), Üben (7 Abfragearten, Wörter selbst auswählen, Filter), Vokabeln (Karteikasten, Suche, Vorlesen, Lektion löschen), Erfolge (Kacheln, 15 Abzeichen, Einstellungen, Sicherung).
 - Lernlogik: Karteikasten mit 5 Fächern, eingestreute schwache Wörter, Wiederholung falscher Antworten in derselben Runde, XP, Serie, Combo, Konfetti.
 - Theme 1 „Back to Camden Town“ (S. 224–226, seit 11.10. mit S. 224, rev 2): 101 Wörter und 12 Redemittel mit Lautschrift, Beispielsätzen, Simple Past und Gegenteilen. In `lists/theme1-camden-town.json` und als `SEED` in `index.html`.
@@ -89,6 +96,36 @@ Gleiches Wort (`norm_en()`, Entscheidung Thomas 11.10.): Groß-/Kleinschreibung,
 
 39 Wörter von S. 224 (zwei Zeilen vor A5 als `sec: "A"`, dann A5–A9) mit festen Ids `t1-a01` … `t1-a39` **vor** `t1-01` eingefügt, `rev` auf 2, `pages` auf „S. 224–226“. Bestehende Ids unverändert. `SEED` in `index.html` bewusst nicht nachgezogen (kommt per `rev` vom Server). Drei fakultative Wörter (°) als `opt: true`.
 
+### 7. Funde aus der Fehlersuche vom 10.11. – erledigt 10.11.
+
+Eine unabhängige Durchsicht fand nichts, was den Lernstand gefährdet, aber 15 Stellen. Alle sind behoben und in `tools/test/spiel.test.js` abgesichert (Block „findings of the review“):
+
+- Quest „richtige in Folge“ war mit 10er-Runden nicht zu schaffen (jetzt 5, 8, 10).
+- Level-Aufstieg wird über `prog.lvl` genau einmal bezahlt, auch wenn die App mitten in der Runde geschlossen wurde.
+- Tagesziel und Quests werden mit der Antwort gebucht, die sie erreicht (`settle()`), nicht erst am Rundenende. Mitternacht oder Schließen kostet nichts mehr.
+- Eine verlorene Serie wird als verloren festgeschrieben (`dropLostStreak()`); ein danach gekaufter Serien-Schutz holt sie nicht zurück.
+- Beschädigte Daten: `migrateProg()` ersetzt Felder falscher Art durch Vorgaben, `cleanUnits()` räumt Lektionen auf, „Sicherung laden“ probiert die Sicherung erst im Speicher aus, und falls der Start doch scheitert, zeigt `rescue()` einen Rettungsbildschirm (Lernstand als Datei sichern, neu versuchen, zurücksetzen mit zwei Tipps).
+- `transit()` wartet nicht mehr auf ein gezeichnetes Bild (nach 300 ms wechselt der Bildschirm in jedem Fall, und nie doppelt).
+- Schreibantwort bleibt erhalten, wenn der Abbrechen-Dialog aufgeht. Namensfeld in den Einstellungen verschluckt den nächsten Tipp nicht mehr.
+- Quest „Lerne N neue Wörter“ zählt die erste richtige Antwort eines Wortes, auch im zweiten Versuch.
+- „Sicherung laden“ zahlt für neue Abzeichen die Münzen. Alle Fragen beantwortet und dann X = fertige Runde. Stations-Knopf nennt die echte Fragenzahl. Flamme am Update-Tag. Abzeichen-Blatt ohne Division durch null. `sw.js` mit try/catch beim Umziehen der Schriften.
+
+### 6. Test von Version 2.0 auf dem iPhone (Thomas) – offen
+
+**Vorher:** In der alten App Erfolge → „Sicherung speichern“. Dann App schließen und zweimal öffnen, bis unter Erfolge → Einstellungen „Version 2.0“ steht.
+
+1. Start: Begrüßung „Voc a Bit ist neu“, Level, XP und Serie wie vorher? Karteikasten (Vokabeln) mit denselben Zahlen wie vorher?
+2. „Weiter lernen“: eine Runde spielen. Töne, Vorlesen, Kippen des Antwortfelds, „Weiter“ gut erreichbar über dem unteren Rand?
+3. Spürt man ein leichtes Tippen bei richtig und falsch (nur iOS 18 oder neuer, sonst nichts)?
+4. Ergebnis: Schritte nacheinander, Konfetti, Münzen in der Kopfzeile gestiegen?
+5. Lernpfad: Station antippen, Sprechblase, „Üben“ startet die Wörter dieser Station.
+6. Erfolge → Shop: einen Skin freischalten, Bit sieht überall so aus. Zurück auf „Bit“ wechseln. Serien-Schutz kaufen.
+7. Einstellungen → Aussehen: hell und dunkel umschalten.
+8. Flugmodus an, App neu starten: muss laufen, Schrift darf dann etwas anders aussehen.
+9. Gehen die Bildschirmwechsel flüssig, ruckelt etwas, flackert etwas?
+
+Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-Tag `v1.15` (Commit 051252b).
+
 ## Nicht ohne Rückfrage
 
 - Kein Framework, kein Build-Schritt, keine Aufteilung in mehrere Dateien.
@@ -107,6 +144,7 @@ Gleiches Wort (`norm_en()`, Entscheidung Thomas 11.10.): Groß-/Kleinschreibung,
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 10.11.2026 | Mac, Browser in iPhone-Größe, Version 2.0 | Alle Ansichten in hell und dunkel durchgespielt, Tests bestanden. iPhone-Test offen (Aufgabe 6). |
 | 11.10.2026 | iPhone (Thomas), Version 1.5 | Töne ok mit und ohne Stummschalter. Sprachausgabe bei Stummschalter an stumm. Umweg in 1.6 (lautloses `<audio>`) hat nicht geholfen → in 1.7 entfernt, stattdessen Hinweis in Einstellungen und Ton-Test. |
 | 11.10.2026 | iPhone, Version 1.8 | Lernziel: Datumsfeld und rote Zahl am Icon funktionieren. |
 | 02.11.2026 | iPhone, Version 1.13 | Befund: Schreibantwort „to ask (for sth)“ als falsch gewertet → in 1.14 behoben. Level seit Wochen „Word Wizard“ (Namensliste endete bei 8) → 1.14. |
