@@ -45,12 +45,30 @@ let fails = 0; const ok = (c, msg) => { if (!c) { fails++; console.log('  FAIL',
   ok(pw('to light').indexOf('lighted') < 0 && pw('to burn').indexOf('burned') < 0, 'valid regular forms are not offered as wrong');
 }
 
+// ---- T2b: no wrong option shares a German meaning with the right one (someone / anyone) ----
+{
+  const A = load({ clock: { t: day(2026, 11, 10) }, storage: { 'wordbox.units.v1': JSON.stringify(units) } });
+  let near = 0, n = 0; const seen = new Set();
+  for (const w of A.S.words) for (const t of ['de-en', 'en-de']) for (let k = 0; k < 6; k++) {
+    const q = A.makeQ(w, t, false), mine = new Set(A.deParts(w.de)); n++;
+    ok(q.options.length >= 2, 'too few options for ' + w.en);
+    for (const o of q.options) { if (o === q.answer) continue;
+      const src = A.S.words.filter(x => (t === 'en-de' ? x.de : x.en) === o);
+      if (src.length && src.every(x => A.deParts(x.de).some(p => mine.has(p)))) { near++; seen.add(w.en + ' / ' + src[0].en) } }
+  }
+  ok(!near, 'options that share a meaning with the answer: ' + Array.from(seen).slice(0, 5).join('; '));
+  console.log('T2b shared meanings:', n, 'questions');
+}
+
 // ---- T3: typed answers ----
 {
   const A = load({ clock: { t: day(2026, 11, 10) }, storage: { 'wordbox.units.v1': JSON.stringify(units) } });
   const C = (i, t) => { const r = A.checkTyped(i, t); return r.ok ? (r.almost ? 'almost' : 'ok') : 'no' };
   const cases = [['to ask (for sth)', 'to ask (for sth)', 'ok'], ['ask for something', 'to ask (for sth)', 'ok'], ['to ask', 'to ask (for sth)', 'ok'], ['to feed', 'to feel', 'no'], ['that', 'than', 'no'], ['call', 'to fall', 'no'], ['plane', 'to plan', 'no'], ['coast', 'to cost', 'no'], ['fight', 'light', 'no'],
     ['everythin', 'everything', 'almost'], ['sudenly', 'suddenly', 'almost'], ['to break my arm', "to break one's arm", 'ok'], ['to break his arm', "to break one's arm", 'ok'], ['Christmas', 'Christmas', 'ok'], ['christmas', 'Christmas', 'ok'], ["new year's eve", "New Year's Eve", 'ok'], ['vlog', 'vlog (= video blog)', 'ok'], ['video blog', 'vlog (= video blog)', 'ok'], ['a lot of', 'a lot (of)', 'ok'], ['a lot', 'a lot (of)', 'ok'], ['xyz', 'everything', 'no'], ['', 'everything', 'no']];
+  cases.push(['towards', 'toward(s)', 'ok'], ['toward', 'toward(s)', 'ok'], ['to be keen on', 'to be keen on sb/sth', 'ok'], ['to be keen on sth', 'to be keen on sb/sth', 'ok'], ['be keen on somebody', 'to be keen on sb/sth', 'ok'],
+    ['to say hello', 'to say hello (to sb)', 'ok'], ['say hello to sb', 'to say hello (to sb)', 'ok'], ['to have to', 'have to', 'ok'], ['hurry up', 'Hurry up!', 'ok'], ["what's wrong", "What's wrong?", 'ok'], ['someone', 'someone', 'ok'],
+    ['worst', 'worse', 'no'], ['worse', 'worst', 'no'], ['to think', 'to think of', 'no'], ['close', 'cute', 'no']);
   for (const [i, t, want] of cases) ok(C(i, t) === want, `typed "${i}" for "${t}" → ${C(i, t)}, expected ${want}`);
   console.log('T3 typed answers:', cases.length, 'cases');
 }

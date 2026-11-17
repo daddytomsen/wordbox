@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 10.11.2026 · Version 2.0 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 17.11.2026 · Version 2.1 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,9 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.1 (17.11.2026):** Theme 2 um S. 229 und 230 erweitert (rev 3, jetzt 152 Wörter, Ids 081–152, alte Ids unverändert) und acht neue Skins (Wunsch des Sohnes: ausgefallen, epische Namen): Sturmrufer, Mondwolf, Flammengeist, Schattenklinge, Sternenfahrer, Frostkaiser, Mecha-Titan, Galaxienwächter. Neue Stufe „Mythisch“, Schild „Neu“ im Shop, einmaliger Hinweis beim Start.
+  - Vokabeln: Abschnitte S. 229: Anfang gehört noch zu A2, dann A3, A6; die Marken vor „to contact sb“ und „upset“ waren auf dem Foto nicht lesbar und sind als A7 und A8 **angenommen** (S. 230 beginnt mit A9). S. 230: A9, B2, B4, B5, B6, B7. „° to solve“ ist fakultativ (`opt`). „worse ↔ better“ und „worst ↔ best“ als `opp`. Dubletten wie im Buch: „annoying“ steht auch in Theme 1, „to get“ auch in Irregular verbs.
+  - Dabei behoben: „towards“ für „toward(s)“ galt nur als Tippfehler, „to be keen on“ für „to be keen on sb/sth“ als falsch; „anyone“ konnte als falsche Antwort bei „someone“ stehen (gleiche Bedeutung).
 - **Version 2.0 (10.11.2026, Wunsch Thomas: flüssiger, mehr wie Duolingo, mehr Anreize; Lernstand und Karteikasten bleiben):** komplette neue Oberfläche und eine Fehlerdurchsicht des gesamten Codes.
   - Neu zum Spielen: Coach „Bit“ als Manga-Figur mit großem Kopf und blauen Haaren (Wunsch Thomas 10.11., der Sohn ist Manga- und Fortnite-Fan; eigene Zeichnung, keine bekannte Figur) mit sechs Stimmungen, Lernpfad mit Stationen je Lektion (Krone, wenn alle Wörter sitzen), „Weiter lernen“ als ein Knopf, drei Tagesquests mit Tagestruhe, Münzen und Shop (Serien-Schutz für 40 Münzen, sechs blaue Manga-Skins für Bit in den Stufen Selten, Episch, Legendär: Ninja, Neko, Pro-Gamer, Magier, Samurai, Drachenkrieger), Ergebnis als Abfolge (Zusammenfassung, Serie, Level, Quests, Abzeichen, Fehlerliste), 62 Abzeichen in Bronze, Silber, Gold, Töne mit steigender Tonhöhe bei Combos, leichtes Tippen unter dem Finger (iPhone ab iOS 18), Bildschirmübergänge, Einstellung „Aussehen“ (automatisch, hell, dunkel), Hinweis auf der Startseite, wenn eine neuere Version bereitliegt.
   - Unverändert: Karteikasten mit 5 Fächern und Lerntempo, XP-Regeln, Level, Lernziele, Seiten-Schalter, Listen-Import, Sicherung, alle Lektionen. Der alte Lernstand wird beim ersten Start ergänzt, nichts wird umbenannt oder gelöscht; alte Abzeichen bleiben, neue kommen rückwirkend dazu.
@@ -144,6 +147,7 @@ Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-T
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 17.11.2026 | Mac, Browser in iPhone-Größe, Version 2.1 | Neue Wörter, Stationen S. 229/230, Shop mit 14 Skins, Kauf und Hinweis geprüft; Tests bestanden. |
 | 10.11.2026 | Mac, Browser in iPhone-Größe, Version 2.0 | Alle Ansichten in hell und dunkel durchgespielt, Tests bestanden. iPhone-Test offen (Aufgabe 6). |
 | 11.10.2026 | iPhone (Thomas), Version 1.5 | Töne ok mit und ohne Stummschalter. Sprachausgabe bei Stummschalter an stumm. Umweg in 1.6 (lautloses `<audio>`) hat nicht geholfen → in 1.7 entfernt, stattdessen Hinweis in Einstellungen und Ton-Test. |
 | 11.10.2026 | iPhone, Version 1.8 | Lernziel: Datumsfeld und rote Zahl am Icon funktionieren. |

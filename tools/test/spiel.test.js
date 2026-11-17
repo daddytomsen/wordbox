@@ -121,7 +121,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   let bad = 0;
   for (const id of ids) for (const m of moods) { const svg = A.bit(m, id); if (!/^<svg[\s\S]*<\/svg>$/.test(svg) || /NaN|undefined/.test(svg)) bad++ }
   ok(!bad, 'figures with broken drawing: ' + bad);
-  ok(A.OUTFITS.every(o => A.SKINS[o.id] && o.cost > 0 && o.tier >= 1 && o.tier <= 3), 'every skin has colours, a price and a rarity');
+  ok(A.OUTFITS.every(o => A.SKINS[o.id] && o.cost > 0 && o.tier >= 1 && o.tier <= 4), 'every skin has colours, a price and a rarity');
   ok(A.bit('happy', 'gibtsnicht') === A.bit('happy', ''), 'an unknown skin falls back to Bit');
   const tap = (act, o) => A.ACT[act]({ dataset: { o } });
   tap('wear', 'ninja'); ok(!A.S.prog.outfit, 'a skin that is not owned cannot be worn');
@@ -132,8 +132,13 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   tap('buy-outfit', 'dragon'); ok(!A.S.prog.outfits.dragon && A.S.prog.coins === afterFirst, 'no purchase without enough coins');
   tap('wear', ''); ok(A.S.prog.outfit === '', 'back to Bit');
   tap('wear', 'ninja'); ok(A.S.prog.outfit === 'ninja', 'and to the skin again');
-  A.S.view = 'shop'; A.render(); ok(/Skins für Bit/.test(A.els.app.innerHTML) && /1 von 6/.test(A.els.app.innerHTML), 'shop shows the skins and the count');
+  A.S.view = 'shop'; A.render(); ok(/Skins für Bit/.test(A.els.app.innerHTML) && A.els.app.innerHTML.indexOf('1 von ' + A.OUTFITS.length) > 0, 'shop shows the skins and the count');
   const saved = JSON.parse(A.mem['wordbox.prog.v1']); ok(saved.outfit === 'ninja' && saved.coins === afterFirst, 'skin and coins are saved');
+  ok(A.OUTFITS.every((o, i) => !i || o.cost >= A.OUTFITS[i - 1].cost), 'skins are listed from cheap to dear');
+  ok(new Set(A.OUTFITS.map(o => o.id)).size === A.OUTFITS.length && new Set(A.OUTFITS.map(o => o.t)).size === A.OUTFITS.length, 'skin ids and names are unique');
+  // the shop hint comes once for players of the version before, never for new players
+  const B = fresh({ t: day(2026, 11, 17) }, {}); ok(B.S.prog.shopSeen === B.OUTFITS.length, 'a player from 2.0 is told about the new skins once: ' + B.S.prog.shopSeen);
+  const B2 = load({ clock: { t: day(2026, 11, 17) }, storage: B.mem }); ok(B2.S.prog.shopSeen === B2.OUTFITS.length, 'and it stays noted after a restart');
   console.log('T skins:', ids.length, 'figures x', moods.length, 'moods');
 }
 // ---- findings of the review on 10.11.2026 ----

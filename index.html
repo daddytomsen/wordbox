@@ -418,6 +418,10 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 .rar-1{background:var(--sky);color:var(--on-sky)}
 .rar-2{background:#7C4DEB;color:#fff}
 .rar-3{background:var(--gold);color:#4A3300}
+.rar-4{background:linear-gradient(90deg,#C81E8C,#7C4DEB);color:#fff}
+.outfit{position:relative}
+.outfit.myth{border-color:#B04DFF}
+.newtag{position:absolute;left:8px;top:8px;font:900 11px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--bad-btn);color:var(--on-bad)}
 .price{display:inline-flex;align-items:center;gap:5px}
 .price .art{width:18px;height:18px}
 
@@ -627,7 +631,7 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 const app = document.getElementById('app');
 const toastEl = document.getElementById('toast');
 const DAY = 864e5;
-const APP_VERSION = '2.0';      // must match CACHE in sw.js; tools/check.sh compares both
+const APP_VERSION = '2.1';      // must match CACHE in sw.js; tools/check.sh compares both
 /* Waiting days per box (index = box). 'fast' is the family's physical card box: one box per day,
    so a word answered right every day goes new -> 2 -> 3 -> 4 -> 5 in four days. 'long' spaces further apart.
    Waiting is counted in calendar days: a word answered in the evening is due again the next morning. */
@@ -648,7 +652,7 @@ function freshProg() {
   return { v: 1, econ: 2, name: '', goal: 150, sound: true, speak: true, haptics: true, theme: 'auto', xp: 0, days: {}, streak: 0, best: 0, last: '',
     rounds: 0, perfect: 0, typedRight: 0, pastRight: 0, extraRight: 0, bestCombo: 0, photos: 0, goalDays: 0, goalDay: '', earlyRounds: 0, weekendRounds: 0, speedRounds: 0, modesUsed: {}, mastered: {},
     coins: 0, coinsEarned: 0, freezes: 0, freezeUsed: 0, frozen: {}, roundDays: {}, since2: '', outfit: '', outfits: {}, today: null, quests: null, questsDone: 0, chests: 0, targetsDone: 0,
-    badges: {}, w: {}, sel: null, mode: 'mix', len: 10, tempo: 'fast', onboarded: false, v2: false, removedLists: [], targets: [], lvl: 0, updatedAt: 0 };
+    badges: {}, w: {}, sel: null, mode: 'mix', len: 10, tempo: 'fast', onboarded: false, v2: false, removedLists: [], targets: [], lvl: 0, shopSeen: 0, updatedAt: 0 };
 }
 
 /* Release 1.3 made XP about five times scarcer (econ 2). Progress saved before that is scaled once,
@@ -662,7 +666,7 @@ function migrateProg(p) {
   for (const k of ['today', 'quests']) if (k in p && p[k] !== null && !obj(p[k])) delete p[k];
   if ('sel' in p && p.sel !== null && !Array.isArray(p.sel)) delete p.sel;
   for (const k of ['xp', 'goal', 'streak', 'best', 'rounds', 'perfect', 'typedRight', 'pastRight', 'extraRight', 'bestCombo', 'photos', 'goalDays', 'earlyRounds', 'weekendRounds', 'speedRounds',
-    'coins', 'coinsEarned', 'freezes', 'freezeUsed', 'questsDone', 'chests', 'targetsDone', 'len', 'lvl']) if (k in p && !num(p[k])) delete p[k];
+    'coins', 'coinsEarned', 'freezes', 'freezeUsed', 'questsDone', 'chests', 'targetsDone', 'len', 'lvl', 'shopSeen']) if (k in p && !num(p[k])) delete p[k];
   for (const k of ['name', 'last', 'goalDay', 'since2', 'outfit', 'mode', 'tempo', 'theme']) if (k in p && typeof p[k] !== 'string') delete p[k];
   if (p.w) for (const id in p.w) if (!obj(p.w[id])) delete p.w[id];
   if (p.days) for (const k in p.days) if (!num(p.days[k])) delete p.days[k];
@@ -1121,10 +1125,13 @@ function sim(a, b) {
   return 2 * hit / (A.length + B.length);
 }
 /* Wrong options come from other words. The same headword in another lesson (to fall is in Theme 1 and in the
-   irregular verbs) or a word with the same German meaning would be a second right answer, so it is left out. */
+   irregular verbs) or a word that shares a German meaning would be a second right answer, so it is left out. */
+/* The separate meanings of a German entry: "erhalten, bekommen, hier: (hin)kommen" → erhalten | bekommen | kommen. */
+const deParts = s => nk(s).replace(/\([^)]*\)/g, '').replace(/hier:/g, ',').split(/[,;]/).map(x => x.trim()).filter(x => x.length > 2);
 function tiersOf(w, get) {
-  const mine = new Set(variants(w.en)), de = nk(w.de);
-  const others = S.words.filter(x => x.id !== w.id && nk(x.de) !== de && !variants(x.en).some(v => mine.has(v)));
+  const mine = new Set(variants(w.en)), de = nk(w.de), parts = new Set(deParts(w.de));
+  // someone "(irgend)jemand, irgendwer" and anyone "(irgend)jemand" share a meaning: neither may be the other's wrong answer
+  const others = S.words.filter(x => x.id !== w.id && nk(x.de) !== de && !variants(x.en).some(v => mine.has(v)) && !deParts(x.de).some(p => parts.has(p)));
   return [others.filter(x => x.unit === w.unit && x.pos === w.pos).map(get),
           others.filter(x => x.pos === w.pos).map(get),
           others.map(get)];
@@ -1199,7 +1206,7 @@ function buildRound(ids, mode, n, extras) {
    no punctuation or brackets, no leading "to", placeholders like sb/sth dropped. Only where the word itself
    contains "one's" may any possessive stand in for it (to break one's arm = to break my arm). */
 function normAns(s, ones) {
-  let t = String(s).toLowerCase().replace(/[’`´]/g, "'").replace(/…|\.\.\./g, ' ').replace(/\b(sb|sth|somebody|something|someone)\b/g, ' ');
+  let t = String(s).toLowerCase().replace(/[’`´]/g, "'").replace(/…|\.\.\./g, ' ').replace(/\b(sb|sth|somebody|something|someone)\b/g, ' ').replace(/(^|\s)\/(?=\s|$)/g, ' ');      // "sb/sth" leaves no lone slash behind
   if (ones) t = t.replace(/\b(your|my|his|her|their|our)\b/g, "one's");
   return t.replace(/[.,!?;:"“”„()\[\]]/g, ' ').replace(/\s+/g, ' ').trim().replace(/^to /, '').trim();
 }
@@ -1208,7 +1215,10 @@ const hasOnes = t => /\bone's\b/.test(String(t).toLowerCase().replace(/[’`´]/
 function variants(t) {
   const out = new Set(), ones = hasOnes(t);
   const base = String(t).replace(/\(=\s*([^)]*)\)/g, (m, a) => { out.add(normAns(a, ones)); return ' ' });
-  for (const alt of base.split(/\s\/\s/)) { out.add(normAns(alt.replace(/\([^)]*\)/g, ' '), ones)); out.add(normAns(alt.replace(/[()]/g, ' '), ones)) }
+  for (const alt of base.split(/\s\/\s/)) {
+    const full = alt.replace(/([a-z])\(([a-z]+)\)/gi, '$1$2');        // letters in brackets right at the word belong to it: toward(s) = toward or towards
+    out.add(normAns(alt.replace(/\([^)]*\)/g, ' '), ones)); out.add(normAns(full.replace(/[()]/g, ' '), ones));
+  }
   out.delete('');
   if (!out.size) out.add(plainAns(t));          // a headword that is itself a placeholder, like "something"
   return Array.from(out);
@@ -1361,16 +1371,25 @@ function finish(quit) {
 /* Bit is the app's coach: a manga kid with a big head and blue hair, drawn for this app (no existing character).
    mood: happy | cheer | oops | think | wow | sleep.
    Skins change hair, gear and colours; they are saved as prog.outfit / prog.outfits (names kept from the first draft). */
-const OUTFITS = [
+const OUTFITS = [                                   // in shop order, cheapest first; since: the version that brought the skin
   { id: 'ninja', t: 'Ninja', cost: 30, tier: 1 },
+  { id: 'storm', t: 'Sturmrufer', cost: 45, tier: 1, since: 2.1 },
   { id: 'neko', t: 'Neko', cost: 60, tier: 1 },
+  { id: 'wolf', t: 'Mondwolf', cost: 70, tier: 1, since: 2.1 },
   { id: 'gamer', t: 'Pro-Gamer', cost: 90, tier: 2 },
+  { id: 'flame', t: 'Flammengeist', cost: 110, tier: 2, since: 2.1 },
   { id: 'mage', t: 'Magier', cost: 120, tier: 2 },
+  { id: 'shadow', t: 'Schattenklinge', cost: 140, tier: 2, since: 2.1 },
+  { id: 'astro', t: 'Sternenfahrer', cost: 150, tier: 2, since: 2.1 },
   { id: 'samurai', t: 'Samurai', cost: 160, tier: 3 },
-  { id: 'dragon', t: 'Drachenkrieger', cost: 250, tier: 3 }
+  { id: 'frost', t: 'Frostkaiser', cost: 200, tier: 3, since: 2.1 },
+  { id: 'dragon', t: 'Drachenkrieger', cost: 250, tier: 3 },
+  { id: 'mecha', t: 'Mecha-Titan', cost: 280, tier: 3, since: 2.1 },
+  { id: 'galaxy', t: 'Galaxienwächter', cost: 400, tier: 4, since: 2.1 }
 ];
-const RARITY = ['', 'Selten', 'Episch', 'Legendär'];
-/* h hair, hs hair shadow, hl hair light, iris + glow eyes, cloth + trim clothes and gear */
+const RARITY = ['', 'Selten', 'Episch', 'Legendär', 'Mythisch'];
+/* h hair, hs hair shadow, hl hair light, iris + glow eyes, cloth + trim clothes and gear; optional: ol outline for hair
+   that would vanish against the page, blush cheek colour */
 const SKINS = {
   '':      { h: '#2F6BFF', hs: '#1B3FBF', hl: '#9CC0FF', iris: '#1E49D8', glow: '#5CC8FF', cloth: '#2F6BFF', trim: '#FFFFFF' },
   ninja:   { h: '#2B3AA6', hs: '#1A2470', hl: '#6C80EA', iris: '#3D5BF5', glow: '#9DBBFF', cloth: '#232C7A', trim: '#4D8DFF' },
@@ -1378,14 +1397,23 @@ const SKINS = {
   gamer:   { h: '#16C1E8', hs: '#0B8DB3', hl: '#B4F4FF', iris: '#0E9FC4', glow: '#8DF3FF', cloth: '#2B3577', trim: '#3DE0FF' },
   mage:    { h: '#6C63F5', hs: '#443ACB', hl: '#BDB8FF', iris: '#5B4FE8', glow: '#B4C0FF', cloth: '#2E33A8', trim: '#FFC21A' },
   samurai: { h: '#2A47C0', hs: '#1B2E86', hl: '#7C95F5', iris: '#2748C8', glow: '#8FB0FF', cloth: '#22308C', trim: '#FFC21A' },
-  dragon:  { h: '#1E90E8', hs: '#1166B5', hl: '#A5DBFF', iris: '#0FA9BF', glow: '#8FF5E8', cloth: '#14569A', trim: '#8FF5E8' }
+  dragon:  { h: '#1E90E8', hs: '#1166B5', hl: '#A5DBFF', iris: '#0FA9BF', glow: '#8FF5E8', cloth: '#14569A', trim: '#8FF5E8' },
+  storm:   { h: '#1F4FE0', hs: '#132F9E', hl: '#FFE14D', iris: '#E9A800', glow: '#FFF3A6', cloth: '#1B2A78', trim: '#FFD21A' },
+  wolf:    { h: '#6F8BD1', hs: '#3F5AA3', hl: '#DCE6FF', iris: '#E9A800', glow: '#FFE99A', cloth: '#3F5AA3', trim: '#EEF3FF' },
+  flame:   { h: '#1E7BFF', hs: '#0F4FD0', hl: '#A8F4FF', iris: '#12BFEA', glow: '#D2FCFF', cloth: '#102A6B', trim: '#59E0FF' },
+  shadow:  { h: '#1B2152', hs: '#0E1236', hl: '#5361CC', iris: '#18CFEF', glow: '#D2FCFF', cloth: '#171D4A', trim: '#28E0FF', ol: '#5E6CC6' },
+  astro:   { h: '#3D7BFF', hs: '#1B3FBF', hl: '#B9D4FF', iris: '#1E49D8', glow: '#5CC8FF', cloth: '#E8EEFF', trim: '#FF8A1F' },
+  frost:   { h: '#E2F5FF', hs: '#6FBDEA', hl: '#FFFFFF', iris: '#2FA9E6', glow: '#DDF8FF', cloth: '#2A5FB8', trim: '#E2F5FF', ol: '#6FBDEA', blush: '#8FD3FF' },
+  mecha:   { h: '#3C63D8', hs: '#27419A', hl: '#A9BEFF', iris: '#12C9AB', glow: '#C2FFF2', cloth: '#27419A', trim: '#FFC21A' },
+  galaxy:  { h: '#261C70', hs: '#150F45', hl: '#C8A2FF', iris: '#A64DF5', glow: '#FFC9F6', cloth: '#1D1558', trim: '#FFD21A', ol: '#6F52E3' }
 };
 function bit(mood = 'happy', outfit, cls = '') {
   const o = outfit === undefined ? ((typeof S !== 'undefined' && S.prog.outfit) || '') : outfit;
   const k = SKINS[o] ? o : '', c = SKINS[k];
   const ink = '#161D42', skin = '#FFE1C8', shade = '#F2C3A2', gear = '#2B3577', edge = '#8E9AE0', gold = '#FFC21A', goldD = '#D99A00';
   const line = (d, col, w) => `<path d="${d}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
-  const spark = (x, y, r) => `<path d="M${x} ${y - r}l${r * .28} ${r * .72} ${r * .72} ${r * .28}-${r * .72} ${r * .28}-${r * .28} ${r * .72}-${r * .28}-${r * .72}-${r * .72}-${r * .28} ${r * .72}-${r * .28}z" fill="${gold}"/>`;
+  const spark = (x, y, r, col = gold) => `<path d="M${x} ${y - r}l${r * .28} ${r * .72} ${r * .72} ${r * .28}-${r * .72} ${r * .28}-${r * .28} ${r * .72}-${r * .28}-${r * .72}-${r * .72}-${r * .28} ${r * .72}-${r * .28}z" fill="${col}"/>`;
+  const bolt = (x, y, z) => `<path d="M${x} ${y}l${-4 * z} ${7 * z}h${3 * z}l${-2 * z} ${6 * z} ${7 * z}-${9 * z}h${-3 * z}l${2.5 * z}-${4 * z}z" fill="#FFD21A" stroke="${goldD}" stroke-width="1" stroke-linejoin="round"/>`;
 
   /* eyes: big manga eyes with two lights; dx/dy move the gaze, z makes them bigger */
   const eye = (x, dx, dy, z) =>
@@ -1396,7 +1424,7 @@ function bit(mood = 'happy', outfit, cls = '') {
     `<circle cx="${x + dx - 3.1}" cy="${68.8 + dy}" r="${2.9 * z}" fill="#fff"/><circle cx="${x + dx + 3.3}" cy="${78 + dy}" r="${1.4 * z}" fill="#fff"/>` +
     line(`M${x - 10.8 * z} 68.6Q${x} ${58.6 - (z - 1) * 12} ${x + 10.8 * z} 68.6`, ink, 3.4);
   const open = (dx = 0, dy = 0, z = 1) => eye(42.5, dx, dy, z) + eye(77.5, dx, dy, z) + line('M31.6 68.4l-3.200-2.200M88.400 68.400l3.200-2.200', ink, 2.6);
-  let eyes, brows, mouth, extra = '', blush = `<ellipse cx="30.500" cy="88" rx="6.500" ry="3.400" fill="#FF8FA3" opacity=".5"/><ellipse cx="89.500" cy="88" rx="6.500" ry="3.400" fill="#FF8FA3" opacity=".5"/>`;
+  let eyes, brows, mouth, extra = '', blush = `<ellipse cx="30.500" cy="88" rx="6.500" ry="3.400" fill="${c.blush || '#FF8FA3'}" opacity=".5"/><ellipse cx="89.500" cy="88" rx="6.500" ry="3.400" fill="${c.blush || '#FF8FA3'}" opacity=".5"/>`;
   const brow = d => line(d, ink, 2.5);
   if (mood === 'cheer') {
     eyes = line('M33 76Q42.500 63 52 76M68 76Q77.500 63 87 76', ink, 3.8);
@@ -1431,14 +1459,16 @@ function bit(mood = 'happy', outfit, cls = '') {
   }
 
   /* hair behind the head: spiky all round, low (under a hat or helmet), or with a middle crest (between horns) */
-  const spikes = pts => `<path d="M${pts}z" fill="${c.h}" stroke="${c.h}" stroke-width="3" stroke-linejoin="round"/>`;
+  const ol = c.ol || c.h, olw = c.ol ? 2 : 3;
+  const spikes = pts => `<path d="M${pts}z" fill="${c.h}" stroke="${ol}" stroke-width="${olw}" stroke-linejoin="round"/>`;
   const backFull = spikes('17 76 5 60 20 55 8 38 27 36 21 13 41 22 46 2 61 16 76 2 82 22 101 13 96 36 115 38 103 55 118 60 106 76');
   const backLow = spikes('17 78 5 62 20 57 9 44 24 40 60 30 96 40 111 44 100 57 115 62 103 78');
   const backCrest = spikes('17 76 5 60 20 55 8 40 26 36 46 24 60 4 74 24 94 36 112 40 100 55 115 60 103 76');
-  const fringe = `<path d="M22 62C19 36 36 20 60 20s41 16 38 42l-7-16-6 12-9-16-7 13-9-16-8 14-9-15-7 13-7-13z" fill="${c.h}" stroke="${c.h}" stroke-width="2" stroke-linejoin="round"/>` +
+  let fringe = `<path d="M22 62C19 36 36 20 60 20s41 16 38 42l-7-16-6 12-9-16-7 13-9-16-8 14-9-15-7 13-7-13z" fill="${c.h}" stroke="${ol}" stroke-width="${c.ol ? 1.5 : 2}" stroke-linejoin="round"/>` +
     line('M37 31q10-7.500 22-6.500', c.hl, 3) + line('M71 27q5.500 1.500 9 5.500', c.hl, 2.4);
   let back = backFull, front = '', ears = `<ellipse cx="22" cy="70" rx="6" ry="8.500" fill="${skin}"/><ellipse cx="98" cy="70" rx="6" ry="8.500" fill="${skin}"/>` + line('M20.500 67q-2 3 0 6M99.500 67q2 3 0 6', shade, 1.6);
-  let body = `<path d="M30 120c0-11.500 12-17.500 30-17.500s30 6 30 17.500z" fill="${c.cloth}"/>` + line('M52 105l8 7 8-7', c.trim, 2.4);
+  const torso = `<path d="M30 120c0-11.500 12-17.500 30-17.500s30 6 30 17.500z" fill="${c.cloth}"/>`;
+  let body = torso + line('M52 105l8 7 8-7', c.trim, 2.4);
 
   if (k === 'ninja') {
     front = `<path d="M22 42q38-12 76 0v8.500q-38-12-76 0z" fill="${c.trim}"/>` + line('M24 46.500q36-11 72 0', '#fff', 1.2) +
@@ -1472,6 +1502,61 @@ function bit(mood = 'happy', outfit, cls = '') {
     front = `<path d="M31 31C22 23 20 10 26 1c2 11 8 17 17 21z" fill="#A6F2EA" stroke="#27A9A6" stroke-width="1.800" stroke-linejoin="round"/><path d="M89 31c9-8 11-21 5-30-2 11-8 17-17 21z" fill="#A6F2EA" stroke="#27A9A6" stroke-width="1.800" stroke-linejoin="round"/>` +
       line('M26.500 12.500q3.500 1 6-.500M27.500 19q4 .500 7-1.500M93.500 12.500q-3.500 1-6-.500M92.500 19q-4 .500-7-1.500', '#27A9A6', 1.4);
     body = `<path d="M30 120c0-11.500 12-17.500 30-17.500s30 6 30 17.500z" fill="${c.cloth}"/>` + line('M44 108q5-3.500 10 0t10 0 10 0', c.trim, 2);
+  } else if (k === 'storm') {
+    // a lightning strand in the fringe and two bolts in the air
+    front = `<path d="M55 19l-10 18h8.500l-6.500 17 18-22h-9.500l7.500-13z" fill="#FFD21A" stroke="${goldD}" stroke-width="1.200" stroke-linejoin="round"/>` + bolt(110, 68, 1) + bolt(11, 64, .85);
+  } else if (k === 'wolf') {
+    // a wolf-pelt hood: ears on top, the wolf's sleepy eyes and nose on the brow, fur at the cheeks
+    back = `<path d="M22 36 15 4l28 15z" fill="${c.h}" stroke="${c.h}" stroke-width="3" stroke-linejoin="round"/><path d="M98 36 105 4 77 19z" fill="${c.h}" stroke="${c.h}" stroke-width="3" stroke-linejoin="round"/>` +
+      `<path d="M24 28l-3-15 14 9z" fill="${c.hs}"/><path d="M96 28l3-15-14 9z" fill="${c.hs}"/>` +
+      `<path d="M14 94C2 72 6 36 26 22c10-6 22-9 34-9s24 3 34 9c20 14 24 50 12 72l-11-11H25z" fill="${c.h}" stroke="${c.h}" stroke-width="3" stroke-linejoin="round"/>`;
+    front = `<path d="M22.500 58c-5 11-4 24 1 34 4.500-9 5.500-20 4-32z" fill="${c.h}"/><path d="M97.500 58c5 11 4 24-1 34-4.500-9-5.500-20-4-32z" fill="${c.h}"/>` +
+      line('M39 31q5 3.500 10 0M71 31q5 3.500 10 0', ink, 2.2) + `<path d="M55.500 35.500h9l-4.500 5z" fill="${ink}"/>`;
+    ears = '';
+    body = torso + line('M35 107l6 5 5-5 5 6 4.500-5.500 4.500 6 4.500-6 4.500 5.500 5-6 5 5 6-5', c.trim, 3);
+  } else if (k === 'flame') {
+    // hair of blue fire with a lighter core, a few sparks around
+    back = `<path d="M16 78C4 62 10 48 14 40c2 8 6 10 9 11C18 34 28 22 30 8c6 8 9 14 9 22 4-10 12-18 14-30 8 8 12 18 12 28 4-8 10-12 12-22 6 10 8 20 6 30 5-4 9-8 10-16 8 12 10 26 4 36 4-2 7-4 9-9 4 14 2 24-4 31z" fill="${c.h}" stroke="${c.h}" stroke-width="2" stroke-linejoin="round"/>` +
+      `<circle cx="9" cy="30" r="2.200" fill="${c.trim}"/><circle cx="112" cy="36" r="1.800" fill="${c.trim}"/><circle cx="103" cy="10" r="1.600" fill="${c.hl}"/>`;
+    front = `<path d="M40 35c1-9 6-12 8-21 4 6 5 11 5 16 3-6 7-10 9-18 5 8 6 14 5 21 3-4 6-6 7-11 4 7 4 13 2 18z" fill="${c.trim}"/><path d="M50 34c1-5 4-7 5-12 3 4 3 7 3 10 2-3 4-5 5-9 3 4 3 8 2 12z" fill="${c.glow}"/>`;
+    body = torso + line('M44 108q5-3.500 10 0t10 0 10 0', c.trim, 2);
+  } else if (k === 'shadow') {
+    // a pointed hood with a glowing rim, a scarf and a throwing star
+    back = `<path d="M12 96C2 72 6 36 26 20c8-6 18-10 30-13l4-5 4 5c12 3 22 7 30 13 20 16 24 52 14 76l-12-12H24z" fill="${c.cloth}" stroke="${c.ol}" stroke-width="1.500" stroke-linejoin="round"/>`;
+    front = `<path d="M21 58C18 32 36 16 60 16s42 16 39 42c-6-16-20-26-39-26S27 42 21 58z" fill="${c.cloth}" stroke="${c.ol}" stroke-width="1.500" stroke-linejoin="round"/>` + line('M97 55c-6-14-19-22.500-37-22.500S29 41 23 55', c.trim, 1.6);
+    ears = '';
+    body = torso + `<path d="M33 105.500q27 12.500 54 0l2 9q-29 11-58 0z" fill="${c.hs}" stroke="${c.ol}" stroke-width="1"/>` + line('M36 110q24 9.500 48 0', c.trim, 1.4) + spark(13, 106, 7.5, '#C9D3F5') + `<circle cx="13" cy="106" r="1.700" fill="${c.cloth}"/>`;
+  } else if (k === 'astro') {
+    // a glass helmet around the whole head, with an antenna and a collar ring
+    back = backLow;
+    body = torso + `<rect x="25" y="104" width="70" height="12" rx="6" fill="#C9D3F5" stroke="#7F8FD8" stroke-width="1.500"/><rect x="52" y="104" width="16" height="12" fill="${c.trim}"/>`;
+    front = line('M90 14l8-10', '#7F8FD8', 2.4) + `<circle cx="99" cy="3.500" r="3.200" fill="${c.trim}"/>` +
+      `<circle cx="60" cy="58" r="54" fill="#9FD4FF" fill-opacity=".16" stroke="#7F8FD8" stroke-width="3"/>` + line('M22 36q9-17 27-24', '#fff', 3.2) + line('M17 48q.800-3 2-5.500', '#fff', 3.2);
+  } else if (k === 'frost') {
+    // hair of ice, a crown of ice shards, a fur collar
+    front = `<path d="M34 31l4-18 7 12 6-23 9 20 9-20 6 23 7-12 4 18z" fill="#BFEFFF" stroke="#3FA7DE" stroke-width="1.500" stroke-linejoin="round"/>` + line('M51 4v22M69 4v22M38 15v13M82 15v13', '#fff', 1.2) +
+      `<path d="M56 27l4-7 4 7-4 5z" fill="#3FA7DE"/>`;
+    body = torso + line('M37 106.500q23 10.500 46 0', '#fff', 6.5) + line('M37 106.500q23 10.500 46 0', '#CFE9FA', 1.2);
+  } else if (k === 'mecha') {
+    // an open-faced robot helmet: shell, ear modules with aerials, brow plate with a crest, jaw guards, chest light
+    back = `<path d="M14 86C5 62 8 34 26 20c10-8 22-11 34-11s24 3 34 11c18 14 21 42 12 66l-9 6H23z" fill="${c.h}" stroke="${edge}" stroke-width="1.500" stroke-linejoin="round"/>` +
+      line('M11 56V34M109 56V34', edge, 2.6) + `<circle cx="11" cy="32" r="3.400" fill="${c.glow}" stroke="${edge}" stroke-width="1"/><circle cx="109" cy="32" r="3.400" fill="${c.glow}" stroke="${edge}" stroke-width="1"/>`;
+    fringe = '';
+    front = `<path d="M20 60c-2 14 2 28 12 38l4.500-6c-6-8-9-18-8-30z" fill="${c.hs}" stroke="${edge}" stroke-width="1"/><path d="M100 60c2 14-2 28-12 38l-4.500-6c6-8 9-18 8-30z" fill="${c.hs}" stroke="${edge}" stroke-width="1"/>` +
+      `<path d="M20 57C18 30 36 14 60 14s42 16 40 43l-12-9-10 5-18-7-18 7-10-5z" fill="${c.h}" stroke="${edge}" stroke-width="1.500" stroke-linejoin="round"/>` + line('M38 22q-7 8-9 20M82 22q7 8 9 20', c.hl, 1.4) +
+      `<path d="M55 40l5-37 5 37-5 5z" fill="${gold}" stroke="${goldD}" stroke-width="1.200" stroke-linejoin="round"/>` +
+      `<rect x="3" y="54" width="17" height="27" rx="5" fill="${c.hs}" stroke="${edge}" stroke-width="1.500"/><rect x="100" y="54" width="17" height="27" rx="5" fill="${c.hs}" stroke="${edge}" stroke-width="1.500"/>` +
+      `<rect x="8" y="60" width="7" height="15" rx="3.500" fill="${c.glow}"/><rect x="105" y="60" width="7" height="15" rx="3.500" fill="${c.glow}"/>`;
+    ears = '';
+    body = torso + line('M40 108l12 6h16l12-6', c.hl, 1.6) + `<circle cx="60" cy="113" r="4.200" fill="${c.glow}" stroke="${edge}" stroke-width="1.200"/>`;
+  } else if (k === 'galaxy') {
+    // hair like the night sky with nebula and stars, a halo, a star on the brow, a little planet
+    back = backFull + `<ellipse cx="33" cy="33" rx="9" ry="4.500" fill="#FF5CD1" opacity=".4" transform="rotate(-35 33 33)"/><ellipse cx="90" cy="31" rx="9" ry="4.500" fill="#3DE0FF" opacity=".4" transform="rotate(30 90 31)"/>` +
+      `<circle cx="15" cy="58" r="1.300" fill="#fff"/><circle cx="24" cy="24" r="1.500" fill="#fff"/><circle cx="45" cy="9" r="1.300" fill="#fff"/><circle cx="76" cy="8" r="1.500" fill="#fff"/><circle cx="99" cy="21" r="1.300" fill="#fff"/><circle cx="108" cy="52" r="1.400" fill="#fff"/><circle cx="103" cy="66" r="1" fill="#fff"/>`;
+    front = `<ellipse cx="44" cy="31" rx="9" ry="3.600" fill="#FF5CD1" opacity=".35" transform="rotate(-20 44 31)"/><ellipse cx="76" cy="30" rx="8" ry="3.200" fill="#3DE0FF" opacity=".35" transform="rotate(18 76 30)"/>` +
+      spark(40, 30, 4.2, '#fff') + spark(79, 33, 3.2, '#fff') + `<circle cx="58" cy="27" r="1.200" fill="#fff"/><circle cx="29" cy="45" r="1" fill="#fff"/><circle cx="90" cy="45" r="1.100" fill="#fff"/>` +
+      spark(60, 47.5, 5, gold) + `<ellipse cx="60" cy="7" rx="23" ry="5" fill="none" stroke="${gold}" stroke-width="3"/><ellipse cx="60" cy="7" rx="23" ry="5" fill="none" stroke="#FFF3B0" stroke-width="1"/>`;
+    body = torso + spark(60, 111, 5.5, gold) + `<circle cx="10" cy="100" r="4.600" fill="#FF8AD8"/>` + line('M3 102.500q7-5 14-5', '#FFD9F3', 1.6);
   }
   return `<svg class="bit ${cls}" viewBox="0 0 120 120" aria-hidden="true" focusable="false">` + back + body + ears +
     `<path d="M60 22c24 0 38 17 38 40 0 24-17 43-38 43S22 86 22 62c0-23 14-40 38-40z" fill="${skin}"/>` +
@@ -1907,12 +1992,13 @@ function viewAwards() {
   <div class="sec-h"><h2>Abzeichen</h2><span class="pill">${nGot} von ${BADGES.length}</span></div>
   <div class="badges">${badges}</div>`;
 }
+const NEW_SKINS = 2.1;                    // skins of this version carry a „Neu“ tag in the shop until they are bought
 function viewShop() {
   const p = S.prog, coins = p.coins || 0, fz = p.freezes || 0;
   const cur = SKINS[p.outfit] ? p.outfit : '';
   // Bit's own look comes first and is always there; the skins are bought once and can be switched freely.
   const outfits = [{ id: '', t: 'Bit', tier: 0 }].concat(OUTFITS).map(o => { const own = !o.id || !!(p.outfits || {})[o.id], on = cur === o.id;
-    return `<div class="card outfit${on ? ' on' : ''}">${bit(on ? 'cheer' : 'happy', o.id, on ? fxc('skin', 'fx') : '')}<b>${o.t}</b><span class="rar rar-${o.tier}">${o.tier ? RARITY[o.tier] : 'Standard'}</span>
+    return `<div class="card outfit${on ? ' on' : ''}${o.tier === 4 ? ' myth' : ''}">${!own && o.since === NEW_SKINS ? '<span class="newtag">Neu</span>' : ''}${bit(on ? 'cheer' : 'happy', o.id, on ? fxc('skin', 'fx') : '')}<b>${o.t}</b><span class="rar rar-${o.tier}">${o.tier ? RARITY[o.tier] : 'Standard'}</span>
       ${own ? `<button class="btn ${on ? 'btn-line' : 'btn-soft'} btn-sm wide" data-act="wear" data-o="${o.id}" aria-pressed="${on}">${on ? icon('check') + 'Ausgewählt' : 'Auswählen'}</button>`
             : `<button class="btn btn-primary btn-sm wide" data-act="buy-outfit" data-o="${o.id}" aria-label="${o.t} kaufen für ${o.cost} Münzen"><span class="price">${art('coin')}${o.cost}</span></button>`}</div>` }).join('');
   return `
@@ -2082,7 +2168,7 @@ function viewWhatsNew() {
     <ul>
       <li>${art('star')}<span><b>Lernpfad:</b> Station für Station durch dein Buch.</span></li>
       <li>${art('target')}<span><b>Tagesquests:</b> jeden Tag drei kleine Aufgaben.</span></li>
-      <li>${art('coin')}<span><b>Münzen und Shop:</b> Skins für mich freischalten, vom Ninja bis zum Drachenkrieger.</span></li>
+      <li>${art('coin')}<span><b>Münzen und Shop:</b> Skins für mich freischalten, vom Ninja bis zum Galaxienwächter.</span></li>
       <li>${art('shield')}<span><b>Serien-Schutz:</b> rettet deine Serie an einem freien Tag.</span></li>
     </ul>
     <p class="muted">Deine XP, dein Karteikasten und deine Abzeichen sind alle noch da.</p>
@@ -2411,7 +2497,7 @@ const ACT = {
   'reset-ask': () => { S.resetAsk = true; render() },
   'reset-no': () => { S.resetAsk = false; render() },
   'reset-yes': () => {
-    const o = S.prog, keep = { name: o.name, goal: o.goal, sound: o.sound, speak: o.speak, haptics: o.haptics, theme: o.theme, tempo: o.tempo, removedLists: o.removedLists || [], onboarded: true, v2: true, lvl: 1 };
+    const o = S.prog, keep = { name: o.name, goal: o.goal, sound: o.sound, speak: o.speak, haptics: o.haptics, theme: o.theme, tempo: o.tempo, removedLists: o.removedLists || [], onboarded: true, v2: true, lvl: 1, shopSeen: OUTFITS.length };
     S.prog = Object.assign(freshProg(), keep); S.resetAsk = false; persist(); updateBadge(); go('home'); toast('Fortschritt zurückgesetzt.', 'autorenew');
   },
   'sound-test': () => { unlockAudio(); const was = S.prog.sound; S.prog.sound = true; SFX.win(); S.prog.sound = was; say('Hello! The sound is working.'); haptic('win'); toast('Du solltest jetzt eine Melodie und eine Stimme hören. Keine Stimme? Dann ist der Stummschalter an.', 'volume_up') },
@@ -2440,8 +2526,8 @@ const ACT = {
     saveUnits(); settleUp(true); persist(); applyTheme(); updateBadge(); go('home'); toast('Sicherung geladen.', 'check_circle');
   },
   'ob-goal': t => { S.prog.goal = +t.dataset.n; render() },
-  'ob-go': () => { const p = S.prog; p.name = (p.name || '').trim().slice(0, 24); p.onboarded = true; p.v2 = true; p.lvl = levelInfo(p.xp).n; persist(); render(); SFX.ok(); haptic('ok') },
-  'ob-skip': () => { S.prog.name = ''; S.prog.onboarded = true; S.prog.v2 = true; S.prog.lvl = levelInfo(S.prog.xp).n; persist(); render() },
+  'ob-go': () => { const p = S.prog; p.name = (p.name || '').trim().slice(0, 24); p.onboarded = true; p.v2 = true; p.lvl = levelInfo(p.xp).n; p.shopSeen = OUTFITS.length; persist(); render(); SFX.ok(); haptic('ok') },
+  'ob-skip': () => { S.prog.name = ''; S.prog.onboarded = true; S.prog.v2 = true; S.prog.lvl = levelInfo(S.prog.xp).n; S.prog.shopSeen = OUTFITS.length; persist(); render() },
   'v2-ok': () => { const p = S.prog; p.v2 = true; addCoins(50); persist(); render(); confetti(); SFX.level(); haptic('win'); toast('50 Münzen für dich. Schau mal im Shop vorbei!', 'check_circle') },
   'imp-open': () => { S.imp = S.imp || { step: 'pick', text: '', title: '', words: [], err: '', showPrompt: false }; go('import', 'push') },
   'imp-back': () => { S.imp = null; go('vocab') },
@@ -2614,9 +2700,11 @@ function settleUp(quiet) {
   if (!p.lvl) p.lvl = lv.n; else if (lv.n > p.lvl) { lvCoins = 20 * (lv.n - p.lvl); addCoins(lvCoins); p.lvl = lv.n }
   const fresh = checkBadges(), q = checkQuests(), paid = payGoal();
   addCoins(5 * fresh.length);
+  // The shop grows with updates. shopSeen is the number of skins the player has been told about (version 2.0 had 6).
+  const newSkins = p.v2 ? OUTFITS.length - (p.shopSeen || 6) : 0; p.shopSeen = OUTFITS.length;
   persist(); updateBadge();
   if (quiet || !S.prog.v2) return;
-  const msg = lvCoins ? 'Level ' + lv.n + ': ' + lv.name + '! ' + lvCoins + ' Münzen.' : fresh.length ? (fresh.length === 1 ? 'Neues Abzeichen: ' + fresh[0].t : fresh.length + ' neue Abzeichen! Schau unter Erfolge.')
+  const msg = newSkins > 0 ? newSkins + ' neue Skins im Shop! Schau unter Erfolge.' : lvCoins ? 'Level ' + lv.n + ': ' + lv.name + '! ' + lvCoins + ' Münzen.' : fresh.length ? (fresh.length === 1 ? 'Neues Abzeichen: ' + fresh[0].t : fresh.length + ' neue Abzeichen! Schau unter Erfolge.')
     : q.chest ? 'Tagestruhe geöffnet: 15 Münzen!' : q.done.length ? 'Quest geschafft: 5 Münzen!' : paid ? 'Tagesziel geschafft: 10 Münzen!' : '';
   if (msg) setTimeout(() => { toast(msg, 'emoji_events'); SFX.badge(); softRender() }, 900); else targetReminder();
 }

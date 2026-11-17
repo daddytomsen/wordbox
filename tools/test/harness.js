@@ -31,7 +31,7 @@ function load(opts = {}) {
   };
   if (opts.vt) env.document.startViewTransition = opts.vt;
   const names = Object.keys(env);
-  const expose = `\n;return { get S() { return S }, ACT, BADGES, QUESTS, OUTFITS, TEMPOS, store, grade, composeRound, buildRound, tiersOf, pickOpts, pastWrong, pastAlts, makeQ, variants, checkTyped, startRound, settle, answerMC, nextQ, finish, targetInfo, checkTargets, streakInfo, streakTick, questsToday, checkQuests, dayStats, payGoal, pathNodes, nodeInfo, allNodes, smartPlan, badgeCtx, checkBadges, levelInfo, render, index, fach, isDue, todayKey, xpToday, persist, migrateProg, freshProg, viewHome, viewPractice, viewVocab, viewAwards, viewShop, viewSettings, viewQuiz, viewResult, parseText, listToUnit, bit, SKINS, transit, settleUp, cleanUnits, ws };`;
+  const expose = `\n;return { get S() { return S }, ACT, BADGES, QUESTS, OUTFITS, TEMPOS, store, grade, composeRound, buildRound, tiersOf, pickOpts, pastWrong, pastAlts, makeQ, variants, checkTyped, startRound, settle, answerMC, nextQ, finish, targetInfo, checkTargets, streakInfo, streakTick, questsToday, checkQuests, dayStats, payGoal, pathNodes, nodeInfo, allNodes, smartPlan, badgeCtx, checkBadges, levelInfo, render, index, fach, isDue, todayKey, xpToday, persist, migrateProg, freshProg, viewHome, viewPractice, viewVocab, viewAwards, viewShop, viewSettings, viewQuiz, viewResult, parseText, listToUnit, bit, SKINS, transit, settleUp, cleanUnits, ws, deParts };`;
   const fn = new Function(...names, body + expose);
   const api = fn(...names.map(n => env[n]));
   api.mem = mem; api.clock = clock; api.els = els; api.timers = timers;
