@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 17.11.2026 · Version 2.1 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 18.11.2026 · Version 2.2 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,11 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.2 (18.11.2026, Vorgabe Thomas „Truhensystem nach dem Vorbild von Duolingo“):** Truhen in vier Stufen (Holz, Silber, Gold, Diamant), Öffnen mit drei Tipps und 20 % Upgrade-Chance bei Tipp 1 und 2, Beute aus einer Tabelle (Münzen, XP-Booster, Serien-Schutz), Truhen-Leiste auf dem Start mit Countdown, Booster-Anzeige unter der Kopfzeile.
+  - Auslöser: jede Tagesquest (leicht → Holz, mittel → Silber, schwer → Gold; ersetzt die 5 Münzen je Quest und die 15 der alten Tagestruhe), jede 5. fertige Runde (Holz), jedes neue Level (Silber), Serie an Tag 3, 7, 14, 30, 50, 100, dazu Frühaufsteher- und Nachteulen-Truhe mit Zeitfenster.
+  - Bewusst anders als die Vorgabe: (1) alles bleibt in `index.html`, Regeln und Oberfläche sind getrennte Abschnitte; (2) „Bits“ sind die vorhandenen Münzen; (3) die Münzbeträge sind ein Viertel der Vorgabe, weil Skins 30 bis 400 kosten (Probelauf über 90 Tage: rund 65 Münzen am Tag, alle Skins nach etwa einem Monat); (4) kein Server, also Geräteuhr mit Sperre gegen Zurückstellen; (5) Energie/Herzen gibt es nicht. Die Zahlen stehen in der Tabelle `CHEST` und sind in einer Zeile änderbar.
+  - Neue Quest „Eine Runde mit 85 % richtig“. Quests sind jetzt nach Schwierigkeit gestaffelt.
+  - Tests: Beute-Tabelle, drei Tipps mit Neustart dazwischen, Zeitfenster samt Verfall, Booster (auch mit zurückgestellter Uhr), alle Auslöser, beschädigte Tasche, dazu ein Probelauf über 90 Tage, bei dem jede Buchung nachgerechnet wird.
 - **Version 2.1 (17.11.2026):** Theme 2 um S. 229 und 230 erweitert (rev 3, jetzt 152 Wörter, Ids 081–152, alte Ids unverändert) und acht neue Skins (Wunsch des Sohnes: ausgefallen, epische Namen): Sturmrufer, Mondwolf, Flammengeist, Schattenklinge, Sternenfahrer, Frostkaiser, Mecha-Titan, Galaxienwächter. Neue Stufe „Mythisch“, Schild „Neu“ im Shop, einmaliger Hinweis beim Start.
   - Vokabeln: Abschnitte S. 229: Anfang gehört noch zu A2, dann A3, A6; die Marken vor „to contact sb“ und „upset“ waren auf dem Foto nicht lesbar und sind als A7 und A8 **angenommen** (S. 230 beginnt mit A9). S. 230: A9, B2, B4, B5, B6, B7. „° to solve“ ist fakultativ (`opt`). „worse ↔ better“ und „worst ↔ best“ als `opp`. Dubletten wie im Buch: „annoying“ steht auch in Theme 1, „to get“ auch in Irregular verbs.
   - Dabei behoben: „towards“ für „toward(s)“ galt nur als Tippfehler, „to be keen on“ für „to be keen on sb/sth“ als falsch; „anyone“ konnte als falsche Antwort bei „someone“ stehen (gleiche Bedeutung).
@@ -147,6 +152,7 @@ Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-T
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 18.11.2026 | Mac, Browser in iPhone-Größe, Version 2.2 | Truhen-Leiste, Öffnen mit Upgrade, Beute, Booster im Quiz, Ergebnis-Schritt „Truhen“, Freischalten einer Zeit-Truhe und Ablauf des Boosters live geprüft, hell, dunkel und 320 px. |
 | 17.11.2026 | Mac, Browser in iPhone-Größe, Version 2.1 | Neue Wörter, Stationen S. 229/230, Shop mit 14 Skins, Kauf und Hinweis geprüft; Tests bestanden. |
 | 10.11.2026 | Mac, Browser in iPhone-Größe, Version 2.0 | Alle Ansichten in hell und dunkel durchgespielt, Tests bestanden. iPhone-Test offen (Aufgabe 6). |
 | 11.10.2026 | iPhone (Thomas), Version 1.5 | Töne ok mit und ohne Stummschalter. Sprachausgabe bei Stummschalter an stumm. Umweg in 1.6 (lautloses `<audio>`) hat nicht geholfen → in 1.7 entfernt, stattdessen Hinweis in Einstellungen und Ton-Test. |

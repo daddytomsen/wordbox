@@ -27,11 +27,12 @@ function load(opts = {}) {
     window: { scrollTo() {}, scrollBy() {}, addEventListener() {} },
     navigator: {}, location: { protocol: 'file:', reload() {} },
     matchMedia: () => ({ matches: !opts.vt }),      // tests run with reduced motion, unless they bring a view-transition stub performance: { now: () => 0 }, requestAnimationFrame: () => 0,
-    setTimeout: (f) => { timers.push(f); return 0 }, clearTimeout: () => {}, console, Date: makeDate(clock), innerHeight: 800, innerWidth: 400, scrollTo() {},
+    setTimeout: (f) => { timers.push(f); return 0 }, clearTimeout: () => {}, setInterval: () => 0, clearInterval: () => {}, console, Date: makeDate(clock), innerHeight: 800, innerWidth: 400, scrollTo() {},
   };
   if (opts.vt) env.document.startViewTransition = opts.vt;
   const names = Object.keys(env);
-  const expose = `\n;return { get S() { return S }, ACT, BADGES, QUESTS, OUTFITS, TEMPOS, store, grade, composeRound, buildRound, tiersOf, pickOpts, pastWrong, pastAlts, makeQ, variants, checkTyped, startRound, settle, answerMC, nextQ, finish, targetInfo, checkTargets, streakInfo, streakTick, questsToday, checkQuests, dayStats, payGoal, pathNodes, nodeInfo, allNodes, smartPlan, badgeCtx, checkBadges, levelInfo, render, index, fach, isDue, todayKey, xpToday, persist, migrateProg, freshProg, viewHome, viewPractice, viewVocab, viewAwards, viewShop, viewSettings, viewQuiz, viewResult, parseText, listToUnit, bit, SKINS, transit, settleUp, cleanUnits, ws, deParts };`;
+  const expose = `\n;return { get S() { return S }, ACT, BADGES, QUESTS, OUTFITS, TEMPOS, store, grade, composeRound, buildRound, tiersOf, pickOpts, pastWrong, pastAlts, makeQ, variants, checkTyped, startRound, settle, answerMC, nextQ, finish, targetInfo, checkTargets, streakInfo, streakTick, questsToday, checkQuests, dayStats, payGoal, pathNodes, nodeInfo, allNodes, smartPlan, badgeCtx, checkBadges, levelInfo, render, index, fach, isDue, todayKey, xpToday, persist, migrateProg, freshProg, viewHome, viewPractice, viewVocab, viewAwards, viewShop, viewSettings, viewQuiz, viewResult, parseText, listToUnit, bit, SKINS, transit, settleUp, cleanUnits, ws, deParts,
+    TIERS, CHEST, STREAK_CHESTS, addChest, syncChests, timedChest, rollLoot, applyLoot, tapChest, addBoost, boostTick, xpMult, nowSafe, questTier };`;
   const fn = new Function(...names, body + expose);
   const api = fn(...names.map(n => env[n]));
   api.mem = mem; api.clock = clock; api.els = els; api.timers = timers;

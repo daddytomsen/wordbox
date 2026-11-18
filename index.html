@@ -164,6 +164,39 @@ ol,ul{margin:0;padding:0;list-style:none}
 .pill{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;font:800 13px var(--f-ui);background:var(--surface-2);color:var(--ink-2)}
 .pill .ms{font-size:16px}
 .pill-gold{background:var(--gold-soft);color:var(--gold-ink)}
+/* booster, chests */
+.boost{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;padding:6px 12px;border-radius:12px;background:linear-gradient(90deg,#7C4DEB,#3755EE);color:#fff;font:800 14px var(--f-ui)}
+.boost .art{width:18px;height:18px}
+.boost b{font-weight:900}
+.boost i,.chest-it i{font-style:normal;font-variant-numeric:tabular-nums}
+.qboost{font:900 13px var(--f-ui);padding:3px 8px;border-radius:999px;background:#7C4DEB;color:#fff}
+.chests{display:flex;flex-direction:column;gap:8px;padding-bottom:12px}
+.chest-row{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chest-row::-webkit-scrollbar{display:none}
+.chest-it{flex:none;width:106px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 4px 8px;border-radius:18px;border:2px solid var(--line-2);border-bottom-width:5px;background:var(--surface);color:var(--ink);position:relative;transition:transform .07s}
+.chest-it:active{transform:translateY(2px)}
+.chest-it .art{width:58px;height:58px}
+.chest-it b{font:900 13px/1.2 var(--f-ui)}
+.chest-it small{font:800 12px var(--f-ui);color:var(--ink-2)}
+.chest-it.ready small{color:var(--royal)}
+.chest-it.locked .art{opacity:.5}
+.chest-lock{position:absolute;top:24px;left:50%;translate:-50% 0;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--surface);display:grid;place-items:center}
+.chest-lock .ms{width:16px;height:16px}
+.t-COMMON{border-color:#C98850}.t-RARE{border-color:#8FA9F2}.t-EPIC{border-color:#A684FA}.t-MEGA{border-color:#14B8D4}
+.chest-dlg{align-items:center;gap:10px}
+.chest-src{font:800 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.chest-tap{background:none;border:0;padding:0;width:210px;height:182px;position:relative;border-radius:28px;touch-action:manipulation}
+.chest-big{width:210px;height:182px;display:block}
+.chest-msg{min-height:38px;display:grid;place-items:center;font:800 16px var(--f-ui);color:var(--ink-2)}
+.chest-up{font:900 20px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#C81E8C,#7C4DEB);padding:5px 18px;border-radius:999px}
+.pips3{display:flex;gap:8px;justify-content:center}
+.pips3 i{width:14px;height:14px;border-radius:50%;background:var(--line-2)}
+.pips3 i.on{background:var(--gold)}
+.loots{width:100%;display:flex;flex-direction:column;gap:8px}
+.dialog .loot{padding:10px 14px;border-radius:16px;background:var(--surface-2);font-size:16px}
+.dialog .loot .art{width:32px;height:32px}
+.dialog .loot i{font-style:normal}
+.newmedal .chest-md{width:88px;height:88px}
 .notice{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--r-md);background:var(--gold-soft);color:var(--gold-ink);font-size:15px;line-height:1.35}
 .notice .ms{font-size:24px}
 .notice .art{width:30px;height:30px}
@@ -249,6 +282,7 @@ ol,ul{margin:0;padding:0;list-style:none}
 .quest-r{display:flex;flex-direction:column;align-items:center;gap:0;min-width:46px;font:900 12px var(--f-ui);color:var(--ink-3);font-variant-numeric:tabular-nums}
 .quest-r .art{width:28px;height:28px}
 .quest-r em{font-style:normal;display:inline-flex;align-items:center;gap:3px;color:var(--gold-text)}
+.quest-r .quest-chest-ic{width:26px;height:26px;margin-top:1px}
 .quest-r em .art{width:15px;height:15px}
 .quest.done b{color:var(--ink-3);text-decoration:line-through;text-decoration-thickness:2px}
 .quest.done .bar > span{background:var(--good)}
@@ -558,6 +592,8 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 @keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes chest-shake{0%,100%{transform:rotate(0)}15%{transform:rotate(-8deg) scale(1.04)}35%{transform:rotate(7deg) scale(1.07)}55%{transform:rotate(-5deg) scale(1.03)}75%{transform:rotate(3deg)}}
+@keyframes chest-flash{0%{opacity:.95;transform:scale(.3)}100%{opacity:0;transform:scale(1.8)}}
 @keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 @keyframes tada{0%{transform:scale(.4) rotate(-12deg);opacity:0}60%{transform:scale(1.15) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
 @keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
@@ -602,6 +638,14 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
   .bsheet{animation:sheet-up .3s var(--out) both}
   .outfit.on .bit.fx,.bought{animation:pop .4s var(--out)}
   .skel{animation:fade-in 1.2s ease-in-out infinite alternate}
+  .chest-tap.shake .chest-big{animation:chest-shake .45s var(--out)}
+  .chest-tap.up .chest-big{animation:tada .6s var(--out)}
+  .chest-tap.up::after{content:"";position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,#fff 0,rgba(255,255,255,0) 66%);animation:chest-flash .6s ease-out both;pointer-events:none}
+  .chest-up.fx{animation:pop .4s var(--out) both}
+  .chest-dlg.opened .chest-big{animation:pop .5s var(--out) both}
+  .chest-dlg.opened .loot{animation:rise .4s var(--out) both;animation-delay:calc(.25s + var(--i,0) * .2s)}
+  .chest-it.ready .art{animation:bob 1.6s ease-in-out 3;animation-delay:calc(var(--i,0) * .12s)}
+  .result.enter .newmedal .chest-md{animation:tada .6s var(--out) both;animation-delay:calc(.15s + var(--i,0) * .16s)}
   /* view transitions between screens (Safari 18+); older systems switch at once */
   ::view-transition-old(root){animation:fade-out .12s ease-out both}
   ::view-transition-new(root){animation:fade-in .2s ease-out both}
@@ -631,7 +675,7 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 const app = document.getElementById('app');
 const toastEl = document.getElementById('toast');
 const DAY = 864e5;
-const APP_VERSION = '2.1';      // must match CACHE in sw.js; tools/check.sh compares both
+const APP_VERSION = '2.2';      // must match CACHE in sw.js; tools/check.sh compares both
 /* Waiting days per box (index = box). 'fast' is the family's physical card box: one box per day,
    so a word answered right every day goes new -> 2 -> 3 -> 4 -> 5 in four days. 'long' spaces further apart.
    Waiting is counted in calendar days: a word answered in the evening is due again the next morning. */
@@ -652,7 +696,8 @@ function freshProg() {
   return { v: 1, econ: 2, name: '', goal: 150, sound: true, speak: true, haptics: true, theme: 'auto', xp: 0, days: {}, streak: 0, best: 0, last: '',
     rounds: 0, perfect: 0, typedRight: 0, pastRight: 0, extraRight: 0, bestCombo: 0, photos: 0, goalDays: 0, goalDay: '', earlyRounds: 0, weekendRounds: 0, speedRounds: 0, modesUsed: {}, mastered: {},
     coins: 0, coinsEarned: 0, freezes: 0, freezeUsed: 0, frozen: {}, roundDays: {}, since2: '', outfit: '', outfits: {}, today: null, quests: null, questsDone: 0, chests: 0, targetsDone: 0,
-    badges: {}, w: {}, sel: null, mode: 'mix', len: 10, tempo: 'fast', onboarded: false, v2: false, removedLists: [], targets: [], lvl: 0, shopSeen: 0, updatedAt: 0 };
+    badges: {}, w: {}, sel: null, mode: 'mix', len: 10, tempo: 'fast', onboarded: false, v2: false, removedLists: [], targets: [], lvl: 0, shopSeen: 0,
+    inv: [], boost: null, clock: 0, tcEarly: '', tcNight: '', news: '', chestsWon: 0, chestsOpened: 0, chestUps: 0, updatedAt: 0 };
 }
 
 /* Release 1.3 made XP about five times scarcer (econ 2). Progress saved before that is scaled once,
@@ -666,8 +711,11 @@ function migrateProg(p) {
   for (const k of ['today', 'quests']) if (k in p && p[k] !== null && !obj(p[k])) delete p[k];
   if ('sel' in p && p.sel !== null && !Array.isArray(p.sel)) delete p.sel;
   for (const k of ['xp', 'goal', 'streak', 'best', 'rounds', 'perfect', 'typedRight', 'pastRight', 'extraRight', 'bestCombo', 'photos', 'goalDays', 'earlyRounds', 'weekendRounds', 'speedRounds',
-    'coins', 'coinsEarned', 'freezes', 'freezeUsed', 'questsDone', 'chests', 'targetsDone', 'len', 'lvl', 'shopSeen']) if (k in p && !num(p[k])) delete p[k];
-  for (const k of ['name', 'last', 'goalDay', 'since2', 'outfit', 'mode', 'tempo', 'theme']) if (k in p && typeof p[k] !== 'string') delete p[k];
+    'coins', 'coinsEarned', 'freezes', 'freezeUsed', 'questsDone', 'chests', 'targetsDone', 'len', 'lvl', 'shopSeen', 'clock', 'chestsWon', 'chestsOpened', 'chestUps']) if (k in p && !num(p[k])) delete p[k];
+  for (const k of ['name', 'last', 'goalDay', 'since2', 'outfit', 'mode', 'tempo', 'theme', 'tcEarly', 'tcNight', 'news']) if (k in p && typeof p[k] !== 'string') delete p[k];
+  // chests and booster (since 2.2): only whole, known things stay
+  if ('inv' in p) p.inv = Array.isArray(p.inv) ? p.inv.filter(c => obj(c) && typeof c.id === 'string' && ['COMMON', 'RARE', 'EPIC', 'MEGA'].indexOf(c.tier) >= 0 && (c.status === 'READY' || c.status === 'LOCKED')) : [];
+  if ('boost' in p && !(obj(p.boost) && num(p.boost.mult) && num(p.boost.left) && num(p.boost.at))) p.boost = null;
   if (p.w) for (const id in p.w) if (!obj(p.w[id])) delete p.w[id];
   if (p.days) for (const k in p.days) if (!num(p.days[k])) delete p.days[k];
   if (p.targets) p.targets = p.targets.filter(t => obj(t) && Array.isArray(t.ids) && typeof t.due === 'string').map(t => { if (!obj(t.base)) t.base = {}; if (!num(t.need)) t.need = 2; return t });
@@ -704,7 +752,7 @@ const S = {
   storageOk: true, restore: null,
   filter: 'all', unitFilter: null, search: '',
   quiz: null, result: null, imp: null, confirm: null, delUnit: null, resetAsk: false, tform: null, delTarget: null,
-  openNode: null, sheet: null, update: '', stale: false, dayShown: ''
+  openNode: null, sheet: null, chest: null, update: '', stale: false, dayShown: ''
 };
 
 /* ---------- helpers ---------- */
@@ -871,8 +919,8 @@ const BADGES = [
   { id: 'quest10', ic: 'flag', t: 'Quest-Jäger', d: '10 Tagesquests geschafft.', ok: p => (p.questsDone || 0) >= 10, pr: p => [p.questsDone || 0, 10] },
   { id: 'quest50', ic: 'flag', t: 'Quest-Profi', d: '50 Tagesquests geschafft.', ok: p => (p.questsDone || 0) >= 50, pr: p => [p.questsDone || 0, 50] },
   { id: 'quest200', ic: 'military_tech', t: 'Quest-Legende', d: '200 Tagesquests geschafft.', ok: p => (p.questsDone || 0) >= 200, pr: p => [p.questsDone || 0, 200] },
-  { id: 'chest7', ic: 'inventory_2', t: 'Truhenöffner', d: '7 Tagestruhen geöffnet.', ok: p => (p.chests || 0) >= 7, pr: p => [p.chests || 0, 7] },
-  { id: 'chest30', ic: 'inventory_2', t: 'Schatzmeister', d: '30 Tagestruhen geöffnet.', ok: p => (p.chests || 0) >= 30, pr: p => [p.chests || 0, 30] },
+  { id: 'chest7', ic: 'inventory_2', t: 'Truhenöffner', d: 'An 7 Tagen alle drei Tagesquests geschafft.', ok: p => (p.chests || 0) >= 7, pr: p => [p.chests || 0, 7] },
+  { id: 'chest30', ic: 'inventory_2', t: 'Schatzmeister', d: 'An 30 Tagen alle drei Tagesquests geschafft.', ok: p => (p.chests || 0) >= 30, pr: p => [p.chests || 0, 30] },
   { id: 'coins100', ic: 'star', t: 'Sparschwein', d: '100 Münzen verdient.', ok: p => (p.coinsEarned || 0) >= 100, pr: p => [p.coinsEarned || 0, 100] },
   { id: 'coins1000', ic: 'star', t: 'Goldgrube', d: '1000 Münzen verdient.', ok: p => (p.coinsEarned || 0) >= 1000, pr: p => [p.coinsEarned || 0, 1000] },
   { id: 'outfit', ic: 'auto_awesome', t: 'Neuer Look', d: 'Einen Skin für Bit freigeschaltet.', ok: p => OUTFITS.filter(o => (p.outfits || {})[o.id]).length >= 1 },
@@ -946,7 +994,7 @@ function addDayXP(g) {
 }
 
 /* ---------- persistence (this browser) ---------- */
-function persist() { S.prog.updatedAt = Date.now(); if (!store.set(LS_PROG, S.prog)) S.storageOk = false }
+function persist() { S.prog.updatedAt = Date.now(); nowSafe(); if (!store.set(LS_PROG, S.prog)) S.storageOk = false }
 function saveUnits() { if (!store.set(LS_UNITS, S.units)) S.storageOk = false; index() }
 /* Saves a file. On iOS home-screen apps <a download> often fails or only shows a preview, so the
    share sheet is used when it can take files ("In Dateien sichern"). Must be called synchronously
@@ -1016,6 +1064,9 @@ const SFX = {
   win: () => tone([[523.25, 0, .16], [659.25, .13, .16], [783.99, .26, .16], [1046.5, .39, .42]]),
   badge: () => tone([[880, 0, .1, 'sine'], [1174.66, .08, .1, 'sine'], [1567.98, .16, .34, 'sine']]),
   coin: () => tone([[NOTE(26), 0, .07, 'square', .05], [NOTE(31), .06, .24, 'square', .05]]),
+  chestTap: () => tone([[NOTE(-14), 0, .1, 'square', .1], [NOTE(-9), .06, .12, 'triangle', .16]]),
+  chestUp: () => tone([[NOTE(7), 0, .08], [NOTE(12), .07, .08], [NOTE(16), .14, .08], [NOTE(19), .21, .08], [NOTE(24), .28, .34], [NOTE(36), .28, .3, 'sine', .05]]),
+  chestOpen: () => tone([[NOTE(3), 0, .12], [NOTE(7), .1, .12], [NOTE(10), .2, .12], [NOTE(15), .3, .4], [NOTE(27), .3, .36, 'sine', .05], [NOTE(31), .46, .3, 'square', .04]]),
   level: () => tone([[523.25, 0, .14], [659.25, .12, .14], [783.99, .24, .14], [1046.5, .36, .2], [1318.5, .54, .5], [1568, .54, .5, 'sine', .08]])
 };
 let voice = null;
@@ -1246,7 +1297,7 @@ function startRound(ids, mode, n, opts = {}) {
   if (!list.length) { toast('Für diese Abfrage passen keine Wörter aus deiner Auswahl.', 'info'); return }
   S.quiz = { mode, list, i: 0, answered: false, chosen: null, combo: 0, bestCombo: 0, right: 0, wrong: 0, xp: 0, promoted: 0,
     mistakes: new Map(), requeued: new Set(), typed: '', typeErr: '', comboBonus: 0, settled: 0, xpStart: S.prog.xp, t0: Date.now(),
-    coins: 0, goalHit: false, qDone: [], qChest: false };
+    coins: 0, goalHit: false, qDone: [], qChest: false, chests: [], boostXP: 0 };
   S.result = null; S.openNode = null; S.sheet = null;
   transit(() => { S.view = 'quiz'; S.confirm = null; fx('q'); render(); window.scrollTo(0, 0) }, 'up');
 }
@@ -1287,13 +1338,15 @@ function settle(ok, almost) {
     if (!Q.requeued.has(q.wid) && w && Q.list.length - Q.i - 1 >= 2) { Q.requeued.add(q.wid); Q.list.splice(Math.min(Q.list.length, Q.i + 3), 0, makeQ(w, q.type, q.extra)); Q.again = true }
     SFX.bad(); haptic('bad');
   }
+  const mult = xpMult(), plus = gain ? boosted(gain, mult) : 0;         // a running booster multiplies the XP of this answer
+  gain += plus; Q.boostXP += plus; Q.mult = plus ? mult : 1;
   Q.gain = gain; Q.xp += gain; S.prog.xp += gain; addDayXP(gain);
   S.prog.bestCombo = Math.max(S.prog.bestCombo, Q.bestCombo);
   // Daily goal and quests are booked the moment they are reached, so midnight or a closed app cannot lose them.
   // The round remembers them for the result screens.
   if (payGoal()) { Q.goalHit = true; Q.coins += 10 }
   const qs = checkQuests();
-  if (qs.done.length || qs.chest) { Q.qDone = Q.qDone.concat(qs.done); Q.qChest = Q.qChest || qs.chest; Q.coins += 5 * qs.done.length + (qs.chest ? 15 : 0) }
+  if (qs.done.length || qs.chest) { Q.qDone = Q.qDone.concat(qs.done); Q.qChest = Q.qChest || qs.chest; Q.chests = Q.chests.concat(qs.chests) }
   persist();
   if (S.prog.speak) say(q.say);            // must stay inside the tap, iOS blocks speech otherwise
   fx('ans'); render();
@@ -1312,16 +1365,20 @@ function finish(quit) {
   const Q = S.quiz, p = S.prog; if (!Q) return;
   const d = dayStats(), answered = Q.right + Q.wrong, secs = Math.max(1, Math.round((Date.now() - Q.t0) / 1000));
   let bonus = 0, perfect = false, st = { up: false, saved: 0 }, coinSum = 0;
-  const extras = [], mastered = [];
+  const extras = [], mastered = [], won = (Q.chests || []).slice();      // won: every chest this round brought
   const coin = n => { addCoins(n); coinSum += n };
   if (Q.comboBonus) extras.push(['Combo-Bonus', Q.comboBonus]);
   if (!quit) {
     st = streakTick();                       // any finished round keeps the streak alive
+    if (st.up && STREAK_CHESTS[p.streak]) won.push(addChest(STREAK_CHESTS[p.streak], 'STREAK'));
     // Round bonuses and counters need a real round of five answers or more; a two-word repeat is no shortcut.
     if (answered >= 5) {
       bonus = 5; extras.push(['Runde geschafft', 5]);
       if (Q.wrong === 0) { bonus += 10; p.perfect++; d.perfect++; perfect = true; extras.push(['Fehlerfrei', 10]); coin(2); if (Q.right >= 10 && secs <= 90) p.speedRounds = (p.speedRounds || 0) + 1 }
       p.rounds++; d.rounds++;
+      if (Q.right / answered >= .85) d.acc = (d.acc || 0) + 1;
+      if (p.rounds % ROUNDS_PER_CHEST === 0) won.push(addChest('COMMON', 'PATH_MILESTONE'));
+      const timed = timedChest(); if (timed) won.push(timed);
       const sd = shownStreak(), sb = Math.min(7, sd); if (sb >= 2) { bonus += sb; extras.push([sd + ' Tage Serie', sb]) }
       const now = new Date(), h = now.getHours();
       if (h >= 5 && h < 8) p.earlyRounds = (p.earlyRounds || 0) + 1;
@@ -1336,19 +1393,22 @@ function finish(quit) {
     const uw = (u.words || []).filter(w => S.byId.has(w.id));
     if (uw.length && !p.mastered[u.id] && uw.every(w => fach(w.id) >= 4)) { p.mastered[u.id] = todayKey(); mastered.push(u.title); bonus += 30; extras.push(['Lektion gemeistert', 30]); coin(25) }
   }
+  const boostBonus = boosted(bonus, xpMult()); bonus += boostBonus;
+  if (Q.boostXP + boostBonus) extras.push(['XP-Booster', Q.boostXP + boostBonus]);
   p.xp += bonus; addDayXP(bonus);
   let goalHit = !!Q.goalHit; if (payGoal()) { goalHit = true; coinSum += 10 }
   // p.lvl is the highest level already celebrated and paid. It, not the XP at round start, decides about a level-up.
   const lvOld = p.lvl || levelInfo(Q.xpStart || 0).n, lvNow = levelInfo(p.xp), levelUp = lvNow.n > lvOld ? lvNow : null;
   const levelCoins = levelUp ? 20 * (lvNow.n - lvOld) : 0; coin(levelCoins); p.lvl = Math.max(lvOld, lvNow.n);
+  for (let i = lvOld; i < lvNow.n; i++) won.push(addChest('RARE', 'LEVEL_UP'));
   const targetsDone = checkTargets();
-  const quests = checkQuests(); coinSum += 5 * quests.done.length + (quests.chest ? 15 : 0) + (Q.coins || 0);
+  const quests = checkQuests(); coinSum += Q.coins || 0; quests.chests.forEach(c => won.push(c));
   quests.done = (Q.qDone || []).concat(quests.done); quests.chest = quests.chest || !!Q.qChest;
   const fresh = checkBadges(); coin(5 * fresh.length);
   persist(); updateBadge();
   S.quiz = null; S.confirm = null;
   // Leaving early goes back to the start screen, unless something was earned that deserves its screen.
-  if (quit && !(levelUp || fresh.length || mastered.length || targetsDone.length || quests.done.length || quests.chest)) {
+  if (quit && !(levelUp || fresh.length || mastered.length || targetsDone.length || quests.done.length || quests.chest || won.length)) {
     go('home', 'down');
     if (answered) setTimeout(() => toast('Runde beendet. ' + (Q.xp + bonus) + ' XP gesammelt' + (coinSum ? ' und ' + coinSum + ' Münzen.' : '.'), 'bolt'), 350);
     if (levelUp) setTimeout(() => { toast('Level ' + levelUp.n + ': ' + levelUp.name + '!', 'trending_up'); SFX.level() }, 3700);
@@ -1358,10 +1418,11 @@ function finish(quit) {
   if (st.up) steps.push('streak');
   if (levelUp) steps.push('level');
   if (quests.done.length || quests.chest) steps.push('quests');
+  if (won.length) steps.push('chests');
   if (fresh.length) steps.push('badges');
   if (Q.mistakes.size) steps.push('review');
   S.result = { right: Q.right, wrong: Q.wrong, xp: Q.xp + bonus, extras, perfect, secs, best: Q.bestCombo, promoted: Q.promoted, mode: Q.mode, coinSum,
-    saved: st.saved, goalHit, fresh, targetsDone, levelUp, levelCoins, mastered, quests, mistakes: Array.from(Q.mistakes.values()), steps, step: 0 };
+    saved: st.saved, goalHit, fresh, targetsDone, levelUp, levelCoins, mastered, quests, chests: won, mistakes: Array.from(Q.mistakes.values()), steps, step: 0 };
   transit(() => { S.view = 'result'; fx('res'); render(); window.scrollTo(0, 0) }, 'up');
   SFX.win(); haptic('win');
   if (answered && (Q.right / answered >= .8 || goalHit || targetsDone.length || mastered.length)) setTimeout(confetti, 250);
@@ -1583,6 +1644,34 @@ const ART = {
   book: `<path d="M3 5.500A2.500 2.500 0 0 1 5.500 3H11v17H5.500A2.500 2.500 0 0 1 3 17.500z" fill="#4DB8FF"/><path d="M21 5.500A2.500 2.500 0 0 0 18.500 3H13v17h5.500a2.500 2.500 0 0 0 2.500-2.500z" fill="#2E9BEA"/><path d="M5.800 7.500h3M5.800 10.500h3M15.200 7.500h3M15.200 10.500h3" stroke="#fff" stroke-width="1.400" stroke-linecap="round"/>`
 };
 const art = (n, cls = '') => `<svg class="art ${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ART[n] || ''}</svg>`;
+/* Chests come in four materials: wood, silver, gold with violet, diamond with a rainbow band. */
+const CHEST_LOOK = {
+  COMMON: { body: '#A8683A', lid: '#C98850', band: '#7A4E26', lock: '#E7B777', edge: '#6E4522', glow: '#FFD9A0' },
+  RARE:   { body: '#5E7FD6', lid: '#8FA9F2', band: '#E3EAFB', lock: '#FFFFFF', edge: '#3F5AA3', glow: '#BFD2FF' },
+  EPIC:   { body: '#7C4DEB', lid: '#A684FA', band: '#FFC21A', lock: '#FFE27A', edge: '#5330B8', glow: '#FFE27A' },
+  MEGA:   { body: '#14B8D4', lid: '#7DEBF7', band: '#FF5CA8', lock: '#FFFFFF', edge: '#0B7E96', glow: '#C9FBFF' }
+};
+function chestArt(tier, cls = '') {
+  const k = CHEST_LOOK[tier] || CHEST_LOOK.COMMON;
+  const band = tier === 'MEGA' ? '<path d="M3 9.300h6v2.400H3z" fill="#FF5CA8"/><path d="M9 9.300h6v2.400H9z" fill="#FFD21A"/><path d="M15 9.300h6v2.400h-6z" fill="#6DF08A"/>' : `<path d="M3 9.300h18v2.400H3z" fill="${k.band}"/>`;
+  return `<svg class="art ${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10.500h18v8.300a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="${k.body}"/><path d="M5.500 3.500h13A2.500 2.500 0 0 1 21 6v4.500H3V6a2.500 2.500 0 0 1 2.500-2.500z" fill="${k.lid}"/>` +
+    `<path d="M7 3.500v5.800M17 3.500v5.800M7 11.700v9.100M17 11.700v9.100" stroke="${k.edge}" stroke-width="1.200"/>${band}<rect x="9.800" y="8" width="4.400" height="5.600" rx="1.200" fill="${k.lock}" stroke="${k.edge}" stroke-width="1"/></svg>`;
+}
+/* The big chest of the opening dialog, shut or open with its treasure showing. */
+function chestBig(tier, open) {
+  const k = CHEST_LOOK[tier] || CHEST_LOOK.COMMON;
+  const band = y => tier === 'MEGA' ? `<path d="M14 ${y}h31v10H14z" fill="#FF5CA8"/><path d="M45 ${y}h30v10H45z" fill="#FFD21A"/><path d="M75 ${y}h31v10H75z" fill="#6DF08A"/>` : `<path d="M14 ${y}h92v10H14z" fill="${k.band}"/>`;
+  const body = `<ellipse cx="60" cy="98" rx="46" ry="5.500" fill="#0B1026" opacity=".2"/><path d="M16 52h88v36a8 8 0 0 1-8 8H24a8 8 0 0 1-8-8z" fill="${k.body}"/><path d="M16 80h88v8a8 8 0 0 1-8 8H24a8 8 0 0 1-8-8z" fill="#0B1026" opacity=".14"/>` +
+    `<path d="M34 58v38M86 58v38" stroke="${k.edge}" stroke-width="5"/>`;
+  if (!open) return `<svg class="chest-big" viewBox="0 0 120 104" aria-hidden="true" focusable="false">${body}` +
+    `<path d="M14 54V38a20 20 0 0 1 20-20h52a20 20 0 0 1 20 20v16z" fill="${k.lid}"/><path d="M26 37a11 11 0 0 1 11-11h26" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".5"/>` +
+    `<path d="M34 18v32M86 18v32" stroke="${k.edge}" stroke-width="5"/>${band(48)}` +
+    `<rect x="50" y="42" width="20" height="24" rx="5" fill="${k.lock}" stroke="${k.edge}" stroke-width="3"/><circle cx="60" cy="51.500" r="3" fill="${k.edge}"/><path d="M60 52v6.500" stroke="${k.edge}" stroke-width="3" stroke-linecap="round"/></svg>`;
+  const coin = (x, y) => `<circle cx="${x}" cy="${y}" r="8" fill="#FFC21A" stroke="#D99A00" stroke-width="2"/><circle cx="${x}" cy="${y}" r="3.500" fill="#FFE27A"/>`;
+  return `<svg class="chest-big" viewBox="0 0 120 104" aria-hidden="true" focusable="false"><ellipse cx="60" cy="40" rx="54" ry="34" fill="${k.glow}" opacity=".55"/>` +
+    `<path d="M20 30V22A18 18 0 0 1 38 4h44a18 18 0 0 1 18 18v8z" fill="${k.lid}"/><path d="M38 4v26M82 4v26" stroke="${k.edge}" stroke-width="5"/><path d="M20 30h80l-5 12H25z" fill="${k.edge}"/>` +
+    `<path d="M18 46h84v10H18z" fill="#1A1238"/>${coin(40, 48)}${coin(80, 48)}${coin(60, 43)}${coin(50, 52)}${coin(70, 52)}` + body + band(52) + `</svg>`;
+}
 
 /* ---------- today's counters, coins, daily quests ---------- */
 /* dayStats() holds what happened today; it starts fresh at midnight. Quests read their progress from it,
@@ -1600,38 +1689,142 @@ function seedRand(str) {
   let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) }
   return () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 100000) / 100000 };
 }
+/* Every quest knows up to three sizes: easy, medium, hard (0 = not offered at that level). */
 const QUESTS = {
-  xp:      { ic: 'bolt',   t: n => `Sammle ${n} XP`, steps: [40, 60, 80], cur: () => xpToday() },
-  rounds:  { ic: 'target', t: n => `Schaffe ${n} Runden`, steps: [2, 3], cur: d => d.rounds },
-  right:   { ic: 'heart',  t: n => `${n} richtige Antworten`, steps: [20, 30, 40], cur: d => d.right },
-  combo:   { ic: 'flame',  t: n => `${n} richtige in Folge`, steps: [5, 8, 10], cur: d => d.combo },   // a combo lives inside one round, so never more than the shortest round has questions
-  perfect: { ic: 'star',   t: n => n === 1 ? 'Eine Runde ohne Fehler' : `${n} Runden ohne Fehler`, steps: [1, 2], cur: d => d.perfect },
-  up:      { ic: 'crown',  t: n => `Bring ${n} Wörter ein Fach höher`, steps: [6, 10], cur: d => d.up, ok: () => S.words.filter(w => !fach(w.id) || isDue(w.id)).length >= 12 },
-  fresh:   { ic: 'book',   t: n => `Lerne ${n} neue Wörter`, steps: [5, 8], cur: d => d.fresh, ok: () => S.words.filter(w => !(ws(w.id) && ws(w.id).r)).length >= 8 },
-  typed:   { ic: 'pencil', t: n => `Schreibe ${n} Wörter richtig`, steps: [5, 8], cur: d => d.typed, mode: 'type' },
-  past:    { ic: 'clock',  t: n => `${n} Simple-Past-Formen richtig`, steps: [5, 8], cur: d => d.past, mode: 'past', ok: () => S.words.filter(w => applicable(w, 'past')).length >= 8 }
+  xp:      { ic: 'bolt',   t: n => `Sammle ${n} XP`, lv: [40, 60, 80], cur: () => xpToday() },
+  right:   { ic: 'heart',  t: n => `${n} richtige Antworten`, lv: [20, 30, 40], cur: d => d.right },
+  fresh:   { ic: 'book',   t: n => `Lerne ${n} neue Wörter`, lv: [5, 8, 0], cur: d => d.fresh, ok: () => S.words.filter(w => !(ws(w.id) && ws(w.id).r)).length >= 8 },
+  combo:   { ic: 'flame',  t: n => `${n} richtige in Folge`, lv: [5, 8, 10], cur: d => d.combo },   // a combo lives inside one round, so never more than the shortest round has questions
+  acc:     { ic: 'check',  t: n => n === 1 ? 'Eine Runde mit 85 % richtig' : `${n} Runden mit 85 % richtig`, lv: [0, 1, 2], cur: d => d.acc || 0 },
+  up:      { ic: 'crown',  t: n => `Bring ${n} Wörter ein Fach höher`, lv: [0, 6, 10], cur: d => d.up, ok: () => S.words.filter(w => !fach(w.id) || isDue(w.id)).length >= 12 },
+  typed:   { ic: 'pencil', t: n => `Schreibe ${n} Wörter richtig`, lv: [0, 5, 8], cur: d => d.typed, mode: 'type' },
+  past:    { ic: 'clock',  t: n => `${n} Simple-Past-Formen richtig`, lv: [0, 5, 8], cur: d => d.past, mode: 'past', ok: () => S.words.filter(w => applicable(w, 'past')).length >= 8 },
+  rounds:  { ic: 'target', t: n => `Schaffe ${n} Runden`, lv: [0, 2, 3], cur: d => d.rounds },
+  perfect: { ic: 'star',   t: n => n === 1 ? 'Eine Runde ohne Fehler' : `${n} Runden ohne Fehler`, lv: [0, 0, 1], cur: d => d.perfect }
 };
-/* Three quests per day, the same all day (seeded by the date): one easy anchor, one about answering well,
-   one that may ask for a special exercise. */
+/* Three quests per day, the same all day (seeded by the date): an easy one, a medium one and a hard one.
+   Each is stored as [id, target, chest tier]; the easy quest pays a wooden chest, the medium a silver, the hard a golden one. */
 function questsToday() {
   const p = S.prog, k = todayKey();
   if (!p.quests || p.quests.day !== k || !Array.isArray(p.quests.list) || p.quests.list.some(x => !QUESTS[x[0]])) {      // also: a quest this version does not know
-    const rnd = seedRand('q' + k), ok = id => !QUESTS[id].ok || QUESTS[id].ok();
-    const take = ids => { const a = ids.filter(ok); return a.length ? a[Math.floor(rnd() * a.length)] : null };
-    const chosen = [take(['xp', 'rounds'])];
-    chosen.push(take(['right', 'combo', 'perfect'].filter(id => chosen.indexOf(id) < 0)));
-    chosen.push(take(['up', 'fresh', 'typed', 'past', 'combo', 'perfect', 'right'].filter(id => chosen.indexOf(id) < 0)));
-    p.quests = { day: k, list: chosen.filter(Boolean).map(id => [id, QUESTS[id].steps[Math.floor(rnd() * QUESTS[id].steps.length)]]), done: {}, chest: false };
+    const rnd = seedRand('q' + k), ok = id => !QUESTS[id].ok || QUESTS[id].ok(), list = [];
+    for (let lv = 0; lv < 3; lv++) {
+      const pool = Object.keys(QUESTS).filter(id => QUESTS[id].lv[lv] > 0 && ok(id) && !list.some(x => x[0] === id));
+      if (pool.length) { const id = pool[Math.floor(rnd() * pool.length)]; list.push([id, QUESTS[id].lv[lv], TIERS[lv]]) }
+    }
+    p.quests = { day: k, list, done: {}, chest: false };
   }
   return p.quests;
 }
-/* Marks quests whose number is reached, pays 5 coins each and 15 for the chest when all are done. */
+const questTier = (entry, i) => TIERS.indexOf(entry[2]) >= 0 ? entry[2] : TIERS[Math.min(i, 2)];      // quests drawn by an older version carry no tier
+/* Marks quests whose number is reached and puts a chest into the bag for each. q.chest notes a day on which all three were done. */
 function checkQuests() {
-  const q = questsToday(), d = dayStats(), out = { done: [], chest: false };
-  for (const [id, need] of q.list) if (!q.done[id] && QUESTS[id] && QUESTS[id].cur(d) >= need) { q.done[id] = true; S.prog.questsDone = (S.prog.questsDone || 0) + 1; addCoins(5); out.done.push(id) }
-  if (!q.chest && q.list.length && q.list.every(([id]) => q.done[id])) { q.chest = true; S.prog.chests = (S.prog.chests || 0) + 1; addCoins(15); out.chest = true }
+  const q = questsToday(), d = dayStats(), out = { done: [], chest: false, chests: [] };
+  q.list.forEach((e, i) => { const id = e[0], need = e[1];
+    if (!q.done[id] && QUESTS[id] && QUESTS[id].cur(d) >= need) { q.done[id] = true; S.prog.questsDone = (S.prog.questsDone || 0) + 1; out.done.push(id); out.chests.push(addChest(questTier(e, i), 'DAILY_QUEST')) } });
+  if (!q.chest && q.list.length && q.list.every(([id]) => q.done[id])) { q.chest = true; S.prog.chests = (S.prog.chests || 0) + 1; out.chest = true }
   return out;
 }
+
+/* ---------- chests and boosters: the rules (nothing in here touches the page) ----------
+   A chest:  { id, tier, source, status, createdAt, taps, unlockWindowStart?, unlockWindowEnd? }
+     tier    COMMON (wood) | RARE (silver) | EPIC (gold) | MEGA (diamond)
+     source  DAILY_QUEST | PATH_MILESTONE | LEVEL_UP | STREAK | EARLY_BIRD | NIGHT_OWL
+     status  LOCKED (time window not open yet) | READY | OPENED | EXPIRED   (opened and expired chests leave the bag)
+   The bag is prog.inv, the running booster prog.boost = { mult, left (ms), at (last look at the clock) }. */
+const TIERS = ['COMMON', 'RARE', 'EPIC', 'MEGA'];
+/* What a chest holds. coins: from–to; boost: [chance, factor, minutes]; freeze: chance for a Serien-Schutz.
+   The coin numbers are a quarter of a typical "big" loot table, because skins here cost 30 to 400 coins. */
+const CHEST = {
+  COMMON: { t: 'Holztruhe',    coins: [4, 8],    boost: [.10, 1.5, 10], freeze: 0 },
+  RARE:   { t: 'Silbertruhe',  coins: [10, 18],  boost: [.35, 2, 15],   freeze: .10 },
+  EPIC:   { t: 'Goldtruhe',    coins: [25, 45],  boost: [.75, 2, 20],   freeze: .25 },
+  MEGA:   { t: 'Diamanttruhe', coins: [60, 120], boost: [1, 3, 30],     freeze: .50 }
+};
+const CHEST_SOURCE = { DAILY_QUEST: 'Tagesquest', PATH_MILESTONE: 'Lernpfad', LEVEL_UP: 'Neues Level', STREAK: 'Serie', EARLY_BIRD: 'Frühaufsteher', NIGHT_OWL: 'Nachteule' };
+const UPGRADE_CHANCE = .2, FREEZE_MAX = 2, FREEZE_FULL_COINS = 12, ROUNDS_PER_CHEST = 5;
+const STREAK_CHESTS = { 3: 'COMMON', 7: 'RARE', 14: 'RARE', 30: 'EPIC', 50: 'EPIC', 100: 'MEGA' };
+const TIMED_TIER = 'RARE';
+
+/* There is no server, so the device clock is the only clock. It may run forward, but a jump back is not believed:
+   chest windows see the latest time the app has ever seen. A clock that was far ahead and got corrected is forgiven after two days. */
+function nowSafe() {
+  const p = S.prog, t = Date.now();
+  if (!(p.clock > t) || p.clock - t > 2 * DAY) p.clock = t;
+  return p.clock;
+}
+const clockBehind = () => Date.now() < (S.prog.clock || 0) - 2 * 60000;      // set back by more than two minutes
+function chestId() { try { if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID() } catch (e) {} return 'c-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10) }
+function addChest(tier, source, extra) {
+  const p = S.prog; p.inv = p.inv || [];
+  const c = Object.assign({ id: chestId(), tier, source, status: 'READY', createdAt: Date.now(), taps: 0 }, extra || {});
+  p.inv.push(c); p.chestsWon = (p.chestsWon || 0) + 1;
+  return c;
+}
+function clockAt(dayOffset, h, m, sec) { const d = new Date(); d.setDate(d.getDate() + dayOffset); d.setHours(h, m || 0, sec || 0, 0); return d.getTime() }
+/* After a finished round. Learning between 6 and 12 earns the early-bird chest, to be opened the same day from 18:00 to midnight.
+   Learning from 18:00 earns the night-owl chest, to be opened the next morning from 6 to 12. One of each per day; unopened they are gone. */
+function timedChest() {
+  const p = S.prog, h = new Date().getHours(), day = todayKey();
+  if (clockBehind()) return null;
+  if (h >= 6 && h < 12 && p.tcEarly !== day) { p.tcEarly = day; return addChest(TIMED_TIER, 'EARLY_BIRD', { status: 'LOCKED', unlockWindowStart: clockAt(0, 18), unlockWindowEnd: clockAt(0, 23, 59, 59) }) }
+  if (h >= 18 && p.tcNight !== day) { p.tcNight = day; return addChest(TIMED_TIER, 'NIGHT_OWL', { status: 'LOCKED', unlockWindowStart: clockAt(1, 6), unlockWindowEnd: clockAt(1, 12) }) }
+  return null;
+}
+/* Brings every chest up to date: locked ones whose window has begun become ready, timed ones past their window expire.
+   Returns what changed, so the player can be told. */
+function syncChests() {
+  const p = S.prog, t = nowSafe(), out = { ready: [], expired: [] };
+  p.inv = (p.inv || []).filter(c => {
+    if (c.status === 'OPENED' || c.status === 'EXPIRED') return false;
+    if (c.unlockWindowEnd && t > c.unlockWindowEnd) { c.status = 'EXPIRED'; out.expired.push(c); return false }
+    if (c.status === 'LOCKED' && !(c.unlockWindowStart > t)) { c.status = 'READY'; out.ready.push(c) }
+    return true;
+  });
+  return out;
+}
+/* The reward engine: rolls what a chest of this tier holds. rnd can be handed in, so tests are not left to chance. */
+function rollLoot(tier, rnd = Math.random) {
+  const d = CHEST[tier] || CHEST.COMMON, lo = d.coins[0], hi = d.coins[1];
+  const loot = { coins: lo + Math.floor(rnd() * (hi - lo + 1)), boost: null, freeze: false, freezeCoins: 0 };
+  if (rnd() < d.boost[0]) loot.boost = { mult: d.boost[1], min: d.boost[2] };
+  if (d.freeze && rnd() < d.freeze) loot.freeze = true;
+  return loot;
+}
+function applyLoot(loot) {
+  const p = S.prog;
+  addCoins(loot.coins);
+  if (loot.boost) addBoost(loot.boost.mult, loot.boost.min);
+  if (loot.freeze) { if ((p.freezes || 0) < FREEZE_MAX) p.freezes = (p.freezes || 0) + 1; else { loot.freezeCoins = FREEZE_FULL_COINS; addCoins(FREEZE_FULL_COINS) } }
+}
+/* One tap on a chest. Taps 1 and 2 may lift it one tier, tap 3 opens it and pays out. Every tap is saved at once,
+   so closing the app in between does not give a second roll. */
+function tapChest(id, rnd = Math.random) {
+  const p = S.prog; syncChests();
+  const c = (p.inv || []).find(x => x.id === id);
+  if (!c || c.status !== 'READY') return null;
+  c.taps = (c.taps || 0) + 1;
+  if (c.taps < 3) {
+    const i = TIERS.indexOf(c.tier), up = i < TIERS.length - 1 && rnd() < UPGRADE_CHANCE;
+    if (up) { c.tier = TIERS[i + 1]; p.chestUps = (p.chestUps || 0) + 1 }
+    persist(); return { open: false, up, tier: c.tier, taps: c.taps };
+  }
+  const loot = rollLoot(c.tier, rnd); applyLoot(loot);
+  c.status = 'OPENED'; p.inv = p.inv.filter(x => x !== c); p.chestsOpened = (p.chestsOpened || 0) + 1;
+  persist(); return { open: true, up: false, tier: c.tier, taps: 3, loot };
+}
+/* The XP booster is a budget of minutes that only ever runs down, by the time that really passed between two looks at
+   the clock. A clock set back does not stretch it; time away from the app counts. */
+function boostTick() {
+  const b = S.prog.boost, t = Date.now(); if (!b) return null;
+  const d = t - b.at; if (d > 0) b.left -= d; b.at = t;
+  if (!(b.left > 0)) { S.prog.boost = null; return null }
+  return b;
+}
+const xpMult = () => { const b = boostTick(); return b ? b.mult : 1 };
+/* A new booster on top of a running one: the minutes add up and the higher factor counts. */
+function addBoost(mult, minutes) { const b = boostTick(); S.prog.boost = { mult: Math.max(mult, b ? b.mult : 1), left: (b ? b.left : 0) + minutes * 60000, at: Date.now() } }
+const boosted = (xp, m) => Math.round(xp * m) - xp;                      // the extra XP a booster adds
 
 /* ---------- learning path ---------- */
 /* A lesson becomes a row of stations of about 7 to 14 words: a new station starts with a new book page,
@@ -1738,7 +1931,7 @@ function topbar() {
       <button class="chip chip-flame${st.today ? ' on' : ''}" data-act="nav" data-v="awards" aria-label="Serie: ${st.n} ${st.n === 1 ? 'Tag' : 'Tage'}">${art(st.today ? 'flame' : 'flameOff')}<b>${st.n}</b></button>
       <button class="chip chip-coin" data-act="nav" data-v="shop" aria-label="${fmt(p.coins || 0)} Münzen, zum Shop">${art('coin')}<b>${fmt(p.coins || 0)}</b></button>
       <button class="chip chip-xp" data-act="nav" data-v="awards" aria-label="${fmt(p.xp)} XP, zu den Erfolgen">${art('bolt')}<b>${fmt(p.xp)}</b></button>
-    </div></div></header>`;
+    </div></div>${boostBar()}</header>`;
 }
 function navbar() {
   const cur = S.view === 'settings' || S.view === 'shop' ? 'awards' : S.view;
@@ -1793,7 +1986,7 @@ function viewHome() {
     <button class="btn btn-primary btn-xl wide" data-act="continue">${icon('play_arrow', 'fill')}Weiter lernen</button>
     <div class="hero-sub">${esc(plan.label)}</div>
   </section>
-  ${upd}${tcards}${todayCard()}${questCard()}${review}${pathHtml()}`;
+  ${upd}${chestBar()}${tcards}${todayCard()}${questCard()}${review}${pathHtml()}`;
 }
 function todayCard() {
   const p = S.prog, x = xpToday(), pct = Math.min(1, x / p.goal), lv = levelInfo(p.xp);
@@ -1812,16 +2005,61 @@ function questRows() {
     const done = !!q.done[id], cur = done ? need : Math.min(need, def.cur(d));
     return `<button class="quest${done ? ' done' : ''}" style="--i:${i}" data-act="quest" data-q="${id}" ${done ? 'disabled' : ''}>${art(def.ic, 'quest-ic')}
       <span class="grow"><b>${esc(def.t(need))}</b><span class="bar thin"><span style="width:${(cur / need * 100).toFixed(0)}%"></span></span></span>
-      <span class="quest-r">${done ? art('check') : `<span>${fmt(cur)}/${fmt(need)}</span><em>${art('coin')}5</em>`}</span></button>`;
+      <span class="quest-r">${done ? art('check') : `<span>${fmt(cur)}/${fmt(need)}</span>${chestArt(questTier(q.list[i], i), 'quest-chest-ic')}`}</span></button>`;
   }).join('');
 }
 function questChest() {
   const q = questsToday(), n = q.list.filter(([id]) => q.done[id]).length;
-  return `<div class="quest-chest${q.chest ? ' open' : ''}">${art(q.chest ? 'chestOpen' : 'chest')}<span class="grow">${q.chest ? 'Tagestruhe geöffnet: 15 Münzen!' : 'Schaff alle Quests, dann öffnet sich die Tagestruhe.'}</span><span class="pill pill-gold">${n}/${q.list.length}</span></div>`;
+  return `<div class="quest-chest${q.chest ? ' open' : ''}">${art(q.chest ? 'star' : 'chest')}<span class="grow">${q.chest ? 'Alle Quests für heute geschafft!' : 'Jede Quest bringt eine Truhe: Holz, Silber, Gold.'}</span><span class="pill pill-gold">${n}/${q.list.length}</span></div>`;
 }
 function questCard() {
   const left = 24 - new Date().getHours();
   return `<section class="card quests" aria-label="Tagesquests"><div class="quests-h"><h3>Tagesquests</h3><span class="pill">${icon('history')}noch ${left} Std.</span></div>${questRows()}${questChest()}</section>`;
+}
+/* ---------- views: chests and booster ---------- */
+const fmtMult = m => String(m).replace('.', ',') + 'x';
+function fmtLeft(ms) { const x = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(x / 3600), m = Math.floor(x % 3600 / 60), p2 = n => String(n).padStart(2, '0'); return (h ? p2(h) + ':' : '') + p2(m) + ':' + p2(x % 60) }
+function whenLabel(ts) { const d = new Date(ts); return (ymd(d) === todayKey() ? 'heute um ' : 'morgen um ') + d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0') + ' Uhr' }
+/* The running booster, right under the top bar. Elements with data-cd carry the moment their countdown ends;
+   a timer at the end of the script rewrites their text once a second. */
+function boostBar() {
+  const b = boostTick(); if (!b) return '';
+  return `<div class="boost" role="status">${art('bolt')}<b>${fmtMult(b.mult)} XP</b><span>noch <i data-cd="${b.at + b.left}">${fmtLeft(b.left)}</i></span></div>`;
+}
+/* The bag on the start screen: chests that can be opened, and timed ones with the time until they unlock or expire. */
+function chestBar() {
+  const inv = S.prog.inv || []; if (!inv.length) return '';
+  const now = Date.now(), ready = inv.filter(c => c.status === 'READY').length, shown = inv.slice(0, 12);
+  const items = shown.map((c, i) => {
+    const d = CHEST[c.tier] || CHEST.COMMON, lock = c.status === 'LOCKED', src = CHEST_SOURCE[c.source] || 'Truhe';
+    const sub = lock ? `in <i data-cd="${c.unlockWindowStart}">${fmtLeft(c.unlockWindowStart - now)}</i>` : c.unlockWindowEnd ? `noch <i data-cd="${c.unlockWindowEnd}">${fmtLeft(c.unlockWindowEnd - now)}</i>` : 'Öffnen';
+    return `<button class="chest-it t-${c.tier}${lock ? ' locked' : ' ready'}" style="--i:${i}" data-act="chest-open" data-c="${esc(c.id)}" aria-label="${d.t}, ${esc(src)}, ${lock ? 'öffnet ' + whenLabel(c.unlockWindowStart) : 'jetzt öffnen'}">` +
+      `${chestArt(c.tier)}${lock ? `<span class="chest-lock">${icon('lock', 'fill')}</span>` : ''}<b>${esc(src)}</b><small>${sub}</small></button>`;
+  }).join('');
+  return `<section class="card chests" aria-label="Truhen"><div class="quests-h"><h3>Truhen</h3><span class="pill">${ready ? ready + ' bereit' : 'noch zu'}</span></div>
+    <div class="chest-row">${items}</div>${inv.length > shown.length ? `<p class="small muted">und ${inv.length - shown.length} weitere</p>` : ''}</section>`;
+}
+/* The opening dialog. S.chest = { id, tier, source, taps, up (the last tap lifted it), loot (set once it is open) }. */
+function viewChest() {
+  const X = S.chest, d = CHEST[X.tier] || CHEST.COMMON;
+  if (X.loot) {
+    const L = X.loot, rows = [`<li class="loot" style="--i:0">${art('coin')}<span><b>+<i data-count="${L.coins}">${L.coins}</i> Münzen</b></span></li>`];
+    if (L.boost) rows.push(`<li class="loot" style="--i:${rows.length}">${art('bolt')}<span><b>${fmtMult(L.boost.mult)} XP</b> für ${L.boost.min} Minuten</span></li>`);
+    if (L.freeze) rows.push(`<li class="loot" style="--i:${rows.length}">${art('shield')}<span>${L.freezeCoins ? `<b>+${L.freezeCoins} Münzen</b> statt Serien-Schutz, deine Tasche ist voll` : '<b>Serien-Schutz</b> für einen freien Tag'}</span></li>`);
+    const more = (S.prog.inv || []).find(c => c.status === 'READY');
+    return `<div class="overlay"><div class="dialog chest-dlg${fxc('chest-open', 'opened')}" role="dialog" aria-modal="true" aria-labelledby="chT">
+      ${chestBig(X.tier, true)}<h2 id="chT">${d.t} geöffnet!</h2><ul class="loots">${rows.join('')}</ul>
+      <button class="btn btn-primary btn-xl wide" data-act="${more ? 'chest-open' : 'chest-close'}" ${more ? `data-c="${esc(more.id)}"` : ''} id="chestOk">${more ? 'Nächste Truhe' : 'Einsammeln'}</button>
+      ${more ? `<button class="link" data-act="chest-close">Später weiter</button>` : ''}</div></div>`;
+  }
+  const left = 3 - X.taps;
+  return `<div class="overlay"><div class="dialog chest-dlg" role="dialog" aria-modal="true" aria-labelledby="chT">
+    <span class="chest-src">${esc(CHEST_SOURCE[X.source] || 'Truhe')}</span><h2 id="chT">${d.t}</h2>
+    <button class="chest-tap${fxc('chest-shake', 'shake')}${fxc('chest-up', 'up')}" data-act="chest-tap" id="chestTap" aria-label="${d.t} antippen, noch ${left}-mal">${chestBig(X.tier, false)}</button>
+    <div class="chest-msg" aria-live="polite">${X.up ? `<strong class="chest-up${fxc('chest-up', 'fx')}">Upgrade!</strong>` : `<span>Tippe die Truhe an!</span>`}</div>
+    <div class="pips3" aria-hidden="true">${[0, 1, 2].map(i => `<i class="${i < X.taps ? 'on' : ''}"></i>`).join('')}</div>
+    <p class="small muted">Noch ${left}-mal tippen. Mit Glück wird sie dabei besser.</p>
+    <button class="link" data-act="chest-close">Später öffnen</button></div></div>`;
 }
 function targetCard(t) {
   const i = targetInfo(t), when = dueLabel(t.due);
@@ -2007,7 +2245,7 @@ function viewShop() {
     <button class="btn btn-primary btn-sm" data-act="buy-freeze" aria-label="Serien-Schutz kaufen für ${FREEZE_COST} Münzen">${fz >= 2 ? 'Voll' : `<span class="price">${art('coin')}${FREEZE_COST}</span>`}</button></section>
   <div class="sec-h"><h2>Skins für Bit</h2><span class="pill">${Object.keys(p.outfits || {}).filter(id => SKINS[id]).length} von ${OUTFITS.length}</span></div>
   <div class="outfits">${outfits}</div>
-  <p class="small muted" style="text-align:center">Münzen gibt es für Tagesquests, das Tagesziel, fehlerfreie Runden, neue Level und Abzeichen.</p>`;
+  <p class="small muted" style="text-align:center">Münzen gibt es aus Truhen, für das Tagesziel, fehlerfreie Runden, neue Level und Abzeichen. Truhen bekommst du für Tagesquests, jede fünfte Runde, deine Serie und fürs Lernen am Morgen und am Abend.</p>`;
 }
 function viewSettings() {
   const p = S.prog;
@@ -2075,7 +2313,7 @@ function viewQuiz() {
     const ok = Q.lastOk, sayT = q.type === 'past' ? w.past : w.en;
     const wcard = `<div class="wcard"><div class="grow"><b>${esc(w.en)}</b>${q.type === 'past' ? ` → <b>${esc(w.past)}</b>` : ''}${w.ipa ? ` <span class="ipa">${esc(w.ipa)}</span>` : ''}<div class="de">${esc(w.de)}</div>${w.ex ? `<div class="ex">${esc(w.ex)}</div>` : ''}${w.pos === 'phrase' && w.note ? `<div class="ex">${esc(w.note)}</div>` : ''}</div><button class="iconbtn sm" data-act="say" data-t="${esc(sayT)}" aria-label="Vorlesen">${icon('volume_up')}</button></div>`;
     sheet = `<div class="sheet ${ok ? 'ok' : 'no'}${fxc('ans', 'in')}" role="status" aria-live="polite"><div class="sheet-in">
-      <div class="sheet-head">${art(ok ? 'check' : 'cross')}<strong>${esc(Q.praise)}</strong>${Q.gain ? `<span class="gain">+${Q.gain} XP</span>` : ''}</div>
+      <div class="sheet-head">${art(ok ? 'check' : 'cross')}<strong>${esc(Q.praise)}</strong>${Q.gain ? `<span class="gain">+${Q.gain} XP${Q.mult > 1 ? ' · ' + fmtMult(Q.mult) : ''}</span>` : ''}</div>
       ${ok && Q.almost ? `<div>Ein kleiner Tippfehler. Richtig geschrieben: <b>${esc(q.answer)}</b></div>` : ''}
       ${!ok ? `<div>Richtig ist: <b>${esc(q.answer)}</b>${Q.again ? ' · kommt gleich nochmal' : ''}</div>` : ''}
       ${wcard}
@@ -2088,7 +2326,7 @@ function viewQuiz() {
   return `<div class="quiz ${Q.answered ? 'answered' : ''}">
     <header class="qtop"><button class="xbtn" data-act="quit" aria-label="Runde beenden">${icon('close')}</button>
       <div class="qbar${hot ? ' hot' : ''}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(prog * 100)}" aria-label="Fortschritt"><span style="width:${Math.max(4, prog * 100).toFixed(1)}%"></span></div>
-      <span class="combo${hot ? ' on' : ''}${fxc('combo', 'fx')}" aria-label="${Q.combo} richtig in Folge">${art(hot ? 'flame' : 'flameOff')}<b>${Q.combo}</b></span></header>
+      ${xpMult() > 1 ? `<span class="qboost" aria-label="XP-Booster ${fmtMult(xpMult())}">${fmtMult(xpMult())}</span>` : ''}<span class="combo${hot ? ' on' : ''}${fxc('combo', 'fx')}" aria-label="${Q.combo} richtig in Folge">${art(hot ? 'flame' : 'flameOff')}<b>${Q.combo}</b></span></header>
     <main class="qbody${fxc('q', 'enter')}" id="main" tabindex="-1">
       ${extraTag}<h1 class="qlabel">${esc(q.label)}</h1>
       <div class="qask">${bit(mood, undefined, 'qbit' + (Q.answered ? fxc('ans', 'fx') : ''))}<div class="bubble">${ask}</div></div>
@@ -2114,8 +2352,11 @@ function viewResult() {
   } else if (step === 'quests') {
     const k = R.quests.done.length;
     body = `<div class="res-hero">${bit('cheer', undefined, 'res-bit')}<h1>${R.quests.chest ? 'Alle Quests geschafft!' : k === 1 ? 'Quest geschafft!' : k + ' Quests geschafft!'}</h1></div>
-      <section class="card quests">${questRows()}${questChest()}</section>
-      <div class="xtras"><span class="coin">${art('coin')}+${5 * k + (R.quests.chest ? 15 : 0)} Münzen</span></div>`;
+      <section class="card quests">${questRows()}${questChest()}</section>`;
+  } else if (step === 'chests') {
+    const k = R.chests.length;
+    body = `<div class="res-hero">${bit('wow', undefined, 'res-bit')}<h1>${k === 1 ? 'Eine Truhe für dich!' : k + ' Truhen für dich!'}</h1><p class="res-sub">Du findest sie auf dem Start. Tippe sie dreimal an!</p></div>
+      <div class="newmedals">${R.chests.map((c, i) => `<div class="newmedal" style="--i:${i}">${chestArt(c.tier, 'chest-md')}<b>${(CHEST[c.tier] || CHEST.COMMON).t}</b><small>${esc(CHEST_SOURCE[c.source] || '')}${c.unlockWindowStart ? '<br>öffnet ' + whenLabel(c.unlockWindowStart) : ''}</small></div>`).join('')}</div>`;
   } else if (step === 'badges') {
     const big = R.fresh.length <= 4 ? 'big' : '';
     body = `<div class="res-hero"><h1>${R.fresh.length === 1 ? 'Neues Abzeichen!' : R.fresh.length + ' neue Abzeichen!'}</h1></div>
@@ -2189,6 +2430,7 @@ function viewSheet() {
 function overlays() {
   if (!S.prog.onboarded) return S.view === 'home' ? viewOnboard() : '';
   if (!S.prog.v2 && S.view === 'home') return viewWhatsNew();
+  if (S.chest) return viewChest();
   return S.sheet ? viewSheet() : '';
 }
 
@@ -2375,7 +2617,7 @@ function countTo(el, from, to) {
 const typing = () => { const a = document.activeElement; return !!a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && a.type !== 'checkbox' };
 function softRender() { if (S.view === 'quiz' || S.view === 'result' || S.view === 'import' || typing()) { S.stale = true; return } render() }
 function go(v, kind) {
-  transit(() => { S.view = v; S.delUnit = null; S.resetAsk = false; S.sheet = null; if (v !== 'home') S.openNode = null; fx('view'); render(); window.scrollTo(0, 0) }, kind);
+  transit(() => { S.view = v; S.delUnit = null; S.resetAsk = false; S.sheet = null; S.chest = null; if (v !== 'home') S.openNode = null; fx('view'); render(); window.scrollTo(0, 0) }, kind);
 }
 function spend(n) {
   const have = S.prog.coins || 0;
@@ -2450,12 +2692,30 @@ const ACT = {
     if (next === 'streak') { SFX.combo(); haptic('ok') }
     else if (next === 'level') { SFX.level(); haptic('win'); setTimeout(confetti, 300) }
     else if (next === 'quests') { SFX.coin(); haptic('ok'); if (R.quests.chest) setTimeout(confetti, 300) }
+    else if (next === 'chests') { SFX.chestUp(); haptic('win') }
     else if (next === 'badges') { SFX.badge(); haptic('win'); setTimeout(confetti, 300) }
   },
   redo: () => { const R = S.result; if (!R) return; const ids = Array.from(new Set(R.mistakes.map(q => q.wid))); startRound(ids, R.mode, ids.length, { extras: false }) },
   done: () => { S.result = null; go('home', 'down') },
   badge: t => { S.sheet = { type: 'badge', id: t.dataset.b }; render(); const b = document.getElementById('sheetOk'); if (b) b.focus({ preventScroll: true }) },
   'sheet-close': () => { S.sheet = null; render() },
+  'chest-open': t => {
+    syncChests(); const c = (S.prog.inv || []).find(x => x.id === t.dataset.c);
+    if (!c) { S.chest = null; render(); return }
+    if (c.status !== 'READY') { toast('Diese Truhe öffnet sich ' + whenLabel(c.unlockWindowStart) + '.', 'info'); return }
+    S.chest = { id: c.id, tier: c.tier, source: c.source, taps: c.taps || 0, up: false, loot: null };
+    render(); haptic('tap'); const b = document.getElementById('chestTap'); if (b) b.focus({ preventScroll: true });
+  },
+  'chest-tap': () => {
+    const X = S.chest; if (!X || X.loot) return;
+    const r = tapChest(X.id);
+    if (!r) { S.chest = null; render(); toast('Diese Truhe ist nicht mehr da.', 'info'); return }
+    X.tier = r.tier; X.taps = r.taps; X.up = r.up;
+    if (r.open) { X.loot = r.loot; fx('chest-open'); render(); SFX.chestOpen(); haptic('win'); confetti(); const b = document.getElementById('chestOk'); if (b) b.focus({ preventScroll: true }); return }
+    fx(r.up ? 'chest-up' : 'chest-shake'); render(); if (r.up) { SFX.chestUp(); haptic('win') } else { SFX.chestTap(); haptic('tap') }
+    const b = document.getElementById('chestTap'); if (b) b.focus({ preventScroll: true });
+  },
+  'chest-close': () => { S.chest = null; render() },
   'buy-freeze': () => {
     const p = S.prog; dropLostStreak();
     if ((p.freezes || 0) >= 2) { toast('Mehr als 2 Serien-Schutz passen nicht in die Tasche.', 'info'); return }
@@ -2497,7 +2757,7 @@ const ACT = {
   'reset-ask': () => { S.resetAsk = true; render() },
   'reset-no': () => { S.resetAsk = false; render() },
   'reset-yes': () => {
-    const o = S.prog, keep = { name: o.name, goal: o.goal, sound: o.sound, speak: o.speak, haptics: o.haptics, theme: o.theme, tempo: o.tempo, removedLists: o.removedLists || [], onboarded: true, v2: true, lvl: 1, shopSeen: OUTFITS.length };
+    const o = S.prog, keep = { name: o.name, goal: o.goal, sound: o.sound, speak: o.speak, haptics: o.haptics, theme: o.theme, tempo: o.tempo, removedLists: o.removedLists || [], onboarded: true, v2: true, lvl: 1, shopSeen: OUTFITS.length, news: NEWS[0] };
     S.prog = Object.assign(freshProg(), keep); S.resetAsk = false; persist(); updateBadge(); go('home'); toast('Fortschritt zurückgesetzt.', 'autorenew');
   },
   'sound-test': () => { unlockAudio(); const was = S.prog.sound; S.prog.sound = true; SFX.win(); S.prog.sound = was; say('Hello! The sound is working.'); haptic('win'); toast('Du solltest jetzt eine Melodie und eine Stimme hören. Keine Stimme? Dann ist der Stummschalter an.', 'volume_up') },
@@ -2526,8 +2786,8 @@ const ACT = {
     saveUnits(); settleUp(true); persist(); applyTheme(); updateBadge(); go('home'); toast('Sicherung geladen.', 'check_circle');
   },
   'ob-goal': t => { S.prog.goal = +t.dataset.n; render() },
-  'ob-go': () => { const p = S.prog; p.name = (p.name || '').trim().slice(0, 24); p.onboarded = true; p.v2 = true; p.lvl = levelInfo(p.xp).n; p.shopSeen = OUTFITS.length; persist(); render(); SFX.ok(); haptic('ok') },
-  'ob-skip': () => { S.prog.name = ''; S.prog.onboarded = true; S.prog.v2 = true; S.prog.lvl = levelInfo(S.prog.xp).n; S.prog.shopSeen = OUTFITS.length; persist(); render() },
+  'ob-go': () => { const p = S.prog; p.name = (p.name || '').trim().slice(0, 24); p.onboarded = true; p.v2 = true; p.lvl = levelInfo(p.xp).n; p.shopSeen = OUTFITS.length; p.news = NEWS[0]; persist(); render(); SFX.ok(); haptic('ok') },
+  'ob-skip': () => { S.prog.name = ''; S.prog.onboarded = true; S.prog.v2 = true; S.prog.lvl = levelInfo(S.prog.xp).n; S.prog.shopSeen = OUTFITS.length; S.prog.news = NEWS[0]; persist(); render() },
   'v2-ok': () => { const p = S.prog; p.v2 = true; addCoins(50); persist(); render(); confetti(); SFX.level(); haptic('win'); toast('50 Münzen für dich. Schau mal im Shop vorbei!', 'check_circle') },
   'imp-open': () => { S.imp = S.imp || { step: 'pick', text: '', title: '', words: [], err: '', showPrompt: false }; go('import', 'push') },
   'imp-back': () => { S.imp = null; go('vocab') },
@@ -2691,25 +2951,41 @@ try {
 } catch (e) { bootOk = false; rescue(e) }
 /* Rewards that fell due while the app was closed, or that a new version added for things already done,
    are booked here. quiet = no toast (used when the app comes back from the background). */
+const NEWS = ['2.2', 'Neu: Truhen! Jede Tagesquest bringt jetzt eine. Dreimal antippen!'];      // [version, one line], shown once to players who had the version before
 function settleUp(quiet) {
   if (!S.prog.onboarded) return;
   activeTargets().forEach(targetInfo);
   dropLostStreak();
   const p = S.prog, lv = levelInfo(p.xp); let lvCoins = 0;
   // A level reached in a round that was never finished (app closed) is paid here. The first start only notes the level.
-  if (!p.lvl) p.lvl = lv.n; else if (lv.n > p.lvl) { lvCoins = 20 * (lv.n - p.lvl); addCoins(lvCoins); p.lvl = lv.n }
+  if (!p.lvl) p.lvl = lv.n; else if (lv.n > p.lvl) { lvCoins = 20 * (lv.n - p.lvl); addCoins(lvCoins); for (let i = p.lvl; i < lv.n; i++) addChest('RARE', 'LEVEL_UP'); p.lvl = lv.n }
+  const cs = syncChests(); boostTick();
   const fresh = checkBadges(), q = checkQuests(), paid = payGoal();
   addCoins(5 * fresh.length);
   // The shop grows with updates. shopSeen is the number of skins the player has been told about (version 2.0 had 6).
   const newSkins = p.v2 ? OUTFITS.length - (p.shopSeen || 6) : 0; p.shopSeen = OUTFITS.length;
+  const news = p.v2 && p.news !== NEWS[0] ? NEWS[1] : ''; p.news = NEWS[0];
   persist(); updateBadge();
   if (quiet || !S.prog.v2) return;
-  const msg = newSkins > 0 ? newSkins + ' neue Skins im Shop! Schau unter Erfolge.' : lvCoins ? 'Level ' + lv.n + ': ' + lv.name + '! ' + lvCoins + ' Münzen.' : fresh.length ? (fresh.length === 1 ? 'Neues Abzeichen: ' + fresh[0].t : fresh.length + ' neue Abzeichen! Schau unter Erfolge.')
-    : q.chest ? 'Tagestruhe geöffnet: 15 Münzen!' : q.done.length ? 'Quest geschafft: 5 Münzen!' : paid ? 'Tagesziel geschafft: 10 Münzen!' : '';
+  const msg = news ? news : newSkins > 0 ? newSkins + ' neue Skins im Shop! Schau unter Erfolge.' : lvCoins ? 'Level ' + lv.n + ': ' + lv.name + '! ' + lvCoins + ' Münzen.' : fresh.length ? (fresh.length === 1 ? 'Neues Abzeichen: ' + fresh[0].t : fresh.length + ' neue Abzeichen! Schau unter Erfolge.')
+    : cs.ready.length ? 'Deine ' + CHEST_SOURCE[cs.ready[0].source] + '-Truhe ist jetzt bereit!' : q.done.length ? 'Quest geschafft: Eine Truhe wartet auf dich!'
+    : cs.expired.length ? 'Eine Zeit-Truhe ist verfallen. Die nächste holst du dir!' : paid ? 'Tagesziel geschafft: 10 Münzen!' : '';
   if (msg) setTimeout(() => { toast(msg, 'emoji_events'); SFX.badge(); softRender() }, 900); else targetReminder();
 }
 if (bootOk) { try { settleUp(false) } catch (e) { bootOk = false; rescue(e) } }
 if (bootOk) { syncLists(); checkUpdate() }
+/* Countdowns (booster, timed chests) are rewritten once a second without drawing the screen again.
+   When one reaches zero, chests and booster are brought up to date and the screen is drawn once. */
+setInterval(() => {
+  if (!bootOk || document.hidden) return;
+  const els = app.querySelectorAll('[data-cd]'); if (!els.length) return;
+  const t = Date.now(); let over = false;
+  els.forEach(el => { const left = +el.dataset.cd - t; if (left <= 0) over = true; el.textContent = fmtLeft(left) });
+  if (!over) return;
+  const cs = syncChests(); boostTick(); persist();
+  if (cs.ready.length) { toast('Deine ' + CHEST_SOURCE[cs.ready[0].source] + '-Truhe ist jetzt bereit!', 'emoji_events'); SFX.badge() }
+  softRender();
+}, 1000);
 /* Back from the background: a new day gets fresh numbers, and lessons and version are checked again after ten minutes. */
 document.addEventListener('visibilitychange', () => {
   if (document.hidden || !bootOk) return;

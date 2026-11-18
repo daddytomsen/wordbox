@@ -43,14 +43,16 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     clock.t = day(2026, 11, 1 + d); const q = A.questsToday(), again = JSON.stringify(A.questsToday().list);
     ok(q.list.length === 3 && new Set(q.list.map(x => x[0])).size === 3, 'three distinct quests on day ' + d + ': ' + JSON.stringify(q.list));
     ok(again === JSON.stringify(q.list), 'stable within the day');
-    q.list.forEach(([id, need]) => { ok(A.QUESTS[id] && A.QUESTS[id].steps.indexOf(need) >= 0, 'valid step ' + id + ' ' + need); seen.add(id) });
+    q.list.forEach(([id, need, tier], i) => { ok(A.QUESTS[id] && A.QUESTS[id].lv[i] === need && tier === A.TIERS[i], 'quest ' + i + ' is ' + id + ' at its level: ' + need + ' ' + tier); seen.add(id) });
   }
   console.log('T5 quest kinds over 30 days:', Array.from(seen).join(', '));
   clock.t = day(2026, 11, 10); const B = fresh(clock); const all = B.S.words.map(w => w.id);
   const c0 = B.S.prog.coins || 0; let R, rounds = 0;
   do { R = play(B, all, 'mix'); rounds++ } while (!B.questsToday().chest && rounds < 12);
   ok(B.questsToday().chest, 'all quests reachable by plain rounds within 12 rounds: ' + JSON.stringify(B.questsToday()));
-  const before = B.S.prog.coins; B.checkQuests(); ok(B.S.prog.coins === before, 'quests pay once');
+  const qc = B.S.prog.inv.filter(c => c.source === 'DAILY_QUEST');
+  ok(qc.length === 3 && ['COMMON', 'RARE', 'EPIC'].every(tr => qc.filter(c => c.tier === tr).length === 1), 'each quest left its chest: ' + qc.map(c => c.tier).join(','));
+  const before = B.S.prog.inv.length; B.checkQuests(); ok(B.S.prog.inv.length === before, 'quests pay once');
   console.log('   chest after', rounds, 'rounds, coins', c0, '→', B.S.prog.coins, 'questsDone', B.S.prog.questsDone, 'xp', B.S.prog.xp);
 }
 
@@ -213,7 +215,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     ok(A.dayStats().fresh === 6, 'six new words learned, one of them on the second try: ' + A.dayStats().fresh);
   }
   // every combo quest fits into the shortest round; typed text is remembered
-  ok(Math.max(...A0().QUESTS.combo.steps) <= 10, 'combo quest fits into a round of ten');
+  ok(Math.max(...A0().QUESTS.combo.lv) <= 10, 'combo quest fits into a round of ten');
   function A0() { return fresh({ t: day(2026, 11, 10) }) }
   {
     const A = fresh({ t: day(2026, 11, 10) }, { lvl: 1 });
@@ -233,5 +235,139 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     cb(); ok(calls === 1, 'a late callback from the browser does not run it again');
   }
   console.log('T review fixes: done');
+}
+// ---- chests, loot, booster ----
+{
+  const ids = units[1].words.map(w => w.id), at = (h, m = 0, d = 18) => new Date(2026, 10, d, h, m, 0).getTime();
+  const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)] };
+  // loot table: every tier stays inside its range, chances are what the table says
+  {
+    const A = fresh({ t: at(10) });
+    for (const tier of A.TIERS) {
+      const d = A.CHEST[tier]; let boosts = 0, freezes = 0, lo = 1e9, hi = 0; const N = 4000;
+      for (let i = 0; i < N; i++) { const L = A.rollLoot(tier); lo = Math.min(lo, L.coins); hi = Math.max(hi, L.coins); if (L.boost) { boosts++; ok(L.boost.mult === d.boost[1] && L.boost.min === d.boost[2], 'booster of ' + tier) } if (L.freeze) freezes++ }
+      ok(lo === d.coins[0] && hi === d.coins[1], tier + ' coins ' + lo + '–' + hi + ' fill the range ' + d.coins.join('–'));
+      ok(Math.abs(boosts / N - d.boost[0]) < .04 && Math.abs(freezes / N - d.freeze) < .04, tier + ' chances: boost ' + (boosts / N).toFixed(2) + ' freeze ' + (freezes / N).toFixed(2));
+    }
+    ok(A.CHEST.COMMON.coins[1] < A.CHEST.RARE.coins[0] && A.CHEST.RARE.coins[1] < A.CHEST.EPIC.coins[0] && A.CHEST.EPIC.coins[1] < A.CHEST.MEGA.coins[0], 'a better chest always pays more');
+  }
+  // three taps: upgrades on tap 1 and 2 only, saved at once, tap 3 pays exactly what was rolled
+  {
+    const A = fresh({ t: at(10) }, { coins: 0 });
+    const c = A.addChest('COMMON', 'DAILY_QUEST');
+    let r = A.tapChest(c.id, seq(.1)); ok(r && !r.open && r.up && r.tier === 'RARE', 'tap 1 with luck lifts the chest: ' + JSON.stringify(r));
+    ok(JSON.parse(A.mem['wordbox.prog.v1']).inv[0].tier === 'RARE' && JSON.parse(A.mem['wordbox.prog.v1']).inv[0].taps === 1, 'the tap is saved');
+    const B = load({ clock: { t: at(10) }, storage: A.mem });
+    r = B.tapChest(c.id, seq(.9)); ok(r && !r.up && r.tier === 'RARE' && r.taps === 2, 'after a restart the chest goes on at tap 2, no second first roll');
+    r = B.tapChest(c.id, seq(0, .99, .99)); ok(r.open && r.loot.coins === B.CHEST.RARE.coins[0] && !r.loot.boost && !r.loot.freeze, 'tap 3 opens: ' + JSON.stringify(r.loot));
+    ok(B.S.prog.coins === B.CHEST.RARE.coins[0] && !B.S.prog.inv.length && B.S.prog.chestsOpened === 1, 'coins paid, chest gone');
+    ok(B.tapChest(c.id) === null, 'an opened chest cannot be tapped again');
+    const M = B.addChest('MEGA', 'STREAK'); r = B.tapChest(M.id, seq(0)); ok(!r.up && r.tier === 'MEGA', 'nothing above a diamond chest');
+  }
+  // Serien-Schutz from a chest: at most two in the bag, otherwise coins instead
+  {
+    const A = fresh({ t: at(10) }, { coins: 0, freezes: 1 });
+    A.applyLoot({ coins: 5, boost: null, freeze: true, freezeCoins: 0 }); ok(A.S.prog.freezes === 2 && A.S.prog.coins === 5, 'second protection goes into the bag');
+    const L = { coins: 5, boost: null, freeze: true, freezeCoins: 0 }; A.applyLoot(L); ok(A.S.prog.freezes === 2 && L.freezeCoins === 12 && A.S.prog.coins === 22, 'bag full: coins instead, ' + A.S.prog.coins);
+  }
+  // booster: multiplies XP, adds up, runs down with real time only
+  {
+    const clock = { t: at(10) }; const A = fresh(clock, { lvl: 1 });
+    ok(A.xpMult() === 1, 'no booster at first');
+    A.addBoost(1.5, 10); A.addBoost(2, 15); ok(A.S.prog.boost.mult === 2 && A.S.prog.boost.left === 25 * 60000, 'two boosters: higher factor, minutes added');
+    clock.t += 5 * 60000; ok(A.xpMult() === 2 && A.S.prog.boost.left === 20 * 60000, 'five minutes later 20 are left');
+    clock.t -= 60 * 60000; ok(A.xpMult() === 2 && A.S.prog.boost.left === 20 * 60000, 'a clock set back does not stretch it');
+    clock.t += 1 * 60000; A.xpMult(); ok(A.S.prog.boost.left === 19 * 60000, 'and it goes on running down');
+    const xp0 = A.S.prog.xp; A.startRound(ids, 'de-en', 10, { extras: false });
+    const q = A.S.quiz.list[0]; A.answerMC(q.options.indexOf(q.answer)); ok(A.S.prog.xp - xp0 === 4 && A.S.quiz.gain === 4 && A.S.quiz.boostXP === 2, 'a right answer counts double: ' + (A.S.prog.xp - xp0));
+    while (A.S.quiz) { A.nextQ(); if (!A.S.quiz) break; const x = A.S.quiz.list[A.S.quiz.i]; A.answerMC(x.options.indexOf(x.answer)) }
+    const R = A.S.result, plain = R.extras.filter(e => e[0] !== 'XP-Booster').reduce((a, e) => a + e[1], 0) + 20;
+    ok(R.extras.some(e => e[0] === 'XP-Booster') && R.xp === 2 * plain, 'the round shows the booster share: ' + R.xp + ' = 2 x ' + plain);
+    clock.t += 30 * 60000; ok(A.xpMult() === 1 && A.S.prog.boost === null, 'used up');
+  }
+  // time windows: early bird (earned 6–12, open 18–24 the same day), night owl (earned from 18, open 6–12 next day)
+  {
+    const clock = { t: at(7, 30) }; const A = fresh(clock, { lvl: 1 });
+    let R = play(A, ids, 'de-en'); const eb = A.S.prog.inv.find(c => c.source === 'EARLY_BIRD');
+    ok(eb && eb.status === 'LOCKED' && eb.unlockWindowStart === at(18) && eb.unlockWindowEnd === at(23, 59) + 59000 && R.chests.indexOf(eb) >= 0, 'morning round earns the early-bird chest for 18:00');
+    play(A, ids, 'de-en'); ok(A.S.prog.inv.filter(c => c.source === 'EARLY_BIRD').length === 1, 'only one per morning');
+    ok(A.tapChest(eb.id) === null, 'locked: cannot be opened at ' + new Date(clock.t).getHours() + ' h');
+    clock.t = at(14); play(A, ids, 'de-en'); ok(!A.S.prog.inv.some(c => c.source === 'NIGHT_OWL'), 'the afternoon earns no timed chest');
+    clock.t = at(18, 5); let cs = A.syncChests(); ok(cs.ready.length === 1 && eb.status === 'READY', 'ready at 18:05');
+    R = play(A, ids, 'de-en'); const no = A.S.prog.inv.find(c => c.source === 'NIGHT_OWL');
+    ok(no && no.status === 'LOCKED' && no.unlockWindowStart === at(6, 0, 19) && no.unlockWindowEnd === at(12, 0, 19), 'evening round earns the night-owl chest for tomorrow 6–12');
+    ok(A.tapChest(eb.id).taps === 1, 'the early-bird chest opens in its window');
+    clock.t = at(0, 10, 19); cs = A.syncChests(); ok(cs.expired.length === 1 && cs.expired[0].source === 'EARLY_BIRD' && !A.S.prog.inv.some(c => c.source === 'EARLY_BIRD'), 'left half open, it is gone after midnight');
+    clock.t = at(5, 59, 19); A.syncChests(); ok(no.status === 'LOCKED', 'night owl still locked at 5:59');
+    clock.t = at(6, 1, 19); A.syncChests(); ok(no.status === 'READY', 'ready at 6:01');
+    clock.t = at(12, 1, 19); cs = A.syncChests(); ok(cs.expired.length === 1 && !A.S.prog.inv.some(c => c.source === 'NIGHT_OWL'), 'gone after 12:00');
+    // the clock set forward to open early and then back: no new timed chest until time has caught up
+    const B = fresh({ t: at(7) }, { lvl: 1 }); B.clock.t = at(19); B.nowSafe(); B.clock.t = at(8);
+    play(B, ids, 'de-en'); ok(!B.S.prog.inv.some(c => c.source === 'EARLY_BIRD'), 'a clock that was set back earns no timed chest');
+  }
+  // triggers: every fifth round, level-up, streak milestones
+  {
+    const clock = { t: at(14) }; const A = fresh(clock, { lvl: 1, rounds: 3, xp: 0 });
+    const src = s => A.S.prog.inv.filter(c => c.source === s);
+    let R = play(A, ids, 'de-en'); ok(src('PATH_MILESTONE').length === 0, 'round 4: no milestone chest');
+    R = play(A, ids, 'de-en'); ok(A.S.prog.rounds === 5 && src('PATH_MILESTONE').length === 1 && src('PATH_MILESTONE')[0].tier === 'COMMON' && R.steps.indexOf('chests') >= 0, 'round 5: wooden chest, shown in the result');
+    ok(src('LEVEL_UP').length === A.S.prog.lvl - 1 && src('LEVEL_UP').every(c => c.tier === 'RARE'), 'one silver chest per level gained: ' + src('LEVEL_UP').length + ' for level ' + A.S.prog.lvl);
+    for (const [n, tier] of [[3, 'COMMON'], [7, 'RARE'], [14, 'RARE'], [30, 'EPIC'], [50, 'EPIC'], [100, 'MEGA']]) {
+      const B = fresh({ t: at(14) }, { lvl: 1, streak: n - 1, best: n - 1, last: '2026-11-17' });
+      play(B, ids, 'de-en'); const sc = B.S.prog.inv.filter(c => c.source === 'STREAK');
+      ok(B.S.prog.streak === n && sc.length === 1 && sc[0].tier === tier, 'day ' + n + ' of the streak brings ' + tier);
+      play(B, ids, 'de-en'); ok(B.S.prog.inv.filter(c => c.source === 'STREAK').length === 1, 'once only');
+    }
+    const C = fresh({ t: at(14) }, { lvl: 1, streak: 3, best: 3, last: '2026-11-17' }); play(C, ids, 'de-en'); ok(!C.S.prog.inv.some(c => c.source === 'STREAK'), 'day 4 brings none');
+  }
+  // an old save gets an empty bag; a damaged bag is repaired; the bag survives backup and restart
+  {
+    const A = load({ clock: { t: at(10) }, storage: { 'wordbox.units.v1': JSON.stringify(units), 'wordbox.prog.v1': JSON.stringify({ v: 1, econ: 2, tempo: 'fast', onboarded: true, v2: true, xp: 300, coins: 40 }) } });
+    ok(Array.isArray(A.S.prog.inv) && A.S.prog.inv.length === 0 && A.S.prog.boost === null && A.S.prog.coins >= 40, 'a save from 2.1 starts with an empty bag');
+    const B = fresh({ t: at(10) }, { inv: [{ id: 'a', tier: 'EPIC', status: 'READY', source: 'STREAK' }, null, { id: 5, tier: 'RARE', status: 'READY' }, { id: 'b', tier: 'BESSER', status: 'READY' }, { id: 'c', tier: 'RARE', status: 'OPENED' }], boost: { mult: 'x' } });
+    ok(B.S.prog.inv.length === 1 && B.S.prog.inv[0].id === 'a' && B.S.prog.boost === null, 'damaged chests and boosters are dropped: ' + B.S.prog.inv.length);
+    B.addBoost(2, 15); B.persist(); const C2 = load({ clock: { t: at(10, 5) }, storage: B.mem });
+    ok(C2.S.prog.inv.length === 1 && C2.xpMult() === 2 && C2.S.prog.boost.left === 10 * 60000, 'bag and booster survive a restart; five minutes away count');
+    for (const v of ['home', 'awards', 'shop']) { try { C2.S.view = v; C2.render() } catch (e) { fails++; console.log('  FAIL view with chests', v, e.message) } }
+  }
+  console.log('T chests: done');
+}
+// ---- 90 days of play with a fixed dice: the books always balance ----
+{
+  let seed = 20261118; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff };
+  const clock = { t: new Date(2026, 10, 18, 7, 0, 0).getTime() }; let A = fresh(clock, { lvl: 1, coins: 0 });
+  const all = A.S.words.map(w => w.id); let rounds = 0, opened = 0, coinsFromChests = 0, maxInv = 0, bad = [];
+  const note = m => { if (bad.length < 6) bad.push(m) };
+  for (let d = 0; d < 90; d++) {
+    const dayStart = new Date(2026, 10, 18 + d, 0, 0, 0).getTime();
+    if (rnd() < .12) continue;                                                     // a day off now and then
+    for (const h of [7, 13, 19].filter(() => rnd() < .7)) {
+      clock.t = dayStart + h * 3600000 + Math.floor(rnd() * 3000000);
+      if (rnd() < .3) A = load({ clock, storage: A.mem });                          // the app was closed in between
+      const acc = .5 + rnd() * .5, c0 = A.S.prog.coins, quit = rnd() < .1;
+      A.startRound(all, ['mix', 'de-en', 'type'][Math.floor(rnd() * 3)], 10);
+      if (!A.S.quiz) continue;
+      let n = 0;
+      while (A.S.quiz) {
+        const q = A.S.quiz.list[A.S.quiz.i], right = rnd() < acc;
+        if (q.type === 'type') A.settle(right, false); else A.answerMC(right ? q.options.indexOf(q.answer) : q.options.findIndex(o => o !== q.answer));
+        if (quit && ++n >= 4) { A.finish(true); break }
+        A.nextQ();
+      }
+      rounds++;
+      if (A.S.result && A.S.result.coinSum !== A.S.prog.coins - c0) note('day ' + d + ': coin sum ' + A.S.result.coinSum + ' but wallet +' + (A.S.prog.coins - c0));
+      // open some of the chests that are ready
+      A.syncChests();
+      for (const c of A.S.prog.inv.slice()) if (c.status === 'READY' && rnd() < .8) { const before = A.S.prog.coins; let r; do { r = A.tapChest(c.id, rnd) } while (r && !r.open); if (r) { opened++; coinsFromChests += A.S.prog.coins - before; if (A.S.prog.coins - before !== r.loot.coins + r.loot.freezeCoins) note('chest paid ' + (A.S.prog.coins - before) + ' but showed ' + JSON.stringify(r.loot)) } }
+      const p = A.S.prog; maxInv = Math.max(maxInv, p.inv.length);
+      if (!(p.coins >= 0) || !(p.freezes >= 0 && p.freezes <= 2) || !Number.isFinite(p.xp) || (p.boost && !(p.boost.left > 0))) note('day ' + d + ': state off ' + JSON.stringify([p.coins, p.freezes, p.xp, p.boost]));
+      if (p.inv.some(c => A.TIERS.indexOf(c.tier) < 0 || !c.id || (c.status !== 'READY' && c.status !== 'LOCKED'))) note('day ' + d + ': odd chest in the bag');
+      if (new Set(p.inv.map(c => c.id)).size !== p.inv.length) note('day ' + d + ': two chests share an id');
+      for (const v of ['home', 'awards']) { A.S.view = v; A.S.result = null; try { A.render(); if (/NaN|undefined/.test(A.els.app.innerHTML)) note('day ' + d + ': NaN or undefined in ' + v) } catch (e) { note('day ' + d + ': ' + v + ' ' + e.message) } }
+    }
+  }
+  ok(!bad.length, 'play-through found: ' + bad.join(' | '));
+  const p = A.S.prog; ok(p.chestsWon >= p.chestsOpened && p.chestsOpened === opened, 'every opened chest was won first: ' + p.chestsWon + ' won, ' + opened + ' opened');
+  console.log('T play-through: 90 days,', rounds, 'rounds,', p.chestsWon, 'chests won,', opened, 'opened,', p.chestUps, 'upgrades,', coinsFromChests, 'coins from chests, wallet', p.coins, '(earned ' + p.coinsEarned + '), level', A.levelInfo(p.xp).n, ', most chests waiting', maxInv);
 }
 console.log(fails ? fails + ' FAILED' : 'ALL OK'); process.exitCode = fails ? 1 : 0;
