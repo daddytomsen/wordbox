@@ -10,7 +10,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   let i = 0;
   while (A.S.quiz) {
     const q = A.S.quiz.list[A.S.quiz.i];
-    if (q.type === 'type') A.settle(right(i), false); else A.answerMC(right(i) ? q.options.indexOf(q.answer) : q.options.findIndex(o => o !== q.answer));
+    if (q.type === 'type' || q.type === 'hear') A.settle(right(i), false); else A.answerMC(right(i) ? q.options.indexOf(q.answer) : q.options.findIndex(o => o !== q.answer));
     i++; A.nextQ();
   }
   return A.S.result;
@@ -371,13 +371,13 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     const B = load({ clock: { t: at(17) }, storage: A.mem }); ok(B.S.prog.lvl === 16 && B.S.prog.coins === base + 20 && B.S.prog.inv.length === 1, 'and not a second time');
     const C = fresh({ t: at(16) }, { xp: 3400, lvl: 11, coins: 0, news: '2.3' }); ok(C.S.prog.lvl === 11 && !C.S.prog.inv.length, 'level 11 stays level 11');
   }
-  // XP of one answer: 3, typed 4, the 5-combo adds 2 as before
+  // XP of one answer: 3 chosen, 6 written from memory (4 heard and written, see the ladder tests), the 5-combo adds 2 as before
   {
     const A = fresh({ t: at(16) }, { lvl: 1 });
     A.startRound(ids, 'de-en', 10, { extras: false }); const got = [];
     while (A.S.quiz) { const q = A.S.quiz.list[A.S.quiz.i], x0 = A.S.prog.xp; A.answerMC(q.options.indexOf(q.answer)); got.push(A.S.prog.xp - x0); A.nextQ() }
     ok(got.join() === '3,3,3,3,5,3,3,3,3,5', 'multiple choice: ' + got.join());
-    A.startRound(ids, 'type', 10, { extras: false }); const x0 = A.S.prog.xp; A.settle(true, false); ok(A.S.prog.xp - x0 === 4, 'typed: ' + (A.S.prog.xp - x0));
+    A.startRound(ids, 'type', 10, { extras: false }); const x0 = A.S.prog.xp; A.settle(true, false); ok(A.S.prog.xp - x0 === 6, 'written from memory pays 6 (since 2.6, before 4): ' + (A.S.prog.xp - x0));
     A.settle(false, false); A.finish(true);
     const B = fresh({ t: at(16) }, { lvl: 1 }); B.startRound(ids, 'de-en', 10, { extras: false });
     const q = B.S.quiz.list[0], y0 = B.S.prog.xp; B.answerMC(q.options.findIndex(o => o !== q.answer)); ok(B.S.prog.xp === y0, 'a wrong answer still gives nothing');
@@ -391,6 +391,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     const q = A.S.quiz.list[0], x0 = A.S.prog.xp; A.answerMC(q.options.indexOf(q.answer)); ok(A.S.prog.xp - x0 === 5 && A.S.quiz.boostXP === 2, '1,5x on 3 XP gives 5: ' + (A.S.prog.xp - x0));
     while (A.S.quiz) { A.nextQ(); if (!A.S.quiz) break; const x = A.S.quiz.list[A.S.quiz.i]; A.answerMC(x.options.indexOf(x.answer)) }
     ok(A.S.prog.boost === null, 'used up after its round');
+    { const W = fresh({ t: at(16) }, { lvl: 1 }); W.addBoost(1.5, 1); W.startRound(ids, 'type', 10, { extras: false }); const w0 = W.S.prog.xp; W.settle(true, false); ok(W.S.prog.xp - w0 === 9 && W.S.quiz.boostXP === 3, '1,5x on a written word: 6 becomes 9: ' + (W.S.prog.xp - w0)) }
     A.S.view = 'home'; A.S.result = null; A.addBoost(1.5, 1); A.render(); ok(/1,5x XP/.test(A.els.app.innerHTML), 'the start page says 1,5x with a comma');
     // a booster won before the update keeps its factor and its rounds
     const B = fresh({ t: at(16) }, { lvl: 1, boost: { mult: 3, rounds: 2 }, news: '2.3' }); ok(B.xpMult() === 3 && B.S.prog.boost.rounds === 2, 'an old 3x booster is kept');
@@ -525,6 +526,152 @@ const imp = A => { A.ACT['imp-open'](); const h = A.els.app.innerHTML; A.ACT['im
   }
   console.log('T 2.5 share, back button, install: done');
 }
+// ---- 2.6: the ladder. Recognise, use with help, write from memory; a word sits only once it was written ----
+{
+  const at = (h, d = 18) => new Date(2026, 10, d, h, 0, 0).getTime(), DAY = 864e5;
+  const U = units[1], ids = U.words.map(w => w.id), t0 = at(16);
+  const prog = (w, extra) => ({ 'wordbox.units.v1': JSON.stringify(units), 'wordbox.prog.v1': JSON.stringify(Object.assign({ v: 1, econ: 2, tempo: 'fast', onboarded: true, v2: true, sound: false, speak: true, goal: 150, lvl: 1, w }, extra || {})) });
+  const box = (l, due = true, more) => Object.assign({ l, r: l, x: 0, s: t0 - DAY, d: due ? t0 - 1000 : t0 + 3 * DAY }, more || {});
+  const plain = U.words.filter(w => w.pos !== 'phrase' && w.en.length <= 30 && !/[()\/=…]/.test(w.en));      // can be typed and heard
+  const answer = (A, right = true) => { const q = A.S.quiz.list[A.S.quiz.i]; if (A.writing(q.type)) A.settle(right, false); else A.answerMC(right ? q.options.indexOf(q.answer) : q.options.findIndex(o => o !== q.answer)); return q };
+  // the kind of question follows the box
+  {
+    const w = {}; plain.slice(0, 40).forEach((x, i) => { w[x.id] = box([1, 2, 3, 4, 5][i % 5], i % 5 !== 2 || true) });
+    const A = load({ clock: { t: t0 }, speech: true, storage: prog(w) }), seen = { 0: new Set(), 1: new Set(), 2: new Set(), 4: new Set(), 5: new Set() };
+    const by = id => A.S.byId.get(id);
+    for (let i = 0; i < 400; i++) {
+      for (const x of plain.slice(0, 60)) { const f = A.fach(x.id); if (f === 3) continue; seen[f].add(A.ladderType(by(x.id), true)) }
+    }
+    const list = k => Array.from(seen[k]).sort().join();
+    ok(list(0) === 'de-en,en-de' && list(1) === 'de-en,en-de', 'new words and Fach 1 are only recognised: ' + list(0) + ' | ' + list(1));
+    ok(!seen[2].has('type') && seen[2].has('hear') && seen[2].has('gap') && !seen[2].has('en-de'), 'Fach 2 works with help, not yet from memory: ' + list(2));
+    ok(seen[4].has('type') && seen[5].has('type') && seen[5].has('hear') && seen[5].has('de-en'), 'Fach 4 and 5 mix everything, writing included: ' + list(5));
+    let wrote = 0; for (let i = 0; i < 300; i++) for (const x of plain.slice(0, 40)) if (A.writing(A.ladderType(by(x.id), false))) wrote++;
+    ok(wrote === 0, 'without room for writing no written question is chosen');
+    // a verb that is new is asked for its meaning, never for its simple past first
+    const verb = units[2].words[0]; let pastFirst = 0; for (let i = 0; i < 200; i++) if (A.ladderType(by(verb.id), true) === 'past') pastFirst++;
+    ok(A.fach(verb.id) === 0 && pastFirst === 0, 'a new verb: meaning before simple past');
+  }
+  // a mixed round: words in Fach 3 are written, at most half of the round, and they come before optional writing
+  {
+    const w = {}; plain.slice(0, 12).forEach(x => { w[x.id] = box(3) });
+    const A = load({ clock: { t: t0 }, speech: true, storage: prog(w) });
+    for (let i = 0; i < 30; i++) {
+      A.startRound(ids, 'mix', 10, { extras: false }); const L = A.S.quiz.list, typed = L.filter(q => q.type === 'type'), written = L.filter(q => A.writing(q.type));
+      ok(typed.length === 4 && written.length === 4 && typed.every(q => A.fach(q.wid) === 3), 'four of ten are written, all of them words of Fach 3: ' + L.map(q => q.type + A.fach(q.wid)).join(' '));
+      ok(L.filter(q => A.fach(q.wid) === 0).every(q => q.type === 'de-en' || q.type === 'en-de'), 'the new words next to them are recognised');
+      A.finish(true);
+    }
+    const B = load({ clock: { t: t0 }, speech: true, storage: prog(Object.fromEntries(plain.slice(0, 30).map(x => [x.id, box(3)]))) });
+    B.startRound(plain.slice(0, 30).map(x => x.id), 'mix', 10, { extras: false });
+    ok(B.S.quiz.list.filter(q => q.type === 'type').length === 4 && B.S.quiz.list.filter(q => B.writing(q.type)).length === 4 && B.S.quiz.list.length === 10, 'ten words of Fach 3: four written, six in another way');
+    B.finish(true); B.startRound(plain.slice(0, 30).map(x => x.id), 'mix', 7, { extras: false });
+    ok(B.S.quiz.list.filter(q => B.writing(q.type)).length === 3, 'a round of seven: three written');
+    // single modes stay what they are
+    B.finish(true); B.startRound(plain.slice(0, 30).map(x => x.id), 'de-en', 10, { extras: false }); ok(B.S.quiz.list.every(q => q.type === 'de-en'), 'Deutsch → Englisch stays multiple choice');
+    B.finish(true); B.startRound(plain.slice(0, 30).map(x => x.id), 'type', 10, { extras: false }); ok(B.S.quiz.list.every(q => q.type === 'type'), 'Schreiben stays writing');
+  }
+  // the gate: from Fach 3 to Fach 4 only by writing
+  {
+    const a = plain[0], b = plain[1], c = plain[2], phrase = units[0].words.find(x => x.pos === 'phrase');
+    const w = { [a.id]: box(3), [b.id]: box(3), [c.id]: box(3, false), [phrase.id]: box(3) };
+    const A = load({ clock: { t: t0 }, speech: true, storage: prog(w) });
+    ok(A.gateHolds(a.id, false) && !A.gateHolds(a.id, true) && !A.gateHolds(c.id, false) && !A.gateHolds(phrase.id, false), 'the gate holds a due word of Fach 3 that can be written');
+    A.startRound([a.id], 'de-en', 1, { extras: false }); answer(A);
+    ok(A.fach(a.id) === 3 && A.isDue(a.id) && A.S.prog.w[a.id].r === 4 && !A.S.prog.w[a.id].t && A.S.quiz.held === true && A.S.quiz.promoted === 0, 'chosen right: counted, but the word waits in Fach 3 and stays due');
+    A.render(); ok(/sobald du es selbst geschrieben hast/.test(A.els.app.innerHTML), 'the answer sheet says why');
+    A.finish(true);
+    A.startRound([a.id], 'mix', 1, { extras: false }); ok(A.S.quiz.list[0].type === 'type', 'the next mixed round asks for it in writing'); answer(A);
+    ok(A.fach(a.id) === 4 && A.S.prog.w[a.id].t === 1 && A.S.quiz.settled === 1 && !A.S.quiz.held && !A.isDue(a.id), 'written right: Fach 4, it sits');
+    A.finish(true);
+    A.startRound([b.id], 'type', 1, { extras: false }); answer(A, false); ok(A.fach(b.id) === 1 && !A.S.prog.w[b.id].t, 'written wrong: back to Fach 1 as always'); A.finish(true);
+    A.startRound([phrase.id], 'de-en', 1, { extras: false }); answer(A); ok(A.fach(phrase.id) === 4, 'a phrase cannot be written and passes without'); A.finish(true);
+    // hearing is writing with help: it counts as typed, but it is not the gate
+    const d = plain[3]; A.S.prog.w[d.id] = box(3); const Q = A.makeQ(A.S.byId.get(d.id), 'hear', false);
+    ok(Q.type === 'hear' && Q.answer === d.en && Q.prompt === d.de && Q.say === d.en, 'hearing question: meaning shown, word spoken');
+    ok(A.gateHolds(d.id, false), 'a hearing answer does not open the gate');
+    // words that sat before the update are left alone
+    const old = { [a.id]: box(4), [b.id]: box(5, false) }, O = load({ clock: { t: t0 }, speech: true, storage: prog(old) });
+    ok(O.fach(a.id) === 4 && O.fach(b.id) === 5 && O.S.words.filter(x => O.fach(x.id) >= 4).length === 2, 'Fach 4 and 5 from before stay');
+    O.startRound([a.id], 'de-en', 1, { extras: false }); answer(O); ok(O.fach(a.id) === 5, 'above the gate every right answer moves a word on');
+  }
+  // hearing questions: only with a voice and with "Vorlesen" on, only for plain entries; the word is spoken inside the tap
+  {
+    const w = Object.fromEntries(plain.slice(0, 20).map(x => [x.id, box(2)]));
+    const count = A => { let n = 0; for (let i = 0; i < 40; i++) { A.startRound(plain.slice(0, 20).map(x => x.id), 'mix', 10, { extras: false }); n += A.S.quiz.list.filter(q => q.type === 'hear').length; A.finish(true) } return n };
+    const A = load({ clock: { t: t0 }, speech: true, storage: prog(w) }), mute = load({ clock: { t: t0 }, speech: true, storage: prog(w, { speak: false }) }), none = load({ clock: { t: t0 }, storage: prog(w) });
+    ok(count(A) > 40 && count(mute) === 0 && count(none) === 0, 'hearing only with a voice and with Vorlesen on');
+    const odd = { en: 'to be keen on (sb/sth)', de: 'x', pos: 'verb' }, ph = { en: 'See you!', de: 'x', pos: 'phrase' };
+    ok(!A.applicable(odd, 'hear') && !A.applicable(ph, 'hear') && A.applicable({ en: 'plane', de: 'Flugzeug', pos: 'noun' }, 'hear'), 'brackets, slashes and phrases are never dictated');
+    let q; do { A.startRound(plain.slice(0, 20).map(x => x.id), 'mix', 10, { extras: false }); q = A.S.quiz.list[0]; if (q.type !== 'hear') A.finish(true) } while (q.type !== 'hear');
+    ok(A.said[A.said.length - 1] === q.say, 'the first word of a round is spoken at once: ' + A.said[A.said.length - 1]);
+    A.render(); const h = A.els.app.innerHTML;
+    ok(/id="typeIn"/.test(h) && /data-act="say"/.test(h) && /Anhören/.test(h) && h.indexOf(q.prompt.replace(/&/g, '&amp;')) >= 0 && !/class="opt /.test(h), 'hearing question: a button to listen, the meaning, a field to write');
+    const xp = A.S.prog.xp, tr = A.S.prog.typedRight; A.settle(true, false); ok(A.S.prog.xp - xp === 4 && A.S.prog.typedRight === tr + 1 && A.fach(q.wid) === 3 && !A.S.prog.w[q.wid].t, 'heard and written: 4 XP, counts as typed, Fach 2 → 3, no gate credit');
+    // the next question: spoken if it is a hearing question
+    const before = A.said.length; A.nextQ(); const nq = A.S.quiz && A.S.quiz.list[A.S.quiz.i]; ok(!nq || (nq.type === 'hear') === (A.said.length > before && A.said[A.said.length - 1] === nq.say), 'next question spoken only if it is to be heard');
+  }
+  // learning targets: a new one wants each word written once; one from before 2.6 keeps its rule
+  {
+    const a = plain[0], b = plain[1], phrase = units[0].words.find(x => x.pos === 'phrase'), tid = [a.id, b.id, phrase.id];
+    const w = { [a.id]: box(5, false, { r: 9 }), [b.id]: box(5, false, { r: 7, t: 2 }) };
+    const A = load({ clock: { t: t0 }, speech: true, storage: prog(w, { sel: tid }) });
+    A.S.tform = { title: 'Arbeit', due: '2026-11-25', err: '' }; A.ACT['t-save']({});
+    const T = A.S.prog.targets[0]; ok(T && T.write === 1 && T.need === 2 && T.baseT[a.id] === 0 && T.baseT[b.id] === 2 && T.base[a.id] === 9, 'a new target notes the written count: ' + JSON.stringify(T && T.baseT));
+    ok(A.targetInfo(T).open.length === 3, 'three words open');
+    const round = id => { A.startRound([id], 'mix', 1, { extras: false }); const q = answer(A); A.finish(true); return q.type };
+    // A word is done after two right answers of which one is written. Which comes first is open for a word of Fach 5
+    // (there the mix may ask for writing on its own); once it was answered without writing, the next one is written.
+    ok(!A.targetWantsWrite(a.id), 'not yet answered: writing is not demanded');
+    const k1 = round(a.id); ok(A.targetInfo(T).open.indexOf(a.id) >= 0 && A.targetWantsWrite(a.id) === (k1 !== 'type'), 'after one answer (' + k1 + ') the word is still open; writing is demanded unless it just happened');
+    const k2 = round(a.id); ok((k1 === 'type' || k2 === 'type') && A.targetInfo(T).open.indexOf(a.id) < 0, 'two right answers, one of them written (' + k1 + ', ' + k2 + '): done');
+    for (let i = 0; i < 40; i++) {      // the same on fresh copies, so both orders are seen
+      const X = load({ clock: { t: t0 }, speech: true, storage: prog(w, { sel: tid }) }); X.S.tform = { title: 'Arbeit', due: '2026-11-25', err: '' }; X.ACT['t-save']({});
+      const kinds = []; for (let n = 0; n < 2; n++) { X.startRound([a.id], 'mix', 1, { extras: false }); kinds.push(answer(X).type); X.finish(true) }
+      ok(kinds.indexOf('type') >= 0 && X.targetInfo(X.S.prog.targets[0]).open.indexOf(a.id) < 0, 'run ' + i + ': done after two answers, one written: ' + kinds.join());
+    }
+    // two right answers without writing are not enough
+    A.startRound([b.id], 'de-en', 1, { extras: false }); answer(A); A.finish(true); A.startRound([b.id], 'en-de', 1, { extras: false }); answer(A); A.finish(true);
+    ok(A.targetInfo(T).open.indexOf(b.id) >= 0 && A.targetLacksWrite(T, b.id), 'chosen right twice: still open, the written answer is missing');
+    A.startRound([b.id], 'type', 1, { extras: false }); answer(A); A.finish(true); ok(A.targetInfo(T).open.indexOf(b.id) < 0, 'written once: done');
+    // a phrase cannot be written: two right answers do it
+    A.startRound([phrase.id], 'de-en', 1, { extras: false }); answer(A); A.finish(true); A.clock.t += DAY; A.startRound([phrase.id], 'de-en', 1, { extras: false }); answer(A);
+    ok(A.targetInfo(T).open.length === 0, 'the phrase is done without writing'); A.finish(false); ok(A.S.prog.targets[0].done, 'target finished');
+    A.S.view = 'result'; A.render(); ok(/einmal davon geschrieben/.test(A.els.app.innerHTML), 'the result names the written answer');
+    // a target from before 2.6: no write field, the old rule
+    const oldT = { id: 't1', title: 'Alt', due: '2026-11-25', ids: [a.id, b.id], base: { [a.id]: 0, [b.id]: 0 }, need: 2, created: '2026-11-15', done: '' };
+    const O = load({ clock: { t: t0 }, speech: true, storage: prog({ [a.id]: box(5, false, { r: 2 }), [b.id]: box(2, true, { r: 1 }) }, { targets: [oldT] }) });
+    const OT = O.S.prog.targets[0]; ok(!('write' in OT) && O.targetInfo(OT).done === 1 && O.targetInfo(OT).open.join() === b.id && !O.targetWantsWrite(b.id), 'old target: two right answers are enough, no writing asked');
+    // damaged fields of a target are repaired, not fatal
+    const D = load({ clock: { t: t0 }, storage: prog({}, { targets: [Object.assign({}, oldT, { write: 'ja', baseT: 7 })] }) });
+    ok(!('write' in D.S.prog.targets[0]) && typeof D.S.prog.targets[0].baseT === 'object' && D.targetInfo(D.S.prog.targets[0]).total === 2, 'odd write fields in a save do not break the target');
+  }
+  // texts: the word list says what is next, the Karteikasten explains the gate
+  {
+    const a = plain[0], A = load({ clock: { t: t0 }, speech: true, storage: prog({ [a.id]: box(3, false) }) });
+    A.S.view = 'vocab'; A.S.openUnit = U.id; A.render(); const h = A.els.app.innerHTML;
+    ok((h.match(/als Nächstes: schreiben/g) || []).length === 1 && /wenn du es selbst geschrieben hast/.test(h), 'Vokabeln: one word waits for writing, the rule is explained');
+  }
+  // three weeks of daily play: words still reach Fach 4 and 5, nothing piles up in front of the gate
+  {
+    let seed = 2611; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff };
+    const clock = { t: at(16) }, A = load({ clock, speech: true, storage: prog({}) }), all = A.S.words.map(x => x.id); let rounds = 0, maxWritten = 0, waitMax = 0, hears = 0, types = 0;
+    for (let d = 0; d < 21; d++) {
+      clock.t = at(16) + d * DAY;
+      for (let r = 0; r < 2; r++) {
+        clock.t += 15 * 60000; A.startRound(all, 'mix', 10); if (!A.S.quiz) continue; rounds++;
+        const L = A.S.quiz.list.slice(), wr = L.filter(q => A.writing(q.type)).length; maxWritten = Math.max(maxWritten, wr); hears += L.filter(q => q.type === 'hear').length; types += L.filter(q => q.type === 'type').length;
+        while (A.S.quiz) { answer(A, rnd() < .85); A.nextQ() }
+      }
+      waitMax = Math.max(waitMax, A.S.words.filter(x => A.fach(x.id) === 3 && A.isDue(x.id)).length);
+    }
+    const sit = A.S.words.filter(x => A.fach(x.id) >= 4), unwritten = sit.filter(x => A.applicable(x, 'type') && !(A.S.prog.w[x.id].t >= 1));
+    ok(maxWritten <= 4, 'never more than four of ten in writing: ' + maxWritten);
+    ok(sit.length >= 60 && unwritten.length === 0, 'after three weeks ' + sit.length + ' words sit, every one of them written: ' + unwritten.length + ' without');
+    ok(waitMax <= 12, 'no pile in front of the gate: at most ' + waitMax + ' words wait');
+    console.log('T 2.6 ladder: 21 days,', rounds, 'rounds,', types, 'written from memory,', hears, 'heard and written,', sit.length, 'words sit, most waiting at the gate', waitMax);
+  }
+}
 // ---- 90 days of play with a fixed dice: the books always balance ----
 {
   let seed = 20261118; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff };
@@ -544,7 +691,7 @@ const imp = A => { A.ACT['imp-open'](); const h = A.els.app.innerHTML; A.ACT['im
       let n = 0;
       while (A.S.quiz) {
         const q = A.S.quiz.list[A.S.quiz.i], right = rnd() < acc;
-        if (q.type === 'type') A.settle(right, false); else A.answerMC(right ? q.options.indexOf(q.answer) : q.options.findIndex(o => o !== q.answer));
+        if (q.type === 'type' || q.type === 'hear') A.settle(right, false); else A.answerMC(right ? q.options.indexOf(q.answer) : q.options.findIndex(o => o !== q.answer));
         if (quit && ++n >= 4) { A.finish(true); break }
         A.nextQ();
       }

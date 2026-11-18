@@ -29,10 +29,14 @@ function load(opts = {}) {
   const history = { get state() { return hist.stack[hist.i] }, get length() { return hist.stack.length },
     pushState(st) { hist.stack.length = hist.i + 1; hist.stack.push(st); hist.i++; hist.pushes++ }, replaceState(st) { hist.stack[hist.i] = st } };
   const created = [];
+  // opts.speech: the browser can read aloud. Everything said is kept in api.said.
+  const said = [];
+  const speechSynthesis = { getVoices: () => [], speak(u) { said.push(u.text) }, cancel() {}, resume() {}, speaking: false, pending: false, paused: false };
+  function SpeechSynthesisUtterance(text) { this.text = text }
   const env = {
     localStorage: { getItem: k => (k in mem ? mem[k] : null), setItem: (k, v) => { mem[k] = String(v) }, removeItem: k => { delete mem[k] } },
     document: { getElementById: id => els[id] || null, addEventListener: listen('document'), hidden: false, createElement: () => { const e = el(); created.push(e); return e }, body: { appendChild() {} }, head: { appendChild() {} }, documentElement: { dataset: {} }, querySelectorAll: () => [], activeElement: null },
-    window: { scrollTo() {}, scrollBy() {}, addEventListener: listen('window') }, history,
+    window: Object.assign({ scrollTo() {}, scrollBy() {}, addEventListener: listen('window') }, opts.speech ? { speechSynthesis } : {}), history, speechSynthesis, SpeechSynthesisUtterance,
     navigator: Object.assign({ userAgent: opts.ua || '' }, opts.nav || {}), location: Object.assign({ protocol: 'file:', reload() {} }, opts.loc || {}),
     matchMedia: q => ({ matches: opts.media ? !!opts.media(q) : !opts.vt }),      // tests run with reduced motion, unless they bring a view-transition stub performance: { now: () => 0 }, requestAnimationFrame: () => 0,
     setTimeout: (f) => { timers.push(f); return 0 }, clearTimeout: () => {}, setInterval: () => 0, clearInterval: () => {}, console, Date: makeDate(clock), innerHeight: 800, innerWidth: 400, scrollTo() {},
@@ -41,10 +45,11 @@ function load(opts = {}) {
   const names = Object.keys(env);
   const expose = `\n;return { get S() { return S }, ACT, BADGES, QUESTS, OUTFITS, TEMPOS, store, grade, composeRound, buildRound, tiersOf, pickOpts, pastWrong, pastAlts, makeQ, variants, checkTyped, startRound, settle, answerMC, nextQ, finish, targetInfo, checkTargets, streakInfo, streakTick, checkQuests, dayStats, payGoal, pathNodes, nodeInfo, allNodes, smartPlan, badgeCtx, checkBadges, levelInfo, lvlStart, render, index, fach, isDue, todayKey, xpToday, persist, migrateProg, freshProg, viewHome, viewPractice, viewVocab, viewAwards, viewShop, viewSettings, viewQuiz, viewResult, parseText, listToUnit, bit, SKINS, transit, settleUp, cleanUnits, ws, deParts,
     TIERS, CHEST, STREAK_CHESTS, addChest, dayChest, rollLoot, applyLoot, tapChest, addBoost, useBoost, xpMult, questTier, questSlots, track,
-    ANDROID, IOS, STANDALONE, backStep, armBack, installCard, unitFile, unitFileName, startReview, saveImport, go, toast };`;
+    ANDROID, IOS, STANDALONE, backStep, armBack, installCard, unitFile, unitFileName, startReview, saveImport, go, toast,
+    ladderType, ladderTypes, mustWrite, canHear, gateHolds, targetLacksWrite, targetWantsWrite, writing, applicable, LADDER, WRITE_SHARE, MIX_W, answerTyped, viewQuiz };`;
   const fn = new Function(...names, body + expose);
   const api = fn(...names.map(n => env[n]));
-  api.mem = mem; api.clock = clock; api.els = els; api.timers = timers; api.hist = hist; api.created = created;
+  api.mem = mem; api.clock = clock; api.els = els; api.timers = timers; api.hist = hist; api.created = created; api.said = said;
   api.fire = (type, ev, who = 'window') => (heard[who][type] || []).forEach(f => f(ev || {}));
   // The back button: one entry back and a popstate, as the browser does it. false = no entry left, the app would close.
   api.back = () => { if (hist.i === 0) return false; hist.i--; api.fire('popstate', { state: hist.stack[hist.i] }); return true };

@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 18.11.2026 · Version 2.5 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 18.11.2026 · Version 2.6 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,16 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.6 (18.11.2026, „Hebel 1“ aus der Lern-Überlegung: vom Ankreuzen zum Selbst-Schreiben).** Anlass: Bis 2.5 enthielt „Weiter lernen“ keine einzige Schreibfrage; ein Wort galt als „sitzt“, ohne je geschrieben worden zu sein, die Klassenarbeit verlangt aber Schreiben. Befund aus der Forschung dazu: Geübt werden sollte in der Form, in der geprüft wird.
+  - **Leiter:** Im Mix folgt die Frageart dem Fach: neu und Fach 1 erkennen, Fach 2 mit Hilfe (Lücke oder Hörfrage), Fach 3 aus dem Kopf schreiben, Fach 4–5 gemischt mit gelegentlichem Schreiben. Höchstens vier von zehn Fragen werden geschrieben.
+  - **Tor:** Von Fach 3 nach Fach 4 („sitzt“) kommt ein Wort nur durch Schreiben. Richtig angekreuzt zählt, das Wort wartet aber in Fach 3; die Rückmeldung sagt es („Das Wort sitzt, sobald du es selbst geschrieben hast“), die Vokabelliste zeigt „als Nächstes: schreiben“. Wörter, die vorher in Fach 4 oder 5 lagen, bleiben dort.
+  - **Hörfrage (neu):** Wort wird vorgelesen, Bedeutung steht dabei, Kind schreibt. Auch ohne Ton lösbar. Nur mit eingeschaltetem „Vorlesen“.
+  - **Lernziele:** Neue Ziele verlangen je Wort zweimal richtig, einmal davon geschrieben. Bestehende Ziele behalten ihre Regel.
+  - **Rundenmischung (Fund beim Durchspielen, kein Wunsch):** Bis 2.5 war immer die halbe Runde neu, und die fälligen Plätze gingen an das niedrigste Fach. Mit dem echten Code durchgespielt: Ein Kind, das bei null anfängt, hatte nach 4 Wochen kein Wort in Fach 4 (bei 2 Runden am Tag 201 wartende Wörter in Fach 3). Jetzt gilt „erst festigen, dann Neues“: Warten viele Wörter in Fach 1–3, bekommt die Runde weniger oder keine neuen. Ergebnis nach 4 Wochen bei null angefangen: 59 Wörter sitzen bei 1 Runde am Tag, rund 120 bei 2 Runden, alle geschrieben; höchstens 7 warten vor dem Tor. Für einen vollen Kasten (143 sitzen, 133 neu): rund 200 bzw. 240 sitzen, vor dem Tor warten höchstens zwei Wörter.
+  - **Verworfen nach Durchrechnen:** „falsch geschrieben → Fach 2 statt Fach 1“ (kein messbarer Gewinn, zweite Regel), halbe Runde geschrieben statt vier von zehn (kaum mehr Wörter in Fach 4, ein geschriebenes Wort mehr je Runde), feste zwei neue Wörter je Runde (Schlange vor dem Tor blieb bei 25 bis 80 Wörtern).
+  - **XP fürs Schreiben (Entscheidung Thomas 18.11.):** aus dem Kopf geschrieben 6 statt 4 XP, Hörfrage 4, angekreuzt weiter 3. Grund: Runden dauern durch das Schreiben länger, die XP je Runde wären sonst gleich geblieben.
+  - **Offen, von Thomas zu entscheiden:** (1) Ein Tippfehler wird weiter verziehen („Fast perfekt“) und öffnet das Tor; strenger wäre möglich. (2) Neue Wörter kommen langsamer, solange ein Stapel wartet; für Klassenarbeiten ist das Lernziel der Weg.
+  - Tests: Leiter je Fach, Schreibanteil, Tor (auch mit Redewendung und alten Fach-4/5-Wörtern), Hörfrage, Lernziel alt und neu, Texte, dazu drei Wochen tägliches Spielen (alle sitzenden Wörter geschrieben, kein Stapel vor dem Tor).
 - **Version 2.5 (18.11.2026, Wunsch Thomas: Freunde aus derselben Klasse wollen die App auch, einige mit Android; „nicht zu groß denken“).** Verteilt wird über den Link, jedes Gerät hat seinen eigenen Lernstand, die Lektionen aus `lists/` bekommen alle. Kein Server, keine Konten.
   - **Lektion teilen:** Knopf „Teilen“ an jeder Lektion (Vokabeln → Lektion aufklappen). Die Lektion geht als Textdatei ins Teilen-Menü (WhatsApp, AirDrop, Nachrichten). Der Freund öffnet sie unter „Neue Vokabeln hinzufügen“ → „Datei öffnen“, prüft und speichert. In der Datei stehen nur Wörter, kein Lernstand und kein Name.
   - **Kurze Anleitung für die Kinder (Wunsch Thomas):** „Teilen“ zeigt zuerst drei Schritte (schicken, sichern, öffnen) mit dem Knopf „Datei senden“. Die Import-Seite hat die Karte „Lektion von einem Freund?“ mit den drei Schritten der Empfängerseite. Und die Datei selbst beginnt mit zwei Zeilen dazu samt Adresse der App, die sieht, wer sie im Chat antippt. Den Weg der Datei auf Android (WhatsApp → Dateiauswahl) habe ich nicht am Gerät gesehen, der Satz dazu ist allgemein gehalten. Wörter, die es schon gibt, sind beim Öffnen abgewählt.
@@ -139,6 +149,17 @@ Eine unabhängige Durchsicht fand nichts, was den Lernstand gefährdet, aber 15 
 - Quest „Lerne N neue Wörter“ zählt die erste richtige Antwort eines Wortes, auch im zweiten Versuch.
 - „Sicherung laden“ zahlt für neue Abzeichen die Münzen. Alle Fragen beantwortet und dann X = fertige Runde. Stations-Knopf nennt die echte Fragenzahl. Flamme am Update-Tag. Abzeichen-Blatt ohne Division durch null. `sw.js` mit try/catch beim Umziehen der Schriften.
 
+### 9. Lernerfolg: die übrigen Hebel aus der Überlegung vom 18.11. – offen, Thomas entscheidet die Reihenfolge
+
+Thomas wollte wissen, wie die App nach dem Stand der Lernforschung mehr Lernerfolg bringt. Fünf Hebel, nach Wirkung sortiert; Hebel 1 ist Version 2.6.
+
+2. **Längere Abstände, die sich anpassen.** Der längste Abstand ist 7 Tage (`TEMPOS`, langes Tempo 14). Idee: nach Fach 5 weiter mit 14, 30, 60, 120 Tagen; oft falsche Wörter früher; als Steuergröße messen, wie viel nach einer Woche oder länger noch gewusst wird (Ziel 85 bis 90 %).
+3. **Generalprobe vor der Klassenarbeit.** Zum Lernziel eine Probe: 20 Wörter schreiben, ohne Hilfe, ohne Uhr; am Ende ein Ergebnis wie vom Lehrer und die Liste der wackeligen Wörter.
+4. **Neue Wörter einpflanzen, Problemwörter anders anfassen.** Kennenlern-Karte für neue Wörter (hören, im Satz sehen, laut sagen), eigene Eselsbrücke für Wörter, die dreimal falsch waren, Verwechsler nebeneinander. Nur 145 von 306 Wörtern haben einen Beispielsatz.
+5. **Belohnen, was Lernen ist.** Größte Belohnung für „nach einer Woche noch gewusst“ und für Geschriebenes, wenig für Wörter, die nicht dran sind; Hauptanzeige „sicher, wackelig, neu“ statt XP; Serie als Wochenrhythmus; gemeinsames Lernziel zum Teilen, keine Rangliste.
+
+Dazu optisch: Ruhe im Quiz (während der Frage keine Flamme, kein Booster-Schild, keine XP), Rückmeldung ums Wort herum (bei Schreibfehlern die falschen Buchstaben markieren). Nicht machen: mehr Truhen und Booster, „Lerntypen“, Spracherkennung, Belohnung nach Uhrzeit.
+
 ### 8. Test auf einem Android-Gerät (ein Freund oder Thomas) – offen
 
 1. Adresse in Chrome öffnen. Erscheint auf der Startseite „Als App installieren“? Knopf drücken, danach vom Startbildschirm starten. Ist das Symbol rund und die Vokabelkarte ganz zu sehen?
@@ -183,6 +204,7 @@ Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-T
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 18.11.2026 | Mac, Browser in Handy-Größe, Version 2.6 | Hinweis „Ab Fach 3 schreibst du die Wörter selbst“. Knopf „Weiter lernen“ nennt „9 Wiederholungen + 1 neues Wort“ bei 12 wartenden Wörtern. Hörfrage: Wort wird beim Erscheinen vorgelesen, Knopf „Anhören“, Bedeutung, Eingabefeld; richtig geschrieben +4 XP, Fach 2 → 3. Schreibfragen am Tor: Fach 3 → 4. Neue Wörter weiter zum Ankreuzen. Keine Fehler in der Konsole. |
 | 18.11.2026 | Mac, Browser mit Android-Kennung (375 px), Version 2.5 | Wächter-Eintrag nach dem Start da. Zurück: Reiter → Start, Einstellungen → Erfolge → Start, Runde mit Antwort → „Jetzt aufhören?“ → Runde läuft weiter, Import-Durchsicht → Eingabe. „Teilen“ übergibt `Voc a Bit - Theme 2 Celebrations.txt` (text/plain, 29 kB). Auf einem Stand ohne Theme 2 eingefügt: 152 erkannt, 5 schon vorhanden, 147 gespeichert mit Seiten und Abschnitten, Stationen im Lernpfad. Installieren-Karte hell und dunkel, Knopf ruft Chrome einmal. Einstellungen ohne iPhone-Hinweise. Anleitung: „Teilen“ zeigt drei Schritte, „Datei senden“ übergibt die Datei mit Kopfzeilen, Karte „Lektion von einem Freund?“ auf der Import-Seite. |
 | 18.11.2026 | Mac, Browser, Version 2.4 | Stand aus 2.3 mit 3.400 XP geladen: Hinweis „Mehr XP für jede richtige Antwort!“, Level 11 „noch 425 XP“, Leiste „1,5x XP für deine nächste Runde“, richtige Antwort „+5 XP · 1,5x“, Ergebnis mit Zeile „XP-Booster“, Booster danach verbraucht. Keine Fehler in der Konsole. |
 | 18.11.2026 | Mac, Browser in iPhone-Größe, Version 2.3 | Stand aus 2.2 geladen: gesperrte Truhe sofort offen, Booster als „nächste Runde“, Quests mit Zählerstand übernommen, keine Uhrzeit mehr auf dem Bildschirm. |

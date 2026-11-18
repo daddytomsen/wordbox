@@ -412,6 +412,7 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 .vrow .ex{font-size:14px;color:var(--ink-3);font-style:italic;margin-top:2px}
 .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .tag{font-size:12px;font-weight:700;padding:2px 8px;border-radius:7px;background:var(--surface-2);color:var(--ink-2)}
+.tag-next{background:var(--royal-soft);color:var(--royal)}
 .unit-foot{padding:12px 16px;border-top:2px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 
 /* awards + profile + shop */
@@ -502,6 +503,8 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 .opt[disabled]{cursor:default}
 @media (hover:none){.opt .key{display:none}}
 .typebox{display:flex;flex-direction:column;gap:12px}
+.btn.hear{align-self:flex-start}
+.btn.hear + .hint{font-size:16px}
 .typebox input{height:62px;border-radius:var(--r-md);border:2px solid var(--edge);border-bottom-width:5px;background:var(--surface);padding:0 18px;font:800 22px var(--f-ui)}
 .typebox input:focus{border-color:var(--royal);outline:none}
 .typebox input.ok{border-color:var(--good);background:var(--good-soft);color:var(--good-ink)}
@@ -682,7 +685,7 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 const app = document.getElementById('app');
 const toastEl = document.getElementById('toast');
 const DAY = 864e5;
-const APP_VERSION = '2.5';      // must match CACHE in sw.js; tools/check.sh compares both
+const APP_VERSION = '2.6';      // must match CACHE in sw.js; tools/check.sh compares both
 /* Waiting days per box (index = box). 'fast' is the family's physical card box: one box per day,
    so a word answered right every day goes new -> 2 -> 3 -> 4 -> 5 in four days. 'long' spaces further apart.
    Waiting is counted in calendar days: a word answered in the evening is due again the next morning. */
@@ -728,7 +731,7 @@ function migrateProg(p) {
   if ('boost' in p && !(obj(p.boost) && num(p.boost.mult) && num(p.boost.rounds) && p.boost.rounds > 0)) p.boost = null;
   if (p.w) for (const id in p.w) if (!obj(p.w[id])) delete p.w[id];
   if (p.days) for (const k in p.days) if (!num(p.days[k])) delete p.days[k];
-  if (p.targets) p.targets = p.targets.filter(t => obj(t) && Array.isArray(t.ids) && typeof t.due === 'string').map(t => { if (!obj(t.base)) t.base = {}; if (!num(t.need)) t.need = 2; return t });
+  if (p.targets) p.targets = p.targets.filter(t => obj(t) && Array.isArray(t.ids) && typeof t.due === 'string').map(t => { if (!obj(t.base)) t.base = {}; if (!num(t.need)) t.need = 2; if ('write' in t && !num(t.write)) delete t.write; if ('baseT' in t && !obj(t.baseT)) t.baseT = {}; return t });
   if (p.quests) {      // quests: either the places of 2.3 or the day list of 2.2, anything else is drawn again
     const slotsOk = Array.isArray(p.quests.slots) && p.quests.slots.every(q => obj(q) && typeof q.id === 'string' && num(q.need) && obj(q.stat) && typeof q.done === 'string');
     const listOk = Array.isArray(p.quests.list) && obj(p.quests.done) && p.quests.list.every(x => Array.isArray(x) && typeof x[0] === 'string' && num(x[1]));
@@ -817,13 +820,16 @@ const dueWords = () => S.words.filter(w => isDue(w.id));
 /* ---------- learning targets (Lernziele) ----------
    A target is a set of word ids plus a due date. A word counts as practised once it has been answered
    correctly `need` times (default 2) since the target was created; `base` keeps each word's correct
-   count at creation. Everything lives in prog.targets, so backups and resets include it. */
+   count at creation. Everything lives in prog.targets, so backups and resets include it.
+   Since 2.6 a new target also wants each word written from memory once (`write: 1`, `baseT` = written count at
+   creation), because that is what a class test asks for. Targets made before keep the old rule. A word that cannot
+   be asked in writing (a phrase, a very long entry) is exempt. */
 function targets() { if (!Array.isArray(S.prog.targets)) S.prog.targets = []; return S.prog.targets }
 const activeTargets = () => targets().filter(t => !t.done);
 function dayDiff(a, b) { return Math.round((new Date(a + 'T00:00:00') - new Date(b + 'T00:00:00')) / DAY) }
 function targetInfo(t) {
   const need = t.need || 2; let done = 0; const open = [];
-  for (const id of t.ids) { if (!S.byId.has(id)) continue; const r = (ws(id) ? ws(id).r : 0) - (t.base[id] || 0); r >= need ? done++ : open.push(id) }
+  for (const id of t.ids) { if (!S.byId.has(id)) continue; const r = (ws(id) ? ws(id).r : 0) - (t.base[id] || 0); r >= need && !targetLacksWrite(t, id) ? done++ : open.push(id) }
   const total = done + open.length, k = todayKey();
   if (t.day !== k) { t.day = k; t.day0 = done }               // what was done when today began
   const left = dayDiff(t.due, k);                             // days until due, 0 = today, negative = overdue
@@ -835,6 +841,14 @@ function targetInfo(t) {
   const todayDue = Math.max(0, Math.min(open.length, quota - (done - day0)));
   const state = !total ? 'empty' : !open.length ? 'done' : left < 0 ? 'late' : left === 0 ? 'last' : done < expected ? 'behind' : 'ok';
   return { done, open, total, left, todayDue, state, pct: total ? done / total : 0 };
+}
+const writtenCount = id => (ws(id) && ws(id).t) || 0;
+const typable = id => { const w = S.byId.get(id); return !!w && applicable(w, 'type') };
+function targetLacksWrite(t, id) { return !!t.write && typable(id) && writtenCount(id) - ((t.baseT && t.baseT[id]) || 0) < t.write }
+/* A target word is asked in writing once it has been recognised since the target was made. */
+function targetWantsWrite(id) {
+  for (const t of activeTargets()) if (t.ids.indexOf(id) >= 0 && targetLacksWrite(t, id) && (ws(id) ? ws(id).r : 0) - (t.base[id] || 0) >= 1) return true;
+  return false;
 }
 function dueLabel(due) { try { return new Date(due + 'T00:00:00').toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'numeric' }) } catch (e) { return due } }
 function openTargetIds() { const out = new Set(); for (const t of activeTargets()) for (const id of targetInfo(t).open) out.add(id); return Array.from(out) }
@@ -862,14 +876,21 @@ function targetReminder() {
   }
 }
 
-function grade(id, ok) {
+/* written = the answer was written from memory (question type 'type'). Since 2.6 this is the gate to Fach 4:
+   a word "sits" from Fach 4 on, and it gets there only by being written. Any other right answer in Fach 3 counts,
+   but the word stays where it is and stays due, so the next round can ask for it in writing. Words that were
+   in Fach 4 or 5 before stay there; a word that cannot be asked in writing passes without. */
+const gateHolds = (id, written) => !written && fach(id) === 3 && isDue(id) && typable(id);
+function grade(id, ok, written) {
   const now = Date.now();
   const s = S.prog.w[id] || (S.prog.w[id] = { l: 0, r: 0, x: 0, s: 0, d: 0 });
   let promoted = false;
   if (ok) {
-    s.r++;
+    const held = gateHolds(id, written);
+    s.r++; if (written) s.t = (s.t || 0) + 1;
     const iv = intervals();
     if (s.l === 0) { s.l = 2; promoted = true; s.d = dayShift(now, iv[s.l]) }
+    else if (held) { /* stays in Fach 3 and due */ }
     else if (dayStart(s.d || 0) <= now) { if (s.l < 5) { s.l++; promoted = true } s.d = dayShift(now, iv[s.l]) }
   } else { s.x++; s.l = 1; s.d = now }
   s.s = now;
@@ -1149,7 +1170,7 @@ function toast(msg, ic) {
 
 /* ---------- question building ---------- */
 const MODES = [
-  { id: 'mix', ic: 'shuffle', t: 'Gemischt', d: 'Alles durcheinander' },
+  { id: 'mix', ic: 'shuffle', t: 'Gemischt', d: 'Erst erkennen, dann schreiben' },
   { id: 'de-en', ic: 'translate', t: 'Deutsch → Englisch', d: 'Multiple Choice' },
   { id: 'en-de', ic: 'swap_horiz', t: 'Englisch → Deutsch', d: 'Multiple Choice' },
   { id: 'past', ic: 'history', t: 'Simple Past', d: 'choose → chose' },
@@ -1164,33 +1185,75 @@ function applicable(w, t) {
   if (t === 'opp') return !!w.opp;
   if (t === 'gap') return !!(w.ex && w.gap && w.ex.indexOf(w.gap) >= 0);
   if (t === 'type') return w.pos !== 'phrase' && w.en.length <= 40;
+  if (t === 'hear') return w.pos !== 'phrase' && w.en.length <= 30 && !/[()\/=…]/.test(w.en);      // short plain entries only
   return false;
 }
 const typesFor = m => m === 'mix' ? Object.keys(MIX_W) : [m];
 const canDo = (w, m) => typesFor(m).some(t => applicable(w, t));
-function pickType(w, m) {
-  if (m !== 'mix') return m;
-  const opts = Object.keys(MIX_W).filter(t => applicable(w, t));
-  let sum = opts.reduce((a, t) => a + MIX_W[t], 0), r = Math.random() * sum;
-  for (const t of opts) { r -= MIX_W[t]; if (r <= 0) return t }
+const writing = t => t === 'type' || t === 'hear';      // answered on the keyboard
+/* The ladder (since 2.6). In a mixed round the kind of question follows what the child can already do with the word:
+     Fach 0–1  recognise it (choose the meaning)
+     Fach 2    use it with help (the gap in a sentence, or hear it and write it)
+     Fach 3    write it from memory: the gate to Fach 4, see grade()
+     Fach 4–5  anything, now and then in writing
+   Before 2.6 a mixed round never asked for writing, so a word could "sit" without ever having been written, while
+   a class test asks for exactly that. Writing is slow on a phone: at most four of ten questions are written
+   (WRITE_SHARE; played through over four weeks, half a round brought hardly more words into Fach 4 than four of
+   ten, at one more written word per round). Words that have to be written (Fach 3 and due, or a learning target
+   that lacks its written answer) come first. */
+const WRITE_SHARE = .4;
+const LADDER = {
+  see:  { 'en-de': 3, 'de-en': 2 },
+  help: { gap: 4, hear: 4, 'de-en': 2, past: 2, opp: 1 },
+  any:  { 'de-en': 3, 'en-de': 1, past: 3, gap: 2, opp: 2, type: 3, hear: 2 }
+};
+const canSpeak = () => { try { return 'speechSynthesis' in window } catch (e) { return false } };
+/* Hearing questions need the voice: none where the browser has no speech or the child switched "Vorlesen" off. */
+const canHear = w => S.prog.speak !== false && canSpeak() && applicable(w, 'hear');
+const mustWrite = w => applicable(w, 'type') && ((fach(w.id) === 3 && isDue(w.id)) || targetWantsWrite(w.id));
+function ladderType(w, mayWrite) {
+  const f = fach(w.id), table = f <= 1 ? LADDER.see : f === 2 ? LADDER.help : LADDER.any;
+  const opts = Object.keys(table).filter(t => t === 'hear' ? mayWrite && canHear(w) : t === 'type' ? mayWrite && applicable(w, t) : applicable(w, t));
+  let r = Math.random() * opts.reduce((a, t) => a + table[t], 0);
+  for (const t of opts) { r -= table[t]; if (r <= 0) return t }
   return opts[0] || 'de-en';
 }
+/* Gives every word of a mixed round its kind of question. words: in the order of the round. */
+function ladderTypes(words) {
+  let left = Math.ceil(words.length * WRITE_SHARE); const types = new Map();
+  for (const w of words) if (left > 0 && mustWrite(w)) { types.set(w.id, 'type'); left-- }
+  for (const w of words) if (!types.has(w.id)) { const t = ladderType(w, left > 0); if (writing(t)) left--; types.set(w.id, t) }
+  return types;
+}
+const pickType = (w, m) => m === 'mix' ? ladderType(w, false) : m;      // one word on its own: never in writing
 /* Round composition. Old approach (a single weighted sort) let error words crowd out new ones:
    anything ever answered wrong kept a high weight even after being answered correctly the same day.
-   Now a round is built from quotas: at most half due words (waiting time over, errors are due at once),
-   then new words in book order, then due words beyond the half, then known words, oldest first.
+   Now a round is built from quotas: due words first (waiting time over, errors are due at once; how many places
+   they get says dueSlots(), half a round unless a pile is waiting), then new words in book order, then further
+   due words, then known words, oldest first.
    A word that was right today and is not due again comes last: it only fills a round that would be too short. */
 const seenAt = id => (ws(id) && ws(id).s) || 0;
 const jitter = () => Math.random() * 0.5;
+/* How many places of a round go to due words. Normally half, the rest is new. But new words must not come in
+   faster than the old ones move up: with half of every round new, the due places all went to the lowest box and
+   the words in Fach 3 were never asked again as long as new words were left. Played through with the real code,
+   a child who started from nothing had no word in Fach 4 after four weeks (until 2.5).
+   So the round looks at how many words are on their way up (Fach 1–3 and due) and makes them stick first:
+     up to half a round waiting   half the round is due words, the rest new (as before)
+     more than half a round       all places but two
+     more than a whole round      all places but one
+     more than two rounds         every place: no new word until the pile is smaller
+   Nothing is lost by waiting: new words stay where they are and come as soon as there is room. */
+const dueSlots = (climbing, n) => { const half = Math.ceil(n / 2); return climbing > 2 * n ? n : climbing > n ? n - 1 : climbing > half ? Math.max(half, n - 2) : half };
 function composeRound(pool, n) {
   const now = Date.now();
   const due = pool.filter(w => isDue(w.id, now)).map(w => [w, fach(w.id) + ((ws(w.id).d || 0) - now) / DAY / 100 + jitter()]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
   const fresh = pool.filter(w => !fach(w.id));
   const rest = pool.filter(w => fach(w.id) && !isDue(w.id, now)).map(w => [w, seenAt(w.id) / DAY + fach(w.id) + jitter()]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
-  const half = Math.ceil(n / 2), take = [];
-  take.push(...due.slice(0, half));
+  const slots = dueSlots(due.filter(w => fach(w.id) <= 3).length, n), take = [];
+  take.push(...due.slice(0, slots));
   take.push(...fresh.slice(0, n - take.length));
-  take.push(...due.slice(half, half + Math.max(0, n - take.length)));
+  take.push(...due.slice(slots, slots + Math.max(0, n - take.length)));
   take.push(...rest.slice(0, Math.max(0, n - take.length)));
   return take.slice(0, n);
 }
@@ -1264,6 +1327,8 @@ function makeQ(w, type, extra) {
     q.label = 'Welches Wort fehlt?'; q.hint = w.de; q.say = w.ex; q.prompt = w.ex;
   }
   else if (type === 'type') { q.label = 'Schreib es auf Englisch.'; q.prompt = w.de; q.answer = w.en }
+  // Hearing: the word is read out and its meaning shown, the child writes it. With the sound off it is still answerable.
+  else if (type === 'hear') { q.label = 'Hör zu und schreib das Wort.'; q.prompt = w.de; q.answer = w.en }
   return q;
 }
 function buildRound(ids, mode, n, extras) {
@@ -1277,7 +1342,8 @@ function buildRound(ids, mode, n, extras) {
   const main = composeRound(pool, Math.max(0, n - extraPick.length));
   if (!main.length) return [];                 // nothing of the selection fits this exercise: no round from strangers alone
   const items = main.map(w => [w, false]).concat(extraPick.map(w => [w, true]));
-  return shuffle(items).map(([w, e]) => makeQ(w, pickType(w, mode), e));
+  const round = shuffle(items), types = mode === 'mix' ? ladderTypes(round.map(x => x[0])) : null;
+  return round.map(([w, e]) => makeQ(w, types ? types.get(w.id) : mode, e));
 }
 
 /* ---------- typed answers ---------- */
@@ -1327,6 +1393,7 @@ function startRound(ids, mode, n, opts = {}) {
     mistakes: new Map(), requeued: new Set(), typed: '', typeErr: '', comboBonus: 0, settled: 0, xpStart: S.prog.xp, t0: Date.now(),
     coins: 0, goalHit: false, qDone: [], qChest: false, chests: [], boostXP: 0, mult: xpMult() };      // mult: the booster of this round
   S.result = null; S.openNode = null; S.sheet = null;
+  if (list[0].type === 'hear') say(list[0].say);      // inside the tap that started the round, or iOS stays silent
   transit(() => { S.view = 'quiz'; S.confirm = null; fx('q'); render(); window.scrollTo(0, 0) }, 'up');
 }
 function answerMC(idx) {
@@ -1345,16 +1412,19 @@ function focusType() { const i = document.getElementById('typeIn'); if (i) i.foc
 function settle(ok, almost) {
   const Q = S.quiz, q = Q.list[Q.i], w = S.byId.get(q.wid);
   Q.answered = true; Q.lastOk = ok; Q.almost = almost; Q.typeErr = '';
-  if (grade(q.wid, ok)) { Q.promoted++; track('up'); if (fach(q.wid) === 4) Q.settled++ }
+  Q.held = ok && gateHolds(q.wid, q.type === 'type');      // right, but the word waits in Fach 3 until it is written
+  if (grade(q.wid, ok, ok && q.type === 'type')) { Q.promoted++; track('up'); if (fach(q.wid) === 4) Q.settled++ }
   let gain = 0;
   if (ok) {
     Q.combo++; Q.bestCombo = Math.max(Q.bestCombo, Q.combo); Q.right++;
     track('right'); track('combo', Q.combo); if (ws(q.wid) && ws(q.wid).r === 1) track('fresh');      // first right answer ever = a new word learned
-    gain = q.type === 'type' ? 4 : 3;                           // since 2.4 one XP more (was 3 : 2)
+    // 3 for a chosen answer, 4 for hearing and writing, 6 for writing from memory. Since 2.6 mixed rounds ask for
+    // writing; it takes several times as long as a tap and is what a class test wants, so it pays double (was 4).
+    gain = q.type === 'type' ? 6 : q.type === 'hear' ? 4 : 3;
     if (q.extra) { gain += 1; S.prog.extraRight++ }
     const milestone = Q.combo >= 5 && Q.combo % 5 === 0;
     if (milestone) { gain += 2; Q.comboBonus += 2 }
-    if (q.type === 'type') { S.prog.typedRight++; track('typed') }
+    if (writing(q.type)) { S.prog.typedRight++; track('typed') }
     if (q.type === 'past') { S.prog.pastRight++; track('past') }
     Q.praise = milestone ? Q.combo + 'er-Combo!' : (almost ? 'Fast perfekt!' : pick(PRAISE));
     if (milestone) SFX.combo(); else SFX.ok(Q.combo);
@@ -1385,7 +1455,8 @@ function nextQ() {
   Q.i++; Q.answered = false; Q.chosen = null; Q.typed = ''; Q.typeErr = ''; Q.almost = false;
   if (Q.i >= Q.list.length) return finish(false);
   fx('q'); render(); window.scrollTo(0, 0);
-  if (Q.list[Q.i].type === 'type') focusType();
+  if (Q.list[Q.i].type === 'hear') say(Q.list[Q.i].say);
+  if (writing(Q.list[Q.i].type)) focusType();
 }
 /* Ends the round: bonus XP, streak, coins, quests, badges. Everything is booked here once, then either
    the result screens follow (quit = false) or the start screen with a short note (quit = true). */
@@ -1883,7 +1954,8 @@ function smartPlan() {
   const open = openTargetIds(), n = S.prog.len;
   if (open.length) return { ids: open, label: Math.min(n, open.length) + ' Fragen aus deinem Lernziel' };
   const now = Date.now(), due = S.words.filter(w => isDue(w.id, now)).length, fresh = S.words.filter(w => !fach(w.id)).length;
-  const a = Math.min(due, Math.ceil(n / 2)), b = Math.min(fresh, n - a), parts = [];
+  const climbing = S.words.filter(w => fach(w.id) <= 3 && isDue(w.id, now)).length;
+  const a = Math.min(due, dueSlots(climbing, n)), b = Math.min(fresh, n - a), parts = [];
   if (a) parts.push(a + (a === 1 ? ' Wiederholung' : ' Wiederholungen'));
   if (b) parts.push(b + (b === 1 ? ' neues Wort' : ' neue Wörter'));
   return { ids: S.words.map(w => w.id), label: parts.length ? parts.join(' + ') : n + ' Fragen, bunt gemischt' };
@@ -2122,7 +2194,7 @@ function targetCard(t) {
   const i = targetInfo(t), when = dueLabel(t.due);
   let msg;
   if (i.state === 'empty') msg = 'Die Wörter dieses Lernziels gibt es nicht mehr. Du kannst es entfernen.';
-  else if (i.state === 'done') msg = 'Geschafft! Alle ' + i.total + ' Wörter zweimal richtig.';
+  else if (i.state === 'done') msg = 'Geschafft! Alle ' + i.total + ' Wörter zweimal richtig' + (t.write ? ', einmal davon geschrieben.' : '.');
   else if (i.state === 'late') msg = 'Der Termin war ' + when + '. Es fehlen noch ' + i.open.length + ' Wörter.';
   else if (i.state === 'last') msg = 'Heute ist es so weit! Noch ' + i.open.length + ' Wörter.';
   else msg = (i.state === 'behind' ? 'Du liegst zurück. ' : 'Im Plan. ') + 'Noch ' + i.left + (i.left === 1 ? ' Tag' : ' Tage') + ' · ' + (i.todayDue ? 'heute dran: ' + i.todayDue + (i.todayDue === 1 ? ' Wort' : ' Wörter') : 'für heute geschafft!');
@@ -2210,7 +2282,7 @@ function viewPractice() {
   const count = Math.min(p.len, selWords.filter(w => canDo(w, p.mode)).length);
   const T = S.tform, dflt = new Date(); dflt.setDate(dflt.getDate() + 3);
   const tform = T ? `<section class="card target-form stack"><h3>Lernziel aus dieser Auswahl</h3>
-    <p class="small muted">${sel.size} Wörter, jedes muss bis zum Termin zweimal richtig sein. Die App zeigt dir jeden Tag, wie viele dran sind.</p>
+    <p class="small muted">${sel.size} Wörter, jedes muss bis zum Termin zweimal richtig sein, einmal davon selbst geschrieben. Die App zeigt dir jeden Tag, wie viele dran sind.</p>
     <input id="tTitle" class="field" maxlength="30" placeholder="Wofür? z. B. Vokabeltest" aria-label="Name des Lernziels" value="${esc(T.title || '')}" data-in="t-title">
     <input id="tDue" class="field" type="date" min="${todayKey()}" aria-label="Termin" value="${esc(T.due || ymd(dflt))}" data-in="t-due">
     ${T.err ? `<div class="err" role="alert">${esc(T.err)}</div>` : ''}
@@ -2239,7 +2311,7 @@ function viewVocab() {
   <button class="import-card" data-act="imp-open"><span class="ic">${icon('library_add')}</span><span class="grow"><b>Neue Vokabeln hinzufügen</b><small>Liste einfügen, Datei öffnen oder aus Buchfotos</small></span>${icon('arrow_forward')}</button>
   ${S.words.length ? `<section class="card"><div class="row between"><h3>Dein Karteikasten</h3>${icon('inventory_2')}</div>
     <div class="kasten" role="img" aria-label="Verteilung der Wörter auf die Fächer: ${c.map((n, k) => (k ? 'Fach ' + k : 'neu') + ' ' + n).join(', ')}">${kasten}</div>
-    <p class="small muted" style="margin-top:12px">${S.prog.tempo === 'long' ? 'Richtig beantwortet wandert ein Wort ein Fach weiter, sobald seine Wartezeit vorbei ist: 1, 3, 7 und 14 Tage.' : 'Richtig beantwortet wandert ein Wort ein Fach weiter, aber nur einmal am Tag. Morgen geht es ins nächste Fach.'} Falsch heißt: zurück in Fach 1. Ab Fach 4 sitzt ein Wort.</p>
+    <p class="small muted" style="margin-top:12px">${S.prog.tempo === 'long' ? 'Richtig beantwortet wandert ein Wort ein Fach weiter, sobald seine Wartezeit vorbei ist: 1, 3, 7 und 14 Tage.' : 'Richtig beantwortet wandert ein Wort ein Fach weiter, aber nur einmal am Tag. Morgen geht es ins nächste Fach.'} Falsch heißt: zurück in Fach 1. Ab Fach 4 sitzt ein Wort. Dorthin kommt es nur, wenn du es selbst geschrieben hast.</p>
     ${c[0] ? `<button class="btn btn-soft btn-sm" style="margin-top:12px" data-act="new-round">${icon('play_arrow', 'fill')}${c[0] === 1 ? 'Das neue Wort üben' : c[0] + ' neue Wörter üben'}</button>` : ''}</section>
   <div class="search">${icon('search')}<input id="vsearch" type="search" placeholder="Wort suchen, z. B. choose" value="${esc(S.search)}" data-in="search" autocomplete="off" autocapitalize="off" aria-label="Wort suchen"></div>
   <div id="vlist" class="stack">${vocabList()}</div>` : emptyState()}`;
@@ -2251,7 +2323,7 @@ function vocabList() {
     if (q && !words.length) return '';
     const c = dist(words);
     const rows = words.map(w => `<div class="vrow"><div class="grow selectable"><b>${esc(w.en)}</b>${w.ipa ? ` <span class="ipa">${esc(w.ipa)}</span>` : ''}<div class="de">${esc(w.de)}</div>${w.ex ? `<div class="ex">${esc(w.ex)}</div>` : ''}
-      <div class="tags">${w.past ? `<span class="tag">simple past: ${esc(w.past)}</span>` : ''}${w.opp ? `<span class="tag">↔ ${esc(w.opp)}</span>` : ''}${w.note && !/^simple past/.test(w.note) ? `<span class="tag">${esc(w.note)}</span>` : ''}${w.page ? `<span class="tag">S. ${esc(w.page)}</span>` : ''}${w.sec ? `<span class="tag">${esc(w.sec)}</span>` : ''}</div></div>
+      <div class="tags">${w.past ? `<span class="tag">simple past: ${esc(w.past)}</span>` : ''}${w.opp ? `<span class="tag">↔ ${esc(w.opp)}</span>` : ''}${w.note && !/^simple past/.test(w.note) ? `<span class="tag">${esc(w.note)}</span>` : ''}${w.page ? `<span class="tag">S. ${esc(w.page)}</span>` : ''}${w.sec ? `<span class="tag">${esc(w.sec)}</span>` : ''}${fach(w.id) === 3 && typable(w.id) ? `<span class="tag tag-next">als Nächstes: schreiben</span>` : ''}</div></div>
       <div class="stack" style="gap:8px;align-items:flex-end"><button class="iconbtn sm" data-act="say" data-t="${esc(w.en)}" aria-label="${esc(w.en)} vorlesen">${icon('volume_up')}</button>${pips(w.id)}</div></div>`).join('');
     const del = S.delUnit === u.id
       ? `<span class="small muted grow" style="align-self:center">Lektion und Fortschritt löschen?</span><button class="btn btn-line btn-sm" data-act="del-no">Behalten</button><button class="btn btn-danger btn-sm" data-act="del-yes" data-u="${esc(u.id)}">${icon('delete')}Löschen</button>`
@@ -2347,16 +2419,18 @@ function viewQuiz() {
   const mood = !Q.answered ? 'think' : Q.lastOk ? 'cheer' : 'oops';
   const extraTag = q.extra ? `<span class="pill pill-gold" style="align-self:flex-start">${icon('autorenew')}Wiederholung · ${esc(q.unitTitle)}</span>` : '';
   let ask;
-  if (q.type === 'gap') {
+  if (q.type === 'hear') {
+    ask = `<button class="btn btn-soft btn-xl hear" data-act="say" data-t="${esc(q.say)}">${icon('volume_up')}Anhören</button><span class="hint">${icon('translate')}${esc(q.prompt)}</span>`;
+  } else if (q.type === 'gap') {
     ask = `<div class="qprompt sentence">${esc(q.before)}<span class="blank ${Q.answered ? 'ok' : ''}">${Q.answered ? esc(q.answer) : '&nbsp;'}</span>${esc(q.after)}</div><span class="hint">${icon('translate')}${esc(q.hint)}</span>`;
   } else {
     ask = `<div class="qsay"><div class="qprompt ${String(q.prompt).length > 22 ? 'long' : ''} grow">${esc(q.prompt)}</div>${q.showSay ? `<button class="iconbtn" data-act="say" data-t="${esc(q.prompt)}" aria-label="Vorlesen">${icon('volume_up')}</button>` : ''}</div>
       ${q.showSay && w.ipa ? `<span class="ipa">${esc(w.ipa)}</span>` : ''}${q.hint ? `<span class="hint">${icon('translate')}${esc(q.hint)}</span>` : ''}`;
   }
   let answers;
-  if (q.type === 'type') {
+  if (writing(q.type)) {
     const st = Q.answered ? (Q.lastOk ? 'ok' : 'no') : '';
-    answers = `<div class="typebox"><input id="typeIn" class="${st}${Q.answered ? fxc('ans', 'fx') : ''}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Auf Englisch schreiben" value="${esc(Q.typed)}" ${Q.answered ? 'readonly' : ''} aria-label="Antwort auf Englisch" data-in="typing">
+    answers = `<div class="typebox"><input id="typeIn" class="${st}${Q.answered ? fxc('ans', 'fx') : ''}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="${q.type === 'hear' ? 'Schreib, was du hörst' : 'Auf Englisch schreiben'}" value="${esc(Q.typed)}" ${Q.answered ? 'readonly' : ''} aria-label="Antwort auf Englisch" data-in="typing">
       ${Q.typeErr ? `<div class="err" role="alert">${esc(Q.typeErr)}</div>` : ''}
       ${Q.answered ? '' : `<button class="btn btn-primary btn-xl wide" data-act="type-check">Prüfen</button><button class="link" data-act="type-skip">Weiß ich nicht</button>`}</div>`;
   } else {
@@ -2373,6 +2447,7 @@ function viewQuiz() {
       <div class="sheet-head">${art(ok ? 'check' : 'cross')}<strong>${esc(Q.praise)}</strong>${Q.gain ? `<span class="gain">+${Q.gain} XP${Q.mult > 1 ? ' · ' + fmtMult(Q.mult) : ''}</span>` : ''}</div>
       ${ok && Q.almost ? `<div>Ein kleiner Tippfehler. Richtig geschrieben: <b>${esc(q.answer)}</b></div>` : ''}
       ${!ok ? `<div>Richtig ist: <b>${esc(q.answer)}</b>${Q.again ? ' · kommt gleich nochmal' : ''}</div>` : ''}
+      ${ok && Q.held ? `<div class="small">Das Wort sitzt, sobald du es selbst geschrieben hast.</div>` : ''}
       ${wcard}
       <button class="btn ${ok ? 'btn-good' : 'btn-bad'} btn-xl wide" data-act="next" id="nextBtn">Weiter</button>
     </div></div>`;
@@ -2429,7 +2504,7 @@ function viewResult() {
     const now = xpToday(), was = Math.max(0, now - R.xp), pc = v => (Math.min(1, v / p.goal) * 100).toFixed(1) + '%';
     const extras = R.extras.map(([t, x], i) => `<span style="--i:${i}">${esc(t)} <b>+${x}</b></span>`).join('') + (R.coinSum ? `<span class="coin" style="--i:${R.extras.length}">${art('coin')}+${R.coinSum} Münzen</span>` : '');
     const banners = (R.mastered || []).map(t => `<div class="notice good late">${art('crown')}<div><b>Lektion gemeistert!</b> In „${esc(t)}“ sitzen alle Wörter.</div></div>`).join('') +
-      (R.targetsDone || []).map(t => `<div class="notice good late">${icon('flag', 'fill')}<div><b>Lernziel „${esc(t.title)}“ geschafft!</b> Alle Wörter zweimal richtig.</div></div>`).join('') +
+      (R.targetsDone || []).map(t => `<div class="notice good late">${icon('flag', 'fill')}<div><b>Lernziel „${esc(t.title)}“ geschafft!</b> Alle Wörter zweimal richtig${t.write ? ', einmal davon geschrieben' : ''}.</div></div>`).join('') +
       activeTargets().map(t => { const i = targetInfo(t); return `<section class="card late"><div class="meter-h"><b>${esc(t.title)}</b><span>${i.done} / ${i.total} geübt</span></div><div class="bar"><span style="width:${(i.pct * 100).toFixed(1)}%"></span></div></section>` }).join('');
     body = `<div class="res-hero">${bit(acc >= 80 ? 'cheer' : acc >= 50 ? 'happy' : 'think', undefined, 'res-bit')}<h1>${head}</h1><p>${R.right} von ${n} richtig</p></div>
       <div class="tiles3">
@@ -2751,8 +2826,8 @@ const ACT = {
     T.title = title; T.due = due;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(due) || due < todayKey()) { T.err = 'Wähle einen Tag ab heute.'; render(); return }
     const ids = selIds(); if (!ids.length) { T.err = 'Wähle zuerst Wörter aus.'; render(); return }
-    const base = {}; for (const id of ids) base[id] = ws(id) ? ws(id).r : 0;
-    targets().push({ id: 't' + Date.now().toString(36), title, due, ids, base, need: 2, created: todayKey(), done: '' });
+    const base = {}, baseT = {}; for (const id of ids) { base[id] = ws(id) ? ws(id).r : 0; baseT[id] = writtenCount(id) }
+    targets().push({ id: 't' + Date.now().toString(36), title, due, ids, base, baseT, need: 2, write: 1, created: todayKey(), done: '' });
     S.tform = null; persist(); askBadgePermission(); updateBadge(); go('home');
     toast('Lernziel gespeichert: ' + ids.length + ' Wörter bis ' + dueLabel(due), 'flag');
   },
@@ -2781,7 +2856,7 @@ const ACT = {
   'type-check': () => answerTyped(),
   'type-skip': () => { const Q = S.quiz; if (!Q || Q.answered) return; Q.typed = ''; settle(false, false) },
   quit: () => { if (!S.quiz) return; if (S.quiz.right + S.quiz.wrong === 0) { S.quiz = null; go('home', 'down'); return } S.confirm = 'quit'; render() },
-  'quit-no': () => { S.confirm = null; render(); const Q = S.quiz; if (Q && !Q.answered && Q.list[Q.i].type === 'type') focusType() },
+  'quit-no': () => { S.confirm = null; render(); const Q = S.quiz; if (Q && !Q.answered && writing(Q.list[Q.i].type)) focusType() },
   'quit-yes': () => { const Q = S.quiz; finish(!(Q && Q.answered && Q.i === Q.list.length - 1)) },
   'res-next': () => {
     const R = S.result; if (!R || R.busy || R.step >= R.steps.length - 1) return;
@@ -2965,7 +3040,7 @@ document.addEventListener('keydown', e => {
   if (S.view !== 'quiz' || !S.quiz || S.confirm) return;
   const Q = S.quiz, q = Q.list[Q.i];
   if (Q.answered) { if (e.key === 'Enter') { e.preventDefault(); nextQ() } return }
-  if (q.type === 'type') { if (e.key === 'Enter' && e.target && e.target.id === 'typeIn') { e.preventDefault(); answerTyped() } return }
+  if (writing(q.type)) { if (e.key === 'Enter' && e.target && e.target.id === 'typeIn') { e.preventDefault(); answerTyped() } return }
   const n = parseInt(e.key, 10);
   if (n >= 1 && n <= q.options.length) { e.preventDefault(); answerMC(n - 1) }
 });
@@ -3059,7 +3134,7 @@ try {
 } catch (e) { bootOk = false; rescue(e) }
 /* Rewards that fell due while the app was closed, or that a new version added for things already done,
    are booked here. quiet = no toast (used when the app comes back from the background). */
-const NEWS = ['2.5', 'Neu: Lektionen mit Freunden teilen, unter Vokabeln.'];      // [version, one line], shown once to players who had the version before
+const NEWS = ['2.6', 'Neu: Ab Fach 3 schreibst du die Wörter selbst. So sitzen sie richtig.'];      // [version, one line], shown once to players who had the version before
 function settleUp(quiet) {
   if (!S.prog.onboarded) return;
   activeTargets().forEach(targetInfo);
