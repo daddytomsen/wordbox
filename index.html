@@ -671,7 +671,7 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 const app = document.getElementById('app');
 const toastEl = document.getElementById('toast');
 const DAY = 864e5;
-const APP_VERSION = '2.3';      // must match CACHE in sw.js; tools/check.sh compares both
+const APP_VERSION = '2.4';      // must match CACHE in sw.js; tools/check.sh compares both
 /* Waiting days per box (index = box). 'fast' is the family's physical card box: one box per day,
    so a word answered right every day goes new -> 2 -> 3 -> 4 -> 5 in four days. 'long' spaces further apart.
    Waiting is counted in calendar days: a word answered in the evening is due again the next morning. */
@@ -868,7 +868,10 @@ const LEVEL_NAMES = ['Starter', 'Explorer', 'Word Collector', 'Sentence Builder'
   'Oxford Owl', 'Thames Titan', 'Verb Viking', 'Grammar Guru', 'Word Knight', 'Vocab Champion', 'English Eagle', 'Language Lion',
   'Master of Words', 'Grand Wizard', 'Word Legend', 'Crown of Camden', 'Hall of Fame', 'Word Universe'];
 const lvlName = n => n <= LEVEL_NAMES.length ? LEVEL_NAMES[n - 1] : 'Legende ' + (n - LEVEL_NAMES.length);
-const lvlStart = n => 50 * (n - 1) + 25 * n * (n - 1);
+/* XP at which level n starts. Up to level 10 each level costs 50 XP more than the one before (100, 150 … 550).
+   From level 10 on the step is 25 (since 2.4: 550, 575, 600 …), so levels do not slow down as much the longer a child
+   plays. The new curve never lies above the old one, so nobody loses a level through the update. */
+const lvlStart = n => { const m = n - 10; return m <= 0 ? 50 * (n - 1) + 25 * n * (n - 1) : 2700 + 550 * m + 25 * m * (m - 1) / 2 };
 function levelInfo(xp) {
   let n = 1; while (lvlStart(n + 1) <= xp) n++;
   const a = lvlStart(n), b = lvlStart(n + 1);
@@ -1326,7 +1329,7 @@ function settle(ok, almost) {
   if (ok) {
     Q.combo++; Q.bestCombo = Math.max(Q.bestCombo, Q.combo); Q.right++;
     track('right'); track('combo', Q.combo); if (ws(q.wid) && ws(q.wid).r === 1) track('fresh');      // first right answer ever = a new word learned
-    gain = q.type === 'type' ? 3 : 2;
+    gain = q.type === 'type' ? 4 : 3;                           // since 2.4 one XP more (was 3 : 2)
     if (q.extra) { gain += 1; S.prog.extraRight++ }
     const milestone = Q.combo >= 5 && Q.combo % 5 === 0;
     if (milestone) { gain += 2; Q.comboBonus += 2 }
@@ -1759,12 +1762,15 @@ function checkQuests() {
 const TIERS = ['COMMON', 'RARE', 'EPIC', 'MEGA'];
 /* What a chest holds. coins: from–to; boost: [chance, factor, rounds]; freeze: chance for a Serien-Schutz.
    The coin numbers are small on purpose, because skins cost 30 to 400 coins. A booster that counts rounds is never
-   wasted, so it is rarer than one that runs by the clock would be: about every fourth or fifth round is a boosted one. */
+   wasted, and chests upgrade while they are opened (a Gold chest becomes a Diamond chest about one time in three).
+   With the numbers of 2.3 four of ten rounds were boosted and such a round paid three times a plain one: the speed
+   was a matter of luck. Since 2.4 the steady XP are higher instead and the booster is a small extra: about every
+   fifth round, mostly 1,5x, only the Diamond chest gives 2x. */
 const CHEST = {
-  COMMON: { t: 'Holztruhe',    coins: [4, 8],    boost: [.05, 1.5, 1], freeze: 0 },
-  RARE:   { t: 'Silbertruhe',  coins: [10, 18],  boost: [.15, 2, 1],   freeze: .10 },
-  EPIC:   { t: 'Goldtruhe',    coins: [25, 45],  boost: [.35, 2, 1],   freeze: .25 },
-  MEGA:   { t: 'Diamanttruhe', coins: [60, 120], boost: [1, 3, 2],     freeze: .50 }
+  COMMON: { t: 'Holztruhe',    coins: [4, 8],    boost: [0, 1, 0],     freeze: 0 },
+  RARE:   { t: 'Silbertruhe',  coins: [10, 18],  boost: [.08, 1.5, 1], freeze: .10 },
+  EPIC:   { t: 'Goldtruhe',    coins: [25, 45],  boost: [.20, 1.5, 1], freeze: .25 },
+  MEGA:   { t: 'Diamanttruhe', coins: [60, 120], boost: [1, 2, 1],     freeze: .50 }
 };
 const CHEST_SOURCE = { DAILY_QUEST: 'Quest', DAILY: 'Heute geübt', PATH_MILESTONE: 'Lernpfad', LEVEL_UP: 'Neues Level', STREAK: 'Serie', EARLY_BIRD: 'Frühaufsteher', NIGHT_OWL: 'Nachteule' };
 const UPGRADE_CHANCE = .2, FREEZE_MAX = 2, FREEZE_FULL_COINS = 12, ROUNDS_PER_CHEST = 5;
@@ -2932,7 +2938,7 @@ try {
 } catch (e) { bootOk = false; rescue(e) }
 /* Rewards that fell due while the app was closed, or that a new version added for things already done,
    are booked here. quiet = no toast (used when the app comes back from the background). */
-const NEWS = ['2.3', 'Neu: Quests und Truhen ohne Zeitdruck. Nichts läuft mehr ab.'];      // [version, one line], shown once to players who had the version before
+const NEWS = ['2.4', 'Neu: Mehr XP für jede richtige Antwort!'];      // [version, one line], shown once to players who had the version before
 function settleUp(quiet) {
   if (!S.prog.onboarded) return;
   activeTargets().forEach(targetInfo);
@@ -2947,7 +2953,7 @@ function settleUp(quiet) {
   const news = p.v2 && p.news !== NEWS[0] ? NEWS[1] : ''; p.news = NEWS[0];
   persist(); updateBadge();
   if (quiet || !S.prog.v2) return;
-  const msg = news ? news : newSkins > 0 ? newSkins + ' neue Skins im Shop! Schau unter Erfolge.' : lvCoins ? 'Level ' + lv.n + ': ' + lv.name + '! ' + lvCoins + ' Münzen.' : fresh.length ? (fresh.length === 1 ? 'Neues Abzeichen: ' + fresh[0].t : fresh.length + ' neue Abzeichen! Schau unter Erfolge.')
+  const msg = news ? news + (lvCoins ? ' Du bist jetzt Level ' + lv.n + '!' : '') : newSkins > 0 ? newSkins + ' neue Skins im Shop! Schau unter Erfolge.' : lvCoins ? 'Level ' + lv.n + ': ' + lv.name + '! ' + lvCoins + ' Münzen.' : fresh.length ? (fresh.length === 1 ? 'Neues Abzeichen: ' + fresh[0].t : fresh.length + ' neue Abzeichen! Schau unter Erfolge.')
     : q.done.length ? 'Quest geschafft: Eine Truhe wartet auf dich!' : paid ? 'Tagesziel geschafft: 10 Münzen!' : '';
   if (msg) setTimeout(() => { toast(msg, 'emoji_events'); SFX.badge(); softRender() }, 900); else targetReminder();
 }

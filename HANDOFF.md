@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 18.11.2026 · Version 2.3 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 18.11.2026 · Version 2.4 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,13 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.4 (18.11.2026, Wunsch Thomas: XP etwas schneller, „aber nicht zu viel nachgeben“).** Rückmeldung vom Sohn: XP sammeln sei zäh. Mit dem echten App-Code über 12 Wochen durchgespielt (Stand wie seiner, 80 % richtig); Thomas hat die Variante „ruhig“ gewählt:
+  - +1 XP je richtige Antwort: 3 statt 2, beim Schreiben 4 statt 3. Alle Boni unverändert.
+  - Level-Kurve ab Level 10 flacher: Der Schritt wächst um 25 statt 50 XP je Level (Level 15 → 16 kostet 675 statt 800, Level 20 → 21 800 statt 1.050). Bis Level 11 ändert sich nichts, darüber liegt jede Schwelle tiefer, niemand verliert ein Level. Wem die neue Kurve ein Level schenkt, der bekommt es beim ersten Start mit 20 Münzen und Silbertruhe; der Hinweis nennt das Level.
+  - Booster gezügelt: Holztruhe nie, Silber 8 % und Gold 20 % je 1,5-fach, Diamant immer 2-fach, alle für eine Runde. In 2.3 (Silber 15 % und Gold 35 % je 2-fach, Diamant 3-fach für zwei Runden) waren rund 40 % der Runden verstärkt und brachten über 100 XP, eine gewöhnliche 37: gut 65 % mehr XP als vor den Truhen, aber per Glück. Ursache war das Upgrade beim Öffnen, das etwa jede dritte Goldtruhe zur Diamanttruhe macht.
+  - Gemessen mit dem neuen Code, 2 Runden am Tag, 80 % richtig: 47 XP je gewöhnliche Runde, 110 XP am Tag, Booster in etwa jeder fünften Runde, 6,6 Tage je Level, Tagesziel 100 an gut der Hälfte der Tage, 150 an jedem zehnten. Bei 1 Runde am Tag: 61 XP, 11 Tage je Level, Booster in knapp jeder dritten Runde (Truhen gibt es je Tag, nicht je Runde). Zum Vergleich bis 2.1: 75 XP am Tag, 10,6 Tage je Level; 2.3: 124 XP am Tag, 7,1 Tage je Level.
+  - Nicht angefasst: die Stufen des Tagesziels (100/150/250/400). „Normal“ (150) bleibt mit zwei Runden selten erreichbar; Empfehlung an Thomas: in den Einstellungen auf „Locker“ stellen. Die Quest „Sammle N XP“ (40/60/80) ist durch die höheren XP etwas leichter geworden.
+  - Tests: Level-Kurve (bis Level 11 gleich, darüber tiefer, ganzzahlig, kein Level verloren), geschenktes Level einmal bezahlt, XP je Antwort, Booster-Tabelle, 1,5-fach mit Komma; der 90-Tage-Lauf verlangt jetzt weniger als 30 % verstärkte Runden.
 - **Version 2.3 (18.11.2026, Vorgabe Thomas: familien- und kindfreundlich, kein Zeitdruck).** Der Sohn hat Bildschirmzeit von 7 bis 20 Uhr und ist bis 14 Uhr in der Schule; die Zeit-Truhen aus 2.2 passten nicht dazu, und Countdowns und Verfall haben Druck gemacht. Jetzt gilt als Grundsatz (auch in `CLAUDE.md`): Die App verlangt nie, zu einer bestimmten Uhrzeit da zu sein, und nichts läuft ab.
   - Quests ohne Frist: Eine Quest bleibt mit ihrem Zählerstand, bis sie geschafft ist, auch über mehrere Tage. Geschaffte werden am nächsten Tag ersetzt. Der Hinweis „noch N Std.“ ist weg, die Karte heißt „Quests“.
   - Truhen: nie gesperrt, nie verfallen. Frühaufsteher- und Nachteulen-Truhe gibt es nicht mehr; dafür bringt die erste fertige Runde eines Tages eine Silbertruhe, egal zu welcher Uhrzeit. Truhen aus 2.2 mit Öffnungszeit werden zu gewöhnlichen Truhen.
@@ -42,7 +49,7 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 - Git-Repo `daddytomsen/wordbox` (öffentlich), GitHub Pages aktiv, alle drei Adressen antworten mit 200 (11.10.).
 - Sicherung speichern nutzt auf iOS das Teilen-Menü (`navigator.share` mit Datei), sonst Download wie bisher (Version 1.2).
 - `tools/add-list.py` nimmt Claudes Antwort als Lektion auf (siehe Aufgabe 4), mit Testlauf geprüft.
-- XP knapper (Version 1.3, Wunsch Thomas 11.10.): 2 XP pro richtige Antwort, 3 beim Schreiben, +1 Extra-Wort, Rundenbonus 5, fehlerfrei +10. Tagesziele 100/150/250/400. Eine fehlerfreie 10er-Runde bringt etwa 40 XP, „Normal“ braucht rund vier davon. Alte Lernstände werden einmalig umgerechnet (`migrateProg`, Marker `econ: 2`), im Browser gegen die Pages-Adresse geprüft.
+- XP knapper (Version 1.3, Wunsch Thomas 11.10.; seit 2.4 wieder 3 und 4 XP je Antwort, siehe oben): 2 XP pro richtige Antwort, 3 beim Schreiben, +1 Extra-Wort, Rundenbonus 5, fehlerfrei +10. Tagesziele 100/150/250/400. Eine fehlerfreie 10er-Runde bringt etwa 40 XP, „Normal“ braucht rund vier davon. Alte Lernstände werden einmalig umgerechnet (`migrateProg`, Marker `econ: 2`), im Browser gegen die Pages-Adresse geprüft.
 - Lernziele (Version 1.8, Wunsch Thomas 11.10.): Wortauswahl + Termin, jedes Wort zweimal richtig; Karte auf dem Start mit Ampel (im Plan / Rückstand / letzter Tag / überfällig), Hinweis beim Öffnen, Zahl am App-Icon (braucht einmalig Mitteilungs-Erlaubnis, keine Push-Nachrichten), Abzeichen „Ziel erreicht“. Lokal im Browser durchgespielt, am iPhone bestätigt 11.10. (Datumsfeld und Icon-Zahl funktionieren).
 - Theme 2 S. 228 ergänzt (09.11., rev 2, jetzt 80 Wörter, Ids 043–080, alte Ids unverändert): Abschnitt 3 weiter bis „toffee apple“, dann 4, 6, A1, A2. Gegensätze-Kasten: „a lot (of) ↔ a few“ als `opp` ergänzt, „to remember ↔ to forget“ stand schon in Theme 1, „start ↔ end“ gibt es nicht als Wörter. „to burn“, „to blow up“, „to fight“ stehen auch in Irregular verbs. Version 1.15: reine Zahlen als „Abschnitt 4“, und bei einem Lektions-Update kommen neue Wörter in die Auswahl, wenn die Lektion vorher komplett ausgewählt war.
 - Motivation (Version 1.14, Befund Thomas 02.11.: Level 10 „Word Wizard“ seit Wochen, Abzeichen alle da, Langeweile): 30 Level-Namen (Level 10 bleibt „Word Wizard“, 11 „Tube Driver“ …), Aufstiegsfeier im Ergebnis, 43 Abzeichen mit Fortschrittsbalken und „Nächstes Abzeichen“ auf dem Start, rückwirkende Abzeichen beim ersten Start. Neue XP: Combo-Bonus +2 je 5er-Combo, Serien-Bonus (Serientage, max. 7) je Runde, +2 je Wort, das Fach 4 erreicht, +30 je gemeisterter Lektion; Ergebnis zeigt die Aufschlüsselung. Bugfix: „to ask (for sth)“ mit Klammern getippt galt als falsch (Klammern wurden in der Eingabe nicht entfernt).
@@ -158,6 +165,7 @@ Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-T
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 18.11.2026 | Mac, Browser, Version 2.4 | Stand aus 2.3 mit 3.400 XP geladen: Hinweis „Mehr XP für jede richtige Antwort!“, Level 11 „noch 425 XP“, Leiste „1,5x XP für deine nächste Runde“, richtige Antwort „+5 XP · 1,5x“, Ergebnis mit Zeile „XP-Booster“, Booster danach verbraucht. Keine Fehler in der Konsole. |
 | 18.11.2026 | Mac, Browser in iPhone-Größe, Version 2.3 | Stand aus 2.2 geladen: gesperrte Truhe sofort offen, Booster als „nächste Runde“, Quests mit Zählerstand übernommen, keine Uhrzeit mehr auf dem Bildschirm. |
 | 18.11.2026 | Mac, Browser in iPhone-Größe, Version 2.2 | Truhen-Leiste, Öffnen mit Upgrade, Beute, Booster im Quiz, Ergebnis-Schritt „Truhen“, Freischalten einer Zeit-Truhe und Ablauf des Boosters live geprüft, hell, dunkel und 320 px. |
 | 17.11.2026 | Mac, Browser in iPhone-Größe, Version 2.1 | Neue Wörter, Stationen S. 229/230, Shop mit 14 Skins, Kauf und Hinweis geprüft; Tests bestanden. |

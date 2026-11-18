@@ -106,7 +106,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
 {
   const clock = { t: day(2026, 11, 10) }; const A = fresh(clock); const p = A.S.prog;
   const one = [A.S.words[0].id]; const R = play(A, one, 'en-de', () => true, 1, { extras: false });
-  ok(R.xp === 2 && p.rounds === 0 && p.streak === 1, 'one-question round: xp ' + R.xp + ' rounds ' + p.rounds + ' streak ' + p.streak);
+  ok(R.xp === 3 && p.rounds === 0 && p.streak === 1, 'one-question round: xp ' + R.xp + ' rounds ' + p.rounds + ' streak ' + p.streak);
   p.days[A.todayKey()] = 160; ok(A.payGoal() === true && A.payGoal() === false && p.goalDays === 1, 'goal pays once');
   p.goal = 100; ok(A.payGoal() === false, 'changing the goal does not pay again');
   const noOpp = A.S.words.filter(w => !w.opp).slice(0, 10).map(w => w.id);
@@ -289,14 +289,14 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     A.addBoost(1.5, 1); A.addBoost(2, 2); ok(A.S.prog.boost.mult === 2 && A.S.prog.boost.rounds === 3, 'two boosters: higher factor, rounds added');
     clock.t += 21 * 86400000; ok(A.xpMult() === 2 && A.S.prog.boost.rounds === 3, 'three weeks later it is still there');
     const xp0 = A.S.prog.xp; A.startRound(ids, 'de-en', 10, { extras: false });
-    const q = A.S.quiz.list[0]; A.answerMC(q.options.indexOf(q.answer)); ok(A.S.prog.xp - xp0 === 4 && A.S.quiz.gain === 4 && A.S.quiz.boostXP === 2, 'a right answer counts double: ' + (A.S.prog.xp - xp0));
+    const q = A.S.quiz.list[0]; A.answerMC(q.options.indexOf(q.answer)); ok(A.S.prog.xp - xp0 === 6 && A.S.quiz.gain === 6 && A.S.quiz.boostXP === 3, 'a right answer counts double: ' + (A.S.prog.xp - xp0));
     while (A.S.quiz) { A.nextQ(); if (!A.S.quiz) break; const x = A.S.quiz.list[A.S.quiz.i]; A.answerMC(x.options.indexOf(x.answer)) }
-    const R = A.S.result, plain = R.extras.filter(e => e[0] !== 'XP-Booster').reduce((a, e) => a + e[1], 0) + 20;
+    const R = A.S.result, plain = R.extras.filter(e => e[0] !== 'XP-Booster').reduce((a, e) => a + e[1], 0) + 30;
     ok(R.extras.some(e => e[0] === 'XP-Booster') && R.xp === 2 * plain, 'the round shows the booster share: ' + R.xp + ' = 2 x ' + plain);
     ok(A.S.prog.boost.rounds === 2, 'one round used, two left');
     A.startRound(ids, 'de-en', 10, { extras: false }); A.finish(true); ok(A.S.prog.boost.rounds === 2, 'a round left before the first answer uses nothing');
     play(A, ids, 'de-en'); play(A, ids, 'de-en'); ok(A.S.prog.boost === null && A.xpMult() === 1, 'used up after three rounds');
-    const xp1 = A.S.prog.xp; A.startRound(ids, 'de-en', 10, { extras: false }); const y = A.S.quiz.list[0]; A.answerMC(y.options.indexOf(y.answer)); ok(A.S.prog.xp - xp1 === 2, 'then XP count once again');
+    const xp1 = A.S.prog.xp; A.startRound(ids, 'de-en', 10, { extras: false }); const y = A.S.quiz.list[0]; A.answerMC(y.options.indexOf(y.answer)); ok(A.S.prog.xp - xp1 === 3, 'then XP count once again');
   }
   // the first finished round of a day brings a silver chest, at any hour; no chest ever locks or expires
   {
@@ -344,11 +344,64 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   console.log('T chests: done');
 }
 
+// ---- 2.4: steady XP instead of lucky XP. One XP more per right answer, a flatter level curve from level 10, small boosters ----
+{
+  const at = (h, d = 18) => new Date(2026, 10, d, h, 0, 0).getTime();
+  const ids = units[1].words.map(w => w.id);
+  // level curve
+  {
+    const A = fresh({ t: at(16) }), old = n => 50 * (n - 1) + 25 * n * (n - 1), cost = n => A.lvlStart(n + 1) - A.lvlStart(n);
+    for (let n = 1; n <= 11; n++) ok(A.lvlStart(n) === old(n), 'up to level 11 nothing changes: level ' + n + ' starts at ' + A.lvlStart(n));
+    for (let n = 12; n <= 80; n++) ok(A.lvlStart(n) < old(n) && Number.isInteger(A.lvlStart(n)) && cost(n) > cost(n - 1), 'level ' + n + ': ' + A.lvlStart(n) + ' (old ' + old(n) + '), step ' + cost(n));
+    ok(cost(9) === 500 && cost(10) === 550 && cost(11) === 575 && cost(15) === 675 && cost(20) === 800, 'steps: ' + [9, 10, 11, 15, 20].map(cost).join(', '));
+    const oldLevel = xp => { let n = 1; while (old(n + 1) <= xp) n++; return n };
+    let lost = 0; for (let xp = 0; xp <= 80000; xp += 7) if (A.levelInfo(xp).n < oldLevel(xp)) lost++;
+    ok(lost === 0, 'nobody loses a level through the new curve: ' + lost);
+    const L = A.levelInfo(A.lvlStart(15) + 100); ok(L.n === 15 && L.into === 100 && L.span === 675 && L.left === 575, 'levelInfo on the new curve: ' + JSON.stringify(L));
+  }
+  // a level that the new curve hands out is paid once at the start: 20 coins and a silver chest
+  {
+    // old curve: level 15 (5950–6750), new: level 16 from 6375. The control save has the level paid already; both get the same coins for badges.
+    const xp = 6400, K = fresh({ t: at(16) }, { xp, lvl: 16, coins: 0, news: '2.3' }), base = K.S.prog.coins;
+    ok(!K.S.prog.inv.length, 'control: no chest without a new level');
+    const A = fresh({ t: at(16) }, { xp, lvl: 15, coins: 0, news: '2.3' }), p = A.S.prog;
+    ok(A.levelInfo(xp).n === 16 && p.lvl === 16 && p.coins === base + 20 && p.inv.length === 1 && p.inv[0].tier === 'RARE' && p.inv[0].source === 'LEVEL_UP', 'owed level paid at start: ' + JSON.stringify([p.lvl, p.coins - base, p.inv.map(c => c.tier)]));
+    A.timers.slice().forEach(f => f()); ok(/Mehr XP/.test(A.els.toast.innerHTML) && /Level 16/.test(A.els.toast.innerHTML), 'the note after the update names the new level: ' + A.els.toast.innerHTML.replace(/<[^>]+>/g, ''));
+    K.timers.slice().forEach(f => f()); ok(/Mehr XP/.test(K.els.toast.innerHTML) && !/Level/.test(K.els.toast.innerHTML), 'without a new level only the news line');
+    const B = load({ clock: { t: at(17) }, storage: A.mem }); ok(B.S.prog.lvl === 16 && B.S.prog.coins === base + 20 && B.S.prog.inv.length === 1, 'and not a second time');
+    const C = fresh({ t: at(16) }, { xp: 3400, lvl: 11, coins: 0, news: '2.3' }); ok(C.S.prog.lvl === 11 && !C.S.prog.inv.length, 'level 11 stays level 11');
+  }
+  // XP of one answer: 3, typed 4, the 5-combo adds 2 as before
+  {
+    const A = fresh({ t: at(16) }, { lvl: 1 });
+    A.startRound(ids, 'de-en', 10, { extras: false }); const got = [];
+    while (A.S.quiz) { const q = A.S.quiz.list[A.S.quiz.i], x0 = A.S.prog.xp; A.answerMC(q.options.indexOf(q.answer)); got.push(A.S.prog.xp - x0); A.nextQ() }
+    ok(got.join() === '3,3,3,3,5,3,3,3,3,5', 'multiple choice: ' + got.join());
+    A.startRound(ids, 'type', 10, { extras: false }); const x0 = A.S.prog.xp; A.settle(true, false); ok(A.S.prog.xp - x0 === 4, 'typed: ' + (A.S.prog.xp - x0));
+    A.settle(false, false); A.finish(true);
+    const B = fresh({ t: at(16) }, { lvl: 1 }); B.startRound(ids, 'de-en', 10, { extras: false });
+    const q = B.S.quiz.list[0], y0 = B.S.prog.xp; B.answerMC(q.options.findIndex(o => o !== q.answer)); ok(B.S.prog.xp === y0, 'a wrong answer still gives nothing');
+  }
+  // boosters: no booster in a wooden chest, 1,5x in silver and gold, 2x for one round in a diamond chest
+  {
+    const A = fresh({ t: at(16) }, { lvl: 1 }), b = t => A.CHEST[t].boost;
+    ok(b('COMMON')[0] === 0 && b('RARE')[1] === 1.5 && b('EPIC')[1] === 1.5 && b('MEGA').join() === '1,2,1' && b('RARE')[0] < b('EPIC')[0] && b('EPIC')[0] <= .2, 'booster table: ' + JSON.stringify(A.TIERS.map(b)));
+    for (let i = 0; i < 500; i++) ok(!A.rollLoot('COMMON').boost, 'a wooden chest holds no booster');
+    A.addBoost(1.5, 1); A.startRound(ids, 'de-en', 10, { extras: false });
+    const q = A.S.quiz.list[0], x0 = A.S.prog.xp; A.answerMC(q.options.indexOf(q.answer)); ok(A.S.prog.xp - x0 === 5 && A.S.quiz.boostXP === 2, '1,5x on 3 XP gives 5: ' + (A.S.prog.xp - x0));
+    while (A.S.quiz) { A.nextQ(); if (!A.S.quiz) break; const x = A.S.quiz.list[A.S.quiz.i]; A.answerMC(x.options.indexOf(x.answer)) }
+    ok(A.S.prog.boost === null, 'used up after its round');
+    A.S.view = 'home'; A.S.result = null; A.addBoost(1.5, 1); A.render(); ok(/1,5x XP/.test(A.els.app.innerHTML), 'the start page says 1,5x with a comma');
+    // a booster won before the update keeps its factor and its rounds
+    const B = fresh({ t: at(16) }, { lvl: 1, boost: { mult: 3, rounds: 2 }, news: '2.3' }); ok(B.xpMult() === 3 && B.S.prog.boost.rounds === 2, 'an old 3x booster is kept');
+  }
+  console.log('T 2.4 steady XP: done');
+}
 // ---- 90 days of play with a fixed dice: the books always balance ----
 {
   let seed = 20261118; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff };
   const clock = { t: new Date(2026, 10, 18, 7, 0, 0).getTime() }; let A = fresh(clock, { lvl: 1, coins: 0 });
-  const all = A.S.words.map(w => w.id); let rounds = 0, opened = 0, coinsFromChests = 0, maxInv = 0, bad = [];
+  const all = A.S.words.map(w => w.id); let rounds = 0, opened = 0, coinsFromChests = 0, maxInv = 0, boostedRounds = 0, bad = [];
   const note = m => { if (bad.length < 6) bad.push(m) };
   for (let d = 0; d < 90; d++) {
     const dayStart = new Date(2026, 10, 18 + d, 0, 0, 0).getTime();
@@ -359,6 +412,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
       const acc = .5 + rnd() * .5, c0 = A.S.prog.coins, quit = rnd() < .1;
       A.startRound(all, ['mix', 'de-en', 'type'][Math.floor(rnd() * 3)], 10);
       if (!A.S.quiz) continue;
+      if (A.S.quiz.mult > 1) boostedRounds++;
       let n = 0;
       while (A.S.quiz) {
         const q = A.S.quiz.list[A.S.quiz.i], right = rnd() < acc;
@@ -379,6 +433,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   }
   ok(!bad.length, 'play-through found: ' + bad.join(' | '));
   const p = A.S.prog; ok(p.chestsWon >= p.chestsOpened && p.chestsOpened === opened, 'every opened chest was won first: ' + p.chestsWon + ' won, ' + opened + ' opened');
-  console.log('T play-through: 90 days,', rounds, 'rounds,', p.chestsWon, 'chests won,', opened, 'opened,', p.chestUps, 'upgrades,', coinsFromChests, 'coins from chests, wallet', p.coins, '(earned ' + p.coinsEarned + '), level', A.levelInfo(p.xp).n, ', most chests waiting', maxInv);
+  ok(boostedRounds / rounds < .3, 'the booster stays a small extra: ' + boostedRounds + ' of ' + rounds + ' rounds boosted');
+  console.log('T play-through: 90 days,', rounds, 'rounds,', boostedRounds, 'boosted,', p.chestsWon, 'chests won,', opened, 'opened,', p.chestUps, 'upgrades,', coinsFromChests, 'coins from chests, wallet', p.coins, '(earned ' + p.coinsEarned + '), level', A.levelInfo(p.xp).n, ', most chests waiting', maxInv);
 }
 console.log(fails ? fails + ' FAILED' : 'ALL OK'); process.exitCode = fails ? 1 : 0;
