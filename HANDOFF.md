@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 18.11.2026 · Version 2.4 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 18.11.2026 · Version 2.5 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,14 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.5 (18.11.2026, Wunsch Thomas: Freunde aus derselben Klasse wollen die App auch, einige mit Android; „nicht zu groß denken“).** Verteilt wird über den Link, jedes Gerät hat seinen eigenen Lernstand, die Lektionen aus `lists/` bekommen alle. Kein Server, keine Konten.
+  - **Lektion teilen:** Knopf „Teilen“ an jeder Lektion (Vokabeln → Lektion aufklappen). Die Lektion geht als Textdatei ins Teilen-Menü (WhatsApp, AirDrop, Nachrichten). Der Freund öffnet sie unter „Neue Vokabeln hinzufügen“ → „Datei öffnen“, prüft und speichert. In der Datei stehen nur Wörter, kein Lernstand und kein Name.
+  - **Kurze Anleitung für die Kinder (Wunsch Thomas):** „Teilen“ zeigt zuerst drei Schritte (schicken, sichern, öffnen) mit dem Knopf „Datei senden“. Die Import-Seite hat die Karte „Lektion von einem Freund?“ mit den drei Schritten der Empfängerseite. Und die Datei selbst beginnt mit zwei Zeilen dazu samt Adresse der App, die sieht, wer sie im Chat antippt. Den Weg der Datei auf Android (WhatsApp → Dateiauswahl) habe ich nicht am Gerät gesehen, der Satz dazu ist allgemein gehalten. Wörter, die es schon gibt, sind beim Öffnen abgewählt.
+  - **Android:** Die App lief dort schon weitgehend (Vibration, Töne, Dateien). Neu: Die Zurück-Taste geht in der App einen Schritt zurück (Runde fragt erst nach) und schließt die App nur von der Startseite, nach einem Hinweis. Eigenes App-Symbol für den runden Zuschnitt. Hinweise zu Stummschalter und iOS stehen nur noch am iPhone.
+  - **Installieren-Hinweis:** Wer die App im Browser-Tab öffnet, sieht auf der Startseite eine Karte: bei Chrome mit Knopf „Installieren“, am iPhone mit dem Weg über „Teilen → Zum Home-Bildschirm“. In der installierten App erscheint sie nie.
+  - Am iPhone ändert sich sonst nichts: keine History-Einträge, kein neues Verhalten beim Wischen.
+  - Nicht gebaut und warum: Einscannen in der App (bräuchte Server und bezahlten Schlüssel), Texterkennung auf dem Gerät (dreispaltige Wortlisten mit Lautschrift), Link statt Datei (am iPhone landet ein Link in Safari, und Safari und die App auf dem Home-Bildschirm haben getrennte Speicher).
+  - **Nicht auf einem echten Android-Gerät getestet**, nur im Browser mit Android-Kennung und in den Tests. Checkliste unter Aufgabe 8.
 - **Version 2.4 (18.11.2026, Wunsch Thomas: XP etwas schneller, „aber nicht zu viel nachgeben“).** Rückmeldung vom Sohn: XP sammeln sei zäh. Mit dem echten App-Code über 12 Wochen durchgespielt (Stand wie seiner, 80 % richtig); Thomas hat die Variante „ruhig“ gewählt:
   - +1 XP je richtige Antwort: 3 statt 2, beim Schreiben 4 statt 3. Alle Boni unverändert.
   - Level-Kurve ab Level 10 flacher: Der Schritt wächst um 25 statt 50 XP je Level (Level 15 → 16 kostet 675 statt 800, Level 20 → 21 800 statt 1.050). Bis Level 11 ändert sich nichts, darüber liegt jede Schwelle tiefer, niemand verliert ein Level. Wem die neue Kurve ein Level schenkt, der bekommt es beim ersten Start mit 20 Münzen und Silbertruhe; der Hinweis nennt das Level.
@@ -131,6 +139,16 @@ Eine unabhängige Durchsicht fand nichts, was den Lernstand gefährdet, aber 15 
 - Quest „Lerne N neue Wörter“ zählt die erste richtige Antwort eines Wortes, auch im zweiten Versuch.
 - „Sicherung laden“ zahlt für neue Abzeichen die Münzen. Alle Fragen beantwortet und dann X = fertige Runde. Stations-Knopf nennt die echte Fragenzahl. Flamme am Update-Tag. Abzeichen-Blatt ohne Division durch null. `sw.js` mit try/catch beim Umziehen der Schriften.
 
+### 8. Test auf einem Android-Gerät (ein Freund oder Thomas) – offen
+
+1. Adresse in Chrome öffnen. Erscheint auf der Startseite „Als App installieren“? Knopf drücken, danach vom Startbildschirm starten. Ist das Symbol rund und die Vokabelkarte ganz zu sehen?
+2. Eine Runde spielen: Töne, Vorlesen, Vibration bei richtig und falsch.
+3. Zurück-Taste (oder Wischen vom Rand): in der Runde kommt „Jetzt aufhören?“, auf einer Unterseite geht es einen Schritt zurück, auf der Startseite kommt „Noch einmal Zurück schließt die App“.
+4. Vokabeln → Lektion aufklappen → „Teilen“ → „Datei senden“: Öffnet sich das Teilen-Menü, kommt die Datei in WhatsApp an? Stimmt der Satz „Datei in der Nachricht antippen, damit sie auf das Handy geladen wird“, und findet die Dateiauswahl der App die Datei danach? (Sonst den genauen Weg melden, dann passe ich den Text an.)
+5. Auf dem anderen Gerät: Datei sichern, dann Vokabeln → „Neue Vokabeln hinzufügen“ → „Datei öffnen“. Stimmen Name und Anzahl? (Wer die Lektion schon hat, sieht alles abgewählt; zum Testen eine selbst getippte Lektion nehmen.)
+6. Schreiben-Abfrage: Schlägt die Tastatur das gesuchte Wort vor? (Falls ja, melden.)
+7. Flugmodus an, App neu starten: muss laufen.
+
 ### 6. Test von Version 2.0 auf dem iPhone (Thomas) – offen
 
 **Vorher:** In der alten App Erfolge → „Sicherung speichern“. Dann App schließen und zweimal öffnen, bis unter Erfolge → Einstellungen „Version 2.0“ steht.
@@ -165,6 +183,7 @@ Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-T
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 18.11.2026 | Mac, Browser mit Android-Kennung (375 px), Version 2.5 | Wächter-Eintrag nach dem Start da. Zurück: Reiter → Start, Einstellungen → Erfolge → Start, Runde mit Antwort → „Jetzt aufhören?“ → Runde läuft weiter, Import-Durchsicht → Eingabe. „Teilen“ übergibt `Voc a Bit - Theme 2 Celebrations.txt` (text/plain, 29 kB). Auf einem Stand ohne Theme 2 eingefügt: 152 erkannt, 5 schon vorhanden, 147 gespeichert mit Seiten und Abschnitten, Stationen im Lernpfad. Installieren-Karte hell und dunkel, Knopf ruft Chrome einmal. Einstellungen ohne iPhone-Hinweise. Anleitung: „Teilen“ zeigt drei Schritte, „Datei senden“ übergibt die Datei mit Kopfzeilen, Karte „Lektion von einem Freund?“ auf der Import-Seite. |
 | 18.11.2026 | Mac, Browser, Version 2.4 | Stand aus 2.3 mit 3.400 XP geladen: Hinweis „Mehr XP für jede richtige Antwort!“, Level 11 „noch 425 XP“, Leiste „1,5x XP für deine nächste Runde“, richtige Antwort „+5 XP · 1,5x“, Ergebnis mit Zeile „XP-Booster“, Booster danach verbraucht. Keine Fehler in der Konsole. |
 | 18.11.2026 | Mac, Browser in iPhone-Größe, Version 2.3 | Stand aus 2.2 geladen: gesperrte Truhe sofort offen, Booster als „nächste Runde“, Quests mit Zählerstand übernommen, keine Uhrzeit mehr auf dem Bildschirm. |
 | 18.11.2026 | Mac, Browser in iPhone-Größe, Version 2.2 | Truhen-Leiste, Öffnen mit Upgrade, Beute, Booster im Quiz, Ergebnis-Schritt „Truhen“, Freischalten einer Zeit-Truhe und Ablauf des Boosters live geprüft, hell, dunkel und 320 px. |

@@ -366,8 +366,8 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     ok(!K.S.prog.inv.length, 'control: no chest without a new level');
     const A = fresh({ t: at(16) }, { xp, lvl: 15, coins: 0, news: '2.3' }), p = A.S.prog;
     ok(A.levelInfo(xp).n === 16 && p.lvl === 16 && p.coins === base + 20 && p.inv.length === 1 && p.inv[0].tier === 'RARE' && p.inv[0].source === 'LEVEL_UP', 'owed level paid at start: ' + JSON.stringify([p.lvl, p.coins - base, p.inv.map(c => c.tier)]));
-    A.timers.slice().forEach(f => f()); ok(/Mehr XP/.test(A.els.toast.innerHTML) && /Level 16/.test(A.els.toast.innerHTML), 'the note after the update names the new level: ' + A.els.toast.innerHTML.replace(/<[^>]+>/g, ''));
-    K.timers.slice().forEach(f => f()); ok(/Mehr XP/.test(K.els.toast.innerHTML) && !/Level/.test(K.els.toast.innerHTML), 'without a new level only the news line');
+    A.timers.slice().forEach(f => f()); ok(/Neu:/.test(A.els.toast.innerHTML) && /Level 16/.test(A.els.toast.innerHTML), 'the note after the update names the new level: ' + A.els.toast.innerHTML.replace(/<[^>]+>/g, ''));
+    K.timers.slice().forEach(f => f()); ok(/Neu:/.test(K.els.toast.innerHTML) && !/Level/.test(K.els.toast.innerHTML), 'without a new level only the news line');
     const B = load({ clock: { t: at(17) }, storage: A.mem }); ok(B.S.prog.lvl === 16 && B.S.prog.coins === base + 20 && B.S.prog.inv.length === 1, 'and not a second time');
     const C = fresh({ t: at(16) }, { xp: 3400, lvl: 11, coins: 0, news: '2.3' }); ok(C.S.prog.lvl === 11 && !C.S.prog.inv.length, 'level 11 stays level 11');
   }
@@ -396,6 +396,134 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     const B = fresh({ t: at(16) }, { lvl: 1, boost: { mult: 3, rounds: 2 }, news: '2.3' }); ok(B.xpMult() === 3 && B.S.prog.boost.rounds === 2, 'an old 3x booster is kept');
   }
   console.log('T 2.4 steady XP: done');
+}
+// ---- 2.5: a lesson as a file for friends, the Android back button, the hint to install ----
+{
+  const at = (h, d = 18) => new Date(2026, 10, d, h, 0, 0).getTime();
+  const store = (us, extra) => ({ 'wordbox.units.v1': JSON.stringify(us), 'wordbox.prog.v1': JSON.stringify(Object.assign({ v: 1, econ: 2, tempo: 'fast', onboarded: true, v2: true, sound: false, speak: false, goal: 150, lvl: 1 }, extra || {})) });
+  const PHONE = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36';
+  const IPHONE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Mobile/15E148 Safari/604.1';
+  const tab = q => /reduced-motion/.test(q);      // a browser tab: not installed; motion reduced as in the other tests
+  // the lesson file: every word arrives, with page and section, and nothing but words travels
+  {
+    const A = fresh({ t: at(16) });
+    for (const u of A.S.units) {
+      const text = A.unitFile(u), res = A.parseText(text), f = JSON.parse(text.slice(text.indexOf('{')));
+      ok(res && res.data && res.data.title === u.title && res.data.app !== 'wordbox', u.title + ': title travels and the file is no backup');
+      ok(res.words.length === u.words.length, u.title + ': ' + res.words.length + ' of ' + u.words.length + ' words arrive');
+      ok(!/"id"|"l":|"xp"|"name"/.test(text) && Object.keys(f).join() === 'type,title,pages,words', u.title + ': only words in the file, keys ' + Object.keys(f).join());
+      const same = u.words.every((w, i) => ['en', 'de', 'ipa', 'ex', 'sec', 'page'].every(k => String(w[k] || '') === String(res.words[i][k] || '')) && (w.pos !== 'verb' || String(w.past || '') === res.words[i].past));
+      ok(same, u.title + ': en, de, ipa, example, section, page and simple past unchanged');
+    }
+    // the file starts with a few lines for the friend who taps it in a chat; the data still reads
+    {
+      const text = A.unitFile(A.S.units[1]), head = text.slice(0, text.indexOf('{'));
+      ok(/^Voc a Bit – Lektion: Theme 2: Celebrations \(152 Wörter\)\n/.test(head) && /So öffnest du sie:/.test(head) && /Datei öffnen/.test(head) && !/https?:/.test(head), 'the file says what to do: ' + head.split('\n')[0]);
+      const odd = { title: 'Meine {Liste} [1]', pages: '', words: [{ en: 'plane', de: 'Flugzeug' }, { en: 'to choose', de: '(aus)wählen', pos: 'verb', past: 'chose' }] };
+      const t2 = A.unitFile(odd), h2 = t2.slice(0, t2.indexOf('\n\n')), r2 = A.parseText(t2);
+      ok(!/[{}\[\]]/.test(h2) && r2.data.title === odd.title && r2.words.length === 2 && r2.words[1].past === 'chose', 'braces in a title cannot break the file: ' + h2.split('\n')[0]);
+      const W = load({ clock: { t: at(16) }, storage: store(units), loc: { protocol: 'https:', origin: 'https://example.org', pathname: '/app/' } });
+      const t3 = W.unitFile(W.S.units[0]); ok(/Du hast die App noch nicht\? https:\/\/example\.org\/app\/\n/.test(t3) && W.parseText(t3).words.length === W.S.units[0].words.length, 'on the web the file names the address of the app');
+    }
+    ok(A.unitFileName({ title: 'Theme 2: Celebrations / "Party"?' }) === 'Voc a Bit - Theme 2 Celebrations Party.txt', 'file name: ' + A.unitFileName({ title: 'Theme 2: Celebrations / "Party"?' }));
+    ok(A.unitFileName({ title: 'Übung für März' }) === 'Voc a Bit - Übung für März.txt' && A.unitFileName({ title: '///' }) === 'Voc a Bit - Lektion.txt' && A.unitFileName({}) === 'Voc a Bit - Lektion.txt', 'file name keeps umlauts and never is empty');
+  }
+  // a friend who does not have the lesson opens the file: review, save, and the learning path has its stations
+  {
+    const A = fresh({ t: at(16) }), text = A.unitFile(A.S.units[1]);
+    const B = load({ clock: { t: at(16) }, storage: store([units[0]]) });
+    B.S.imp = { step: 'pick', text: '', title: '', words: [], err: '', showPrompt: false }; B.S.view = 'import';
+    B.startReview(B.parseText(text), 'Voc a Bit - Theme 2 Celebrations');
+    ok(B.S.imp.step === 'review' && B.S.imp.title === units[1].title && B.S.imp.words.filter(w => w.on).length > 140, 'review shows the lesson: ' + B.S.imp.title + ', ' + B.S.imp.words.filter(w => w.on).length + ' chosen');
+    const chosen = B.S.imp.words.filter(w => w.on).length; B.saveImport();
+    const got = B.S.units[B.S.units.length - 1];
+    ok(B.S.units.length === 2 && got.title === units[1].title && got.words.length === chosen && got.words.every(w => w.id && w.en && w.de), 'saved as a lesson of its own with ' + got.words.length + ' words');
+    ok(B.pathNodes(got).length === A.pathNodes(A.S.units[1]).length, 'same stations on the learning path: ' + B.pathNodes(got).length);
+    // a friend who has the lesson already gets nothing twice
+    const C = fresh({ t: at(16) }); C.S.imp = { step: 'pick', text: '', title: '', words: [], err: '', showPrompt: false }; C.startReview(C.parseText(text));
+    ok(C.S.imp.words.every(w => w.dup && !w.on), 'known words are marked and not chosen');
+  }
+  // the share button hands a text file to the share sheet; where the system refuses, the file is saved instead
+  {
+    let shared = null;
+    const A = load({ clock: { t: at(16) }, storage: store(units), nav: { canShare: d => d.files[0].type === 'text/plain', share: d => { shared = d; return Promise.resolve() } } });
+    A.S.view = 'vocab'; A.S.openUnit = units[1].id; A.render();
+    ok(/data-act="unit-share"/.test(A.els.app.innerHTML) && />Teilen</.test(A.els.app.innerHTML.replace(/<svg[\s\S]*?<\/svg>/g, '')), 'every lesson has a share button');
+    A.ACT['unit-share']({ dataset: { u: units[1].id } });
+    const sheet = A.els.app.innerHTML;
+    ok(shared === null && A.S.sheet && A.S.sheet.type === 'share' && /Lektion teilen/.test(sheet) && (sheet.match(/<li>/g) || []).length === 3 && /data-act="unit-send"/.test(sheet) && /nicht dein Lernstand/.test(sheet), 'the share button first shows three steps');
+    ok(/Theme 2: Celebrations · 152 Wörter/.test(sheet), 'the sheet names the lesson');
+    A.ACT['unit-send']({ dataset: { u: units[1].id } });
+    ok(A.S.sheet === null && !/Lektion teilen/.test(A.els.app.innerHTML), 'sending closes the sheet');
+    ok(shared && shared.files.length === 1 && shared.files[0].type === 'text/plain' && /^Voc a Bit - .*\.txt$/.test(shared.files[0].name), 'a .txt goes to the share sheet: ' + (shared && shared.files[0].name));
+    const B = load({ clock: { t: at(16) }, storage: store(units), nav: { canShare: () => false, share: () => { throw new Error('must not be called') } } });
+    B.created.length = 0; B.ACT['unit-share']({ dataset: { u: units[1].id } }); ok(!B.created.some(e => e.download), 'the how-to alone saves nothing'); B.ACT['unit-send']({ dataset: { u: units[1].id } });
+    ok(B.created.some(e => /^Voc a Bit - .*\.txt$/.test(e.download || '')), 'no share sheet for files: saved as a download');
+    const C = load({ clock: { t: at(16) }, storage: store(units) }); C.created.length = 0; C.ACT['unit-share']({ dataset: { u: 'gibt-es-nicht' } }); ok(C.S.sheet === null, 'no sheet for an unknown lesson'); C.ACT['unit-send']({ dataset: { u: 'gibt-es-nicht' } });
+    ok(!C.created.some(e => e.download), 'an unknown lesson shares nothing');
+  }
+  // Android back button: one step back inside the app, and out of the app only from the start page
+  {
+    const ids = units[1].words.map(w => w.id);
+    const A = load({ clock: { t: at(16) }, storage: store(units), ua: PHONE });
+    ok(A.ANDROID && !A.IOS && A.hist.stack.length === 2 && A.hist.i === 1 && A.hist.stack[1].vab === 1, 'the guard is there after the start: ' + JSON.stringify(A.hist));
+    const guard = () => A.hist.i === 1 && A.hist.stack.length === 2;
+    A.go('vocab'); ok(A.back() && A.S.view === 'home' && guard(), 'a tab: back to the start page');
+    A.go('settings'); A.back(); ok(A.S.view === 'awards' && guard(), 'settings: back to Erfolge'); A.back(); ok(A.S.view === 'home', 'then to the start page');
+    A.S.sheet = { type: 'badge', id: 'first' }; A.S.view = 'awards'; A.render(); A.back(); ok(A.S.sheet === null && A.S.view === 'awards' && guard(), 'an open sheet closes first');
+A.S.view = 'vocab'; A.ACT['unit-share']({ dataset: { u: units[1].id } }); ok(A.S.sheet && A.S.sheet.type === 'share', 'how-to open'); A.back(); ok(A.S.sheet === null && A.S.view === 'vocab' && guard(), 'back closes the how-to for sharing');
+    const c = A.addChest('COMMON', 'DAILY_QUEST'); A.S.view = 'home'; A.ACT['chest-open']({ dataset: { c: c.id } }); ok(A.S.chest, 'chest dialog open'); A.back(); ok(A.S.chest === null && A.S.prog.inv.length === 1, 'a chest dialog closes, the chest stays in the bag');
+    A.startRound(ids, 'de-en', 10, { extras: false }); A.back(); ok(A.S.quiz === null && A.S.view === 'home', 'a round without an answer just ends');
+    A.startRound(ids, 'de-en', 10, { extras: false }); const q = A.S.quiz.list[0]; A.answerMC(q.options.indexOf(q.answer));
+    A.back(); ok(A.S.quiz && A.S.confirm === 'quit' && guard(), 'a round with answers asks first');
+    A.back(); ok(A.S.quiz && A.S.confirm === null && A.S.view === 'quiz', 'back again closes the question and the round goes on');
+    while (A.S.quiz) { A.nextQ(); if (!A.S.quiz) break; const x = A.S.quiz.list[A.S.quiz.i]; A.answerMC(x.options.indexOf(x.answer)) }
+    ok(A.S.view === 'result' && A.S.result, 'round finished'); const xp = A.S.prog.xp; A.back(); ok(A.S.view === 'home' && A.S.result === null && A.S.prog.xp === xp, 'the result closes, nothing is lost');
+    A.ACT['imp-open'](); A.S.imp.text = 'plane ; Flugzeug\nsuddenly ; plötzlich'; A.ACT['imp-parse'](); ok(A.S.imp.step === 'review', 'import at the review');
+    A.back(); ok(A.S.view === 'import' && A.S.imp.step === 'pick', 'review: back to the input'); A.back(); ok(A.S.view === 'vocab' && A.S.imp === null, 'input: back to Vokabeln');
+    A.back(); ok(A.S.view === 'home' && guard(), 'and home');
+    // on the start page nothing is left to close: a note, no new guard, the next back leaves the app
+    A.els.toast.innerHTML = ''; ok(A.back() === true && /Noch einmal/.test(A.els.toast.innerHTML) && A.hist.i === 0, 'start page: the note appears');
+    A.render(); ok(A.hist.i === 0 && A.back() === false, 'a render in the background does not hold the app: the second back leaves');
+    A.fire('click', {}, 'document'); A.render(); ok(guard(), 'a tap brings the guard back');
+    // started again on the guard entry (update, reload): no second guard
+    const R = load({ clock: { t: at(16) }, storage: store(units), ua: PHONE, history: { state: { vab: 1 } } }); ok(R.hist.pushes === 0, 'reload on the guard: nothing is added');
+    // the iPhone and the desktop get no history entry at all
+    const I = load({ clock: { t: at(16) }, storage: store(units), ua: IPHONE }); I.go('vocab'); I.go('home'); ok(I.IOS && !I.ANDROID && I.hist.pushes === 0, 'iPhone: history untouched');
+    const D = load({ clock: { t: at(16) }, storage: store(units) }); D.go('vocab'); ok(D.hist.pushes === 0, 'desktop: history untouched');
+    // before the welcome screens are done, back is not answered
+    const N = load({ clock: { t: at(16) }, storage: { 'wordbox.units.v1': JSON.stringify(units) }, ua: PHONE }); ok(N.backStep() === false, 'welcome screens: back may leave');
+  }
+  // the hint to install shows in a browser tab only, and in the words of the system
+  {
+    const home = A => { A.S.view = 'home'; A.render(); return A.els.app.innerHTML };
+    const P = load({ clock: { t: at(16) }, storage: store(units), ua: IPHONE, media: tab, nav: { standalone: false } });
+    ok(!P.STANDALONE && /Zum Home-Bildschirm/.test(home(P)), 'iPhone in Safari: the way to the home screen is explained');
+    P.ACT['install-later'](); ok(!/Zum Home-Bildschirm/.test(home(P)), '"Später" puts the hint away');
+    const H = load({ clock: { t: at(16) }, storage: store(units), ua: IPHONE, media: tab, nav: { standalone: true } });
+    ok(H.STANDALONE && !/class="card install"/.test(home(H)), 'iPhone app on the home screen: no hint');
+    const G = load({ clock: { t: at(16) }, storage: store(units), ua: PHONE, media: tab });
+    ok(!/class="card install"/.test(home(G)), 'Android before Chrome offers to install: no hint');
+    let prompted = 0, stopped = 0; G.fire('beforeinstallprompt', { preventDefault() { stopped++ }, prompt() { prompted++ } });
+    ok(stopped === 1 && /Als App installieren/.test(home(G)) && /data-act="install"/.test(home(G)), 'Android: a button to install');
+    G.ACT.install(); ok(prompted === 1 && !/class="card install"/.test(home(G)), 'the button asks Chrome once and the hint is gone');
+    const W = load({ clock: { t: at(16) }, storage: store(units), ua: PHONE, media: q => /reduced-motion|standalone/.test(q) }); W.fire('beforeinstallprompt', { preventDefault() {}, prompt() {} });
+    ok(W.STANDALONE && !/class="card install"/.test(home(W)), 'installed Android app: no hint');
+    // the words about sound name the mute switch on the iPhone only
+    const set = A => { A.S.view = 'settings'; A.render(); return A.els.app.innerHTML };
+const imp = A => { A.ACT['imp-open'](); const h = A.els.app.innerHTML; A.ACT['imp-back'](); return h };
+    ok(/Lektion von einem Freund\?/.test(imp(P)) && /In Dateien sichern/.test(imp(P)) && (imp(P).match(/<li>/g) || []).length === 3, 'import page: three steps for a file from a friend, iPhone wording');
+    ok(/Lektion von einem Freund\?/.test(imp(G)) && !/In Dateien sichern/.test(imp(G)) && /geladen wird/.test(imp(G)), 'import page on Android: no words about the Files app');
+    ok(/Stummschalter/.test(set(P)) && /iOS 18/.test(set(P)) && !/Stummschalter|iOS 18|iPhone/.test(set(G)), 'settings: mute switch and iOS only on the iPhone');
+  }
+  // one system at a time: an iPad calls itself a Mac with a touch screen, an Android phone never counts as one
+  {
+    const pad = load({ clock: { t: at(16) }, storage: store(units), ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15', nav: { platform: 'MacIntel', maxTouchPoints: 5 } });
+    const mac = load({ clock: { t: at(16) }, storage: store(units), ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15', nav: { platform: 'MacIntel', maxTouchPoints: 0 } });
+    const odd = load({ clock: { t: at(16) }, storage: store(units), ua: PHONE, nav: { platform: 'MacIntel', maxTouchPoints: 5 } });
+    ok(pad.IOS && !pad.ANDROID && !mac.IOS && !mac.ANDROID && odd.ANDROID && !odd.IOS, 'iPad yes, Mac no, Android never both: ' + [pad.IOS, mac.IOS, odd.IOS, odd.ANDROID].join());
+  }
+  console.log('T 2.5 share, back button, install: done');
 }
 // ---- 90 days of play with a fixed dice: the books always balance ----
 {

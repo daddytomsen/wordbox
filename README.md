@@ -1,6 +1,6 @@
 # Voc a Bit – Vokabeltrainer Englisch
 
-Eine Lern-App für die Vokabeln aus dem Englischbuch (Klasse 6). Sie läuft als Web-App im Safari auf dem iPhone und lässt sich wie eine normale App auf den Home-Bildschirm legen. Nach dem ersten Öffnen funktioniert sie auch ohne Internet.
+Eine Lern-App für die Vokabeln aus dem Englischbuch (Klasse 6). Sie läuft als Web-App auf dem iPhone (Safari) und auf Android (Chrome) und lässt sich wie eine normale App auf den Startbildschirm legen. Nach dem ersten Öffnen funktioniert sie auch ohne Internet.
 
 Gelernt wird wie mit einem Karteikasten mit fünf Fächern. Dazu gibt es einen Lernpfad mit Stationen, Tagesquests, Münzen, Abzeichen und die Manga-Figur Bit mit Skins zum Freischalten.
 
@@ -18,6 +18,18 @@ Die Seite ist öffentlich erreichbar, wird aber nicht von Suchmaschinen aufgenom
 1. Die Adresse in **Safari** öffnen.
 2. **Teilen → Zum Home-Bildschirm**.
 3. Ab jetzt Voc a Bit über das Icon starten.
+
+## Auf Android installieren
+
+1. Die Adresse in **Chrome** öffnen.
+2. Auf der Startseite der App **Installieren** tippen. Fehlt die Karte: Chrome-Menü (drei Punkte) → **App installieren** oder **Zum Startbildschirm hinzufügen**.
+3. Ab jetzt Voc a Bit über das Icon starten.
+
+## Für Freunde
+
+Jeder öffnet dieselbe Adresse und installiert die App. Jedes Gerät hat seinen eigenen Lernstand, es gibt keine Anmeldung und es werden keine Daten verschickt. Die Lektionen aus dem Ordner `lists/` bekommen alle automatisch.
+
+Selbst angelegte Lektionen lassen sich weitergeben: **Vokabeln → Lektion aufklappen → Teilen** zeigt drei kurze Schritte und schickt die Lektion als Datei, zum Beispiel über WhatsApp. Der Empfänger sichert die Datei und öffnet sie in der App unter **Vokabeln → Neue Vokabeln hinzufügen → Datei öffnen**. In der Datei stehen nur die Wörter, kein Lernstand.
 
 ## Bildschirmzeit: nur Voc a Bit erlauben
 
@@ -69,7 +81,7 @@ Gibt es eine neue Fassung, zeigt die Startseite oben den Hinweis „Version … 
 |---|---|
 | `index.html` | die komplette App |
 | `sw.js` | macht die App offline-fähig und lädt Updates |
-| `manifest.webmanifest`, `*.png` | Name und Icon für den Home-Bildschirm |
+| `manifest.webmanifest`, `*.png` | Name und Icon für den Startbildschirm (iPhone und Android) |
 | `lists/` | Vokabellisten (Lektionen) |
 | `tools/` | Prüfung vor dem Hochladen (`check.sh`), Tests, Hilfsskript für neue Lektionen |
 | `robots.txt`, `.nojekyll` | keine Suchmaschinen, GitHub Pages ohne Umbau |
