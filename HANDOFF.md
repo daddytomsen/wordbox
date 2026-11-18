@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 18.11.2026 · Version 2.2 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 18.11.2026 · Version 2.3 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,12 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.3 (18.11.2026, Vorgabe Thomas: familien- und kindfreundlich, kein Zeitdruck).** Der Sohn hat Bildschirmzeit von 7 bis 20 Uhr und ist bis 14 Uhr in der Schule; die Zeit-Truhen aus 2.2 passten nicht dazu, und Countdowns und Verfall haben Druck gemacht. Jetzt gilt als Grundsatz (auch in `CLAUDE.md`): Die App verlangt nie, zu einer bestimmten Uhrzeit da zu sein, und nichts läuft ab.
+  - Quests ohne Frist: Eine Quest bleibt mit ihrem Zählerstand, bis sie geschafft ist, auch über mehrere Tage. Geschaffte werden am nächsten Tag ersetzt. Der Hinweis „noch N Std.“ ist weg, die Karte heißt „Quests“.
+  - Truhen: nie gesperrt, nie verfallen. Frühaufsteher- und Nachteulen-Truhe gibt es nicht mehr; dafür bringt die erste fertige Runde eines Tages eine Silbertruhe, egal zu welcher Uhrzeit. Truhen aus 2.2 mit Öffnungszeit werden zu gewöhnlichen Truhen.
+  - XP-Booster zählt Runden statt Minuten („2x XP für deine nächste Runde“) und wartet, bis gespielt wird. Weil er so nie ungenutzt verstreicht, ist er seltener (Holz 5 %, Silber 15 %, Gold 35 %, Diamant immer).
+  - Texte ohne Verlust-Drohung („Schön, dass du heute geübt hast!“ statt „Komm morgen wieder, damit die Flamme weiterbrennt“). Abzeichen „Frühaufsteher“ gilt für jede Runde am Vormittag.
+  - Bewusst **nicht** angefasst: die Serie (Tage in Folge, mit Serien-Schutz) und das Tagesziel. Beides gibt es seit 1.x; ob die Serie weicher werden soll (z. B. Wochenende zählt nicht mit), entscheidet Thomas. Das Abzeichen „Blitzrunde“ (10 fehlerfrei in 90 Sekunden) belohnt Tempo und ist ebenfalls noch drin.
 - **Version 2.2 (18.11.2026, Vorgabe Thomas „Truhensystem nach dem Vorbild von Duolingo“):** Truhen in vier Stufen (Holz, Silber, Gold, Diamant), Öffnen mit drei Tipps und 20 % Upgrade-Chance bei Tipp 1 und 2, Beute aus einer Tabelle (Münzen, XP-Booster, Serien-Schutz), Truhen-Leiste auf dem Start mit Countdown, Booster-Anzeige unter der Kopfzeile.
   - Auslöser: jede Tagesquest (leicht → Holz, mittel → Silber, schwer → Gold; ersetzt die 5 Münzen je Quest und die 15 der alten Tagestruhe), jede 5. fertige Runde (Holz), jedes neue Level (Silber), Serie an Tag 3, 7, 14, 30, 50, 100, dazu Frühaufsteher- und Nachteulen-Truhe mit Zeitfenster.
   - Bewusst anders als die Vorgabe: (1) alles bleibt in `index.html`, Regeln und Oberfläche sind getrennte Abschnitte; (2) „Bits“ sind die vorhandenen Münzen; (3) die Münzbeträge sind ein Viertel der Vorgabe, weil Skins 30 bis 400 kosten (Probelauf über 90 Tage: rund 65 Münzen am Tag, alle Skins nach etwa einem Monat); (4) kein Server, also Geräteuhr mit Sperre gegen Zurückstellen; (5) Energie/Herzen gibt es nicht. Die Zahlen stehen in der Tabelle `CHEST` und sind in einer Zeile änderbar.
@@ -152,6 +158,7 @@ Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-T
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 18.11.2026 | Mac, Browser in iPhone-Größe, Version 2.3 | Stand aus 2.2 geladen: gesperrte Truhe sofort offen, Booster als „nächste Runde“, Quests mit Zählerstand übernommen, keine Uhrzeit mehr auf dem Bildschirm. |
 | 18.11.2026 | Mac, Browser in iPhone-Größe, Version 2.2 | Truhen-Leiste, Öffnen mit Upgrade, Beute, Booster im Quiz, Ergebnis-Schritt „Truhen“, Freischalten einer Zeit-Truhe und Ablauf des Boosters live geprüft, hell, dunkel und 320 px. |
 | 17.11.2026 | Mac, Browser in iPhone-Größe, Version 2.1 | Neue Wörter, Stationen S. 229/230, Shop mit 14 Skins, Kauf und Hinweis geprüft; Tests bestanden. |
 | 10.11.2026 | Mac, Browser in iPhone-Größe, Version 2.0 | Alle Ansichten in hell und dunkel durchgespielt, Tests bestanden. iPhone-Test offen (Aufgabe 6). |
