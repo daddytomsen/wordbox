@@ -7,3 +7,6 @@ fotos/
 *.heic
 *.HEIC
 entwurf/
+# Familienfotos für den Adventskalender bleiben privat
+*Adventspaket*
+advent-privat/

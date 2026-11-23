@@ -31,6 +31,12 @@ Jeder öffnet dieselbe Adresse und installiert die App. Jedes Gerät hat seinen 
 
 Selbst angelegte Lektionen lassen sich weitergeben: **Vokabeln → Lektion aufklappen → Teilen** zeigt drei kurze Schritte und schickt die Lektion als Datei, zum Beispiel über WhatsApp. Der Empfänger sichert die Datei und öffnet sie in der App unter **Vokabeln → Neue Vokabeln hinzufügen → Datei öffnen**. In der Datei stehen nur die Wörter, kein Lernstand.
 
+## Adventskalender
+
+Im Dezember zeigt die Startseite einen Adventskalender mit 24 Türchen: jeden Tag ein englisches Weihnachtswort, ein Rätsel oder etwas über Weihnachten in Großbritannien, manchmal ein kleines Geschenk. Die Türchen verfallen nicht, ein verpasstes wartet.
+
+Eltern können eigene Fotos und Sätze hinter die Türchen legen. Die liegen nicht in dieser öffentlichen App, sondern in einer Datei, die nur auf das Handy des Kindes geladen wird: Fotos mit der Türchen-Nummer am Anfang des Namens in einen Ordner außerhalb dieses Projekts legen, dann `python3 tools/advent-paket.py <Ordner>` ausführen und die erzeugte Datei in der App laden (Erfolge → Einstellungen → Adventskalender).
+
 ## Bildschirmzeit: nur Voc a Bit erlauben
 
 Die App auf dem Home-Bildschirm ist technisch ein Teil von Safari. Ist Safari in der Bildschirmzeit unter „Erlaubte Apps“ ausgeschaltet, startet auch Voc a Bit nicht. Der richtige Weg ist die Website-Liste: Safari bleibt erlaubt, darf aber nur freigegebene Adressen öffnen. Das gilt für Safari und für die App gleichermaßen.

@@ -135,7 +135,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   let bad = 0;
   for (const id of ids) for (const m of moods) { const svg = A.bit(m, id); if (!/^<svg[\s\S]*<\/svg>$/.test(svg) || /NaN|undefined/.test(svg)) bad++ }
   ok(!bad, 'figures with broken drawing: ' + bad);
-  ok(A.OUTFITS.every(o => A.SKINS[o.id] && o.cost > 0 && o.tier >= 1 && o.tier <= 4), 'every skin has colours, a price and a rarity');
+  ok(A.OUTFITS.every(o => (A.SKINS[o.id] || A.PICS[o.id]) && o.cost > 0 && o.tier >= 1 && o.tier <= 4), 'every skin has its artwork (colours or a picture), a price and a rarity');
   ok(A.bit('happy', 'gibtsnicht') === A.bit('happy', ''), 'an unknown skin falls back to Bit');
   const tap = (act, o) => A.ACT[act]({ dataset: { o } });
   tap('wear', 'ninja'); ok(!A.S.prog.outfit, 'a skin that is not owned cannot be worn');
@@ -148,7 +148,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   tap('wear', 'ninja'); ok(A.S.prog.outfit === 'ninja', 'and to the skin again');
   A.S.view = 'shop'; A.render(); ok(/Skins für Bit/.test(A.els.app.innerHTML) && A.els.app.innerHTML.indexOf('1 von ' + A.OUTFITS.length) > 0, 'shop shows the skins and the count');
   const saved = JSON.parse(A.mem['wordbox.prog.v1']); ok(saved.outfit === 'ninja' && saved.coins === afterFirst, 'skin and coins are saved');
-  ok(A.OUTFITS.every((o, i) => !i || o.cost >= A.OUTFITS[i - 1].cost), 'skins are listed from cheap to dear');
+  for (const line of [undefined, 'fn']) { const L = A.OUTFITS.filter(o => o.line === line); ok(L.length >= 8 && L.every((o, i) => !i || o.cost >= L[i - 1].cost), 'skins of a line are listed from cheap to dear: ' + (line || 'drawn')) }
   ok(new Set(A.OUTFITS.map(o => o.id)).size === A.OUTFITS.length && new Set(A.OUTFITS.map(o => o.t)).size === A.OUTFITS.length, 'skin ids and names are unique');
   // the shop hint comes once for players of the version before, never for new players
   const B = fresh({ t: day(2026, 11, 17) }, {}); ok(B.S.prog.shopSeen === B.OUTFITS.length, 'a player from 2.0 is told about the new skins once: ' + B.S.prog.shopSeen);
@@ -397,6 +397,145 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     const B = fresh({ t: at(16) }, { lvl: 1, boost: { mult: 3, rounds: 2 }, news: '2.3' }); ok(B.xpMult() === 3 && B.S.prog.boost.rounds === 2, 'an old 3x booster is kept');
   }
   console.log('T 2.4 steady XP: done');
+}
+// ---- 2.7: picture skins. The new Bit, the winter line, a skin from a chest ----
+{
+  const fs = require('fs'), path = require('path'), ROOT = path.join(__dirname, '..', '..');
+  const at = h => new Date(2026, 10, 25, h, 0, 0).getTime();
+  const moods = ['happy', 'cheer', 'oops', 'think', 'wow', 'sleep'];
+  const A = fresh({ t: at(16) }, { coins: 0, lvl: 1 });
+  // every picture skin has its file, and every mood shows another cell of the sheet
+  for (const id of Object.keys(A.PICS)) {
+    ok(fs.existsSync(path.join(ROOT, 'skins', A.PICS[id] + '.webp')), 'file for ' + (id || 'Bit') + ': skins/' + A.PICS[id] + '.webp');
+    const cells = moods.map(m => { const h = A.bit(m, id), x = /<image href="skins\/([a-z-]+)\.webp" x="(-?\d+)" y="(-?\d+)" width="1080" height="720"\/>/.exec(h); ok(x && x[1] === A.PICS[id] && /^<svg class="bit pic /.test(h) && /viewBox="0 0 360 360"/.test(h), (id || 'Bit') + ' ' + m + ' is a picture'); return x ? x[2] + '/' + x[3] : '' });
+    ok(cells.join(' ') === '0/0 -360/0 -720/0 0/-360 -360/-360 -720/-360', 'six moods, six cells: ' + cells.join(' '));
+  }
+  ok(/<svg class="bit pic /.test(A.bit('happy', '')) && A.bit('happy', undefined) === A.bit('happy', ''), 'Bit himself is the new picture');
+  ok(!/<image/.test(A.bit('happy', 'classic')) && /<path/.test(A.bit('happy', 'classic')) && !/<image/.test(A.bit('happy', 'ninja')), 'Bit Klassik and the old skins are still drawn');
+  ok(A.bit('happy', 'gibt-es-nicht') === A.bit('happy', '') && A.bit('happy', 'toString') === A.bit('happy', ''), 'an unknown look falls back to Bit');
+  ok(/x="0" y="0"/.test(A.bit('quatsch', '')), 'an unknown mood shows the happy one');
+  // every skin is either drawn or a picture, and the winter line is complete
+  ok(A.OUTFITS.every(o => (o.id in A.SKINS) !== (o.id in A.PICS)), 'each skin has exactly one kind of artwork');
+  const fn = A.OUTFITS.filter(o => o.line === 'fn');
+  ok(fn.length === 8 && fn.every(o => o.since === 2.7 && o.id in A.PICS) && fn.map(o => o.tier).join('') === '11222334', 'eight skins of the winter line, two Selten, three Episch, two Legendär, one Mythisch');
+  // the shop: the two looks everyone has, the winter line, the classics
+  A.S.view = 'shop'; A.render(); const shop = A.els.app.innerHTML, plain = shop.replace(/<svg[\s\S]*?<\/svg>/g, '');
+  ok(/Frostnacht-Legenden/.test(plain) && /Klassiker/.test(plain) && />Bit Klassik</.test(plain) && plain.indexOf('0 von 22') > 0, 'shop sections and the count 0 von 22');
+  ok((plain.match(/class="newtag"/g) || []).length === 8, 'the eight new skins carry „Neu“: ' + (plain.match(/class="newtag"/g) || []).length);
+  ok((plain.match(/data-act="wear"/g) || []).length === 2 && (plain.match(/data-act="buy-outfit"/g) || []).length === 22, 'two looks to choose, 22 to buy');
+  const tap = (act, o) => A.ACT[act]({ dataset: { o } });
+  tap('wear', 'classic'); ok(A.S.prog.outfit === 'classic' && !/<image/.test(A.bit('happy')), 'Bit Klassik can be chosen by everyone');
+  tap('wear', 'fn-idol'); ok(A.S.prog.outfit === 'classic', 'a winter skin that is not owned cannot be worn');
+  tap('wear', 'hasOwnProperty'); ok(A.S.prog.outfit === 'classic', 'nor something that is no look at all');
+  A.S.prog.coins = 200; tap('buy-outfit', 'fn-idol'); ok(A.S.prog.outfit === 'fn-idol' && A.S.prog.coins === 200 - 150 + 5 && /skins\/fn-idol\.webp/.test(A.bit('happy')), 'bought for 150 and worn (first skin: badge worth 5)');
+  tap('wear', ''); ok(A.S.prog.outfit === '' && /skins\/bit\.webp/.test(A.bit('happy')), 'back to Bit');
+  // a save from before 2.7: the chosen skin stays, plain Bit becomes the new Bit, the player is told once
+  {
+    const B = fresh({ t: at(16) }, { outfit: 'ninja', outfits: { ninja: '2026-11-01' }, shopSeen: 14, news: '2.6' });
+    ok(B.S.prog.outfit === 'ninja' && !/<image/.test(B.bit('happy')), 'an old skin that is worn stays on');
+    B.timers.slice().forEach(f => f()); ok(/Bit hat einen neuen Look/.test(B.els.toast.innerHTML), 'the update says that Bit looks new');
+    const C = fresh({ t: at(16) }, { outfit: '', shopSeen: 14, news: '2.6' }); C.S.view = 'home'; C.render(); ok(/skins\/bit\.webp/.test(C.els.app.innerHTML), 'the start page shows the new Bit');
+  }
+  // a chest may hold a skin: only one that is missing, never above the rarity of the chest, never the mythic one
+  {
+    const C = fresh({ t: at(16) }, { coins: 0, lvl: 1 }), tierOf = id => C.OUTFITS.find(o => o.id === id).tier;
+    ok(C.CHEST.COMMON.skin[0] === 0 && C.CHEST.RARE.skin.join() === '0.01,1' && C.CHEST.EPIC.skin.join() === '0.03,2' && C.CHEST.MEGA.skin.join() === '0.1,3', 'chances and rarities: ' + JSON.stringify(C.TIERS.map(t => C.CHEST[t].skin)));
+    const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)] };
+    ok(!C.rollLoot('COMMON', () => 0).skin, 'no skin in a wooden chest, whatever the dice');
+    for (const [tier, max] of [['RARE', 1], ['EPIC', 2], ['MEGA', 3]]) {
+      const seen = new Set(); for (let i = 0; i < 400; i++) { const L = C.rollLoot(tier, seq(.5, .99, .99, 0, i / 400)); ok(L.skin && tierOf(L.skin) <= max, tier + ' gave ' + L.skin); seen.add(L.skin) }
+      ok(seen.size === C.OUTFITS.filter(o => o.tier <= max).length, tier + ': every skin up to its rarity can come, ' + seen.size);
+    }
+    ok(!C.rollLoot('MEGA', seq(.5, .99, .99, .11)).skin, 'above the chance: no skin');
+    let n = 0; const N = 6000; for (let i = 0; i < N; i++) if (C.rollLoot('MEGA').skin) n++; ok(Math.abs(n / N - .1) < .025, 'a diamond chest holds a skin about one time in ten: ' + (n / N).toFixed(3));
+    // opening: the skin is in the bag afterwards, not put on, shown with its name; coins as rolled
+    const c = C.addChest('MEGA', 'STREAK'); C.S.chest = { id: c.id, tier: c.tier, source: c.source, taps: 2, up: false, loot: null }; c.taps = 2;
+    const r = C.tapChest(c.id, seq(0, .99, .99, 0, 0)); ok(r.open && r.loot.skin && C.S.prog.outfits[r.loot.skin] && C.S.prog.outfit === '' && C.S.prog.coins === C.CHEST.MEGA.coins[0], 'opened: ' + r.loot.skin + ' is owned, coins ' + C.S.prog.coins);
+    C.S.chest.loot = r.loot; C.S.view = 'home'; C.render(); ok(new RegExp('Neuer Skin: ' + C.lookName(r.loot.skin)).test(C.els.app.innerHTML.replace(/<svg[\s\S]*?<\/svg>/g, '')), 'the chest names the skin');
+    // with every skin up to Legendär owned a chest simply holds none
+    C.OUTFITS.forEach(o => { if (o.tier <= 3) C.giveLook(o.id) }); ok(C.chestSkins(3).length === 0 && !C.rollLoot('MEGA', seq(.5, .99, .99, 0, 0)).skin, 'nothing left to find: no skin, no error');
+    ok(!C.S.prog.outfits['fn-polarlicht'] && !C.S.prog.outfits.galaxy, 'the mythic skins never come from a chest');
+  }
+  console.log('T 2.7 picture skins: done');
+}
+// ---- 2.7: Bit moves. He floats where he hosts a screen, answers an answer in the quiz, and can be told to hold still ----
+{
+  const fs = require('fs'), path = require('path'), src = fs.readFileSync(path.join(__dirname, '..', '..', 'index.html'), 'utf8');
+  const at = h => new Date(2026, 10, 25, h, 0, 0).getTime(), ids = units[1].words.map(w => w.id);
+  // the quiz: still while the question is open, one move for the answer, and only once
+  {
+    const A = fresh({ t: at(16) }, { lvl: 1 }), qbit = () => (/<svg class="bit[^"]*qbit[^"]*"/.exec(A.els.app.innerHTML) || [''])[0];
+    A.startRound(ids, 'de-en', 10, { extras: false }); A.render();
+    ok(/qbit/.test(qbit()) && !/hop|no\b|fx/.test(qbit().replace('qbit', '')), 'question open: Bit holds still: ' + qbit());
+    let q = A.S.quiz.list[0]; A.answerMC(q.options.indexOf(q.answer)); ok(/qbit hop/.test(qbit()), 'right answer: a little jump: ' + qbit());
+    A.render(); ok(!/hop/.test(qbit()), 'drawn again: no second jump');
+    A.nextQ(); q = A.S.quiz.list[A.S.quiz.i]; A.answerMC(q.options.findIndex(o => o !== q.answer)); ok(/qbit no/.test(qbit()) && !/hop/.test(qbit()), 'wrong answer: he shakes his head: ' + qbit());
+    A.finish(true);
+  }
+  // every figure knows where the floating stands, so a page that is drawn again does not make him jump
+  {
+    const clock = { t: at(16) }, A = fresh(clock, { lvl: 1 }), ft = h => parseFloat((/style="--ft:(-[\d.]+)s;--st:-[\d.]+s;--bt:-[\d.]+s"/.exec(h) || [0, 'NaN'])[1]);
+    for (const id of ['', 'classic', 'ninja', 'fn-idol', 'fn-polarlicht']) { const v = ft(A.bit('happy', id)); ok(v <= 0 && v > -3.2, (id || 'Bit') + ' carries its place in the cycle: ' + v) }
+    const a = ft(A.bit('happy', '')); clock.t += 1000; const b = ft(A.bit('happy', '')); ok(Math.abs((a - b) - 1) < .02 || Math.abs((a - b) + 2.2) < .02, 'one second later the place has moved on by one second: ' + a + ' → ' + b);
+  }
+  // the streak of light: every skin has it, cut to its own outline; Bit himself has none; the soft light is for the rarest
+  {
+    const A = fresh({ t: at(16) }, { lvl: 1 }), kids = h => (h.match(/<mask id="(bm\d+)"/) || [])[1];
+    ok(A.OUTFITS.every(o => A.shinyLook(o.id)) && !A.shinyLook('') && !A.shinyLook('classic') && !A.shinyLook('quatsch'), 'every skin shines, Bit and Bit Klassik do not');
+    ok(A.OUTFITS.filter(o => A.auraLook(o.id)).map(o => o.id).join() === 'galaxy,fn-polarlicht', 'the soft light: only the mythic skins');
+    for (const o of A.OUTFITS) {
+      const h = A.bit('wow', o.id), id = kids(h), pic = o.id in A.PICS;
+      ok(/^<svg class="bit[^"]* shiny/.test(h) && /class="sheen"/.test(h) && id && h.indexOf('<mask id="' + id + '" style="mask-type:alpha">') > 0 && h.indexOf('mask="url(#' + id + ')"') > 0, o.id + ': a streak and a mask of its own');
+      ok((/ aura/.test(/^<svg class="([^"]*)"/.exec(h)[1])) === (o.tier === 4), o.id + ': soft light only if mythic');
+      if (pic) { const imgs = (h.match(/<image [^>]*\/>/g) || []).filter(x => !/class="blink"/.test(x)); ok(imgs.length === 2 && imgs[0] === imgs[1] && /x="-360" y="-360"/.test(imgs[0]), o.id + ': the mask is the same cell as the figure') }
+      else { const d = /<g id="(bd\d+)">/.exec(h); ok(d && h.indexOf('<use href="#' + d[1] + '"/>') > 0 && !/<image/.test(h) && /transform="scale\(0\.3333/.test(h), o.id + ': the mask points at the drawing, the bars are scaled to it') }
+    }
+    const one = A.bit('happy', 'ninja'), two = A.bit('happy', 'ninja'), ids = h => [kids(h), (/<g id="(bd\d+)">/.exec(h) || [])[1]].join();
+    ok(ids(one) !== ids(two), 'two figures on a page never share a mask or a name: ' + ids(one) + ' | ' + ids(two));
+    for (const id of ['', 'classic']) ok(!/shiny|sheen|<mask|aura/.test(A.bit('happy', id)), (id || 'Bit') + ' has no streak');
+    ok(A.bit('happy', '') === A.bit('happy', '') && A.bit('think', 'classic') === A.bit('think', 'classic'), 'Bit himself is drawn the same every time');
+    A.S.view = 'shop'; A.render(); const shop = A.els.app.innerHTML, all = shop.match(/<mask id="bm\d+"/g) || [];
+    ok(all.length === 22 && new Set(all).size === 22, 'the shop: 22 skins, 22 masks, no two alike');
+  }
+  // blinking: a figure with a strip of closed eyes blinks in the moods that have open eyes, the others do not blink at all
+  {
+    const fs2 = require('fs'), path2 = require('path'), A = fresh({ t: at(16) }, { lvl: 1 });
+    ok(A.BLINK.length >= 1 && A.BLINK.every(id => id in A.PICS && fs2.existsSync(path2.join(__dirname, '..', '..', 'skins', A.PICS[id] + '-blink.webp'))), 'every blinking figure has its strip: ' + A.BLINK.join());
+    const eyes = (m, id) => /<image class="blink" href="skins\/([a-z-]+)-blink\.webp" x="(-?\d+)" y="0" width="1080" height="360"\/>/.exec(A.bit(m, id));
+    for (const id of A.BLINK) {
+      ok(['happy', 'think', 'wow'].map(m => { const e = eyes(m, id); return e && e[1] === A.PICS[id] ? e[2] : '?' }).join() === '0,-360,-720', id + ': closed eyes for happy, think, wow, each its own cell');
+      ok(!eyes('cheer', id) && !eyes('oops', id) && !eyes('sleep', id), id + ': no blink where the eyes are closed anyway');
+      const h = A.bit('happy', id), eyeAt = h.indexOf('class="blink"'), streakAt = h.indexOf('<defs>'); ok(eyeAt > h.indexOf('<image href=') && (streakAt < 0 ? !A.shinyLook(id) : eyeAt < streakAt), (id || 'Bit') + ': the eyes lie over the figure and under the streak of light');
+    }
+    ok(A.BLINK.join() === Object.keys(A.PICS).join(), 'every picture figure blinks: ' + A.BLINK.length);
+    for (const id of ['classic'].concat(A.OUTFITS.map(o => o.id).filter(id => A.BLINK.indexOf(id) < 0))) ok(!/class="blink"/.test(A.bit('happy', id)), id + ' is drawn, has no strip and does not blink');
+  }
+  // the switch: Bit can be told to hold still, and the choice stays
+  {
+    const A = fresh({ t: at(16) }, { lvl: 1 });
+    ok(A.S.prog.motion === true && !('still' in A.root.dataset), 'Bit moves unless told otherwise');
+    A.S.view = 'settings'; A.render(); ok(/Bit bewegt sich/.test(A.els.app.innerHTML) && /data-k="motion"/.test(A.els.app.innerHTML), 'the switch is in the settings');
+    A.ACT.tog({ dataset: { k: 'motion' } }); ok(A.S.prog.motion === false && A.root.dataset.still === '1' && JSON.parse(A.mem['wordbox.prog.v1']).motion === false, 'switched off: saved, and the page knows');
+    const B = load({ clock: { t: at(17) }, storage: A.mem }); ok(B.root.dataset.still === '1', 'still off after a restart');
+    B.ACT.tog({ dataset: { k: 'motion' } }); ok(B.S.prog.motion === true && !('still' in B.root.dataset), 'and on again');
+    const old = fresh({ t: at(16) }, { lvl: 1, haptics: false }); ok(old.S.prog.motion === true, 'a save from before 2.7 starts with a moving Bit');
+  }
+  // the rules of motion in the style sheet: floating and streak respect the system setting and the switch,
+  // the quiz figure is not among the floating ones, and no animation changes a filter (that costs battery)
+  {
+    const css = src.slice(src.indexOf('<style>'), src.indexOf('</style>')), block = css.slice(css.indexOf('@media (prefers-reduced-motion: no-preference){'));
+    const floats = /:root:not\(\[data-still\]\) :is\(([^)]*)\)\{--float:bit-float/.exec(block);
+    ok(floats && !/qbit/.test(floats[1]) && /hero-bit/.test(floats[1]) && /res-bit/.test(floats[1]), 'who floats: ' + (floats && floats[1]));
+    const streak = /:root:not\(\[data-still\]\) :is\(([^)]*)\)\.shiny \.sheen\{animation:bit-sheen/.exec(block);
+    ok(streak && streak[1] === floats[1] && !/\.sheen\{[^}]*animation/.test(css.slice(0, css.indexOf('@media (prefers-reduced-motion: no-preference){'))), 'the streak runs only where Bit floats, with motion allowed and the switch on: ' + (streak && streak[1]));
+    const before = css.slice(0, css.indexOf('@media (prefers-reduced-motion: no-preference){')).replace(/@keyframes[^{]+\{(?:[^{}]*\{[^{}]*\})*\s*\}/g, '');
+    ok(!/animation:[^;}]*bit-(float|sheen|hop|no)/.test(before), 'none of Bit\'s moves is used outside the block for people who allow motion');
+    const frames = css.match(/@keyframes bit-[a-z]+\{(?:[^{}]*\{[^{}]*\})*\}/g) || [];
+    ok(frames.length === 5 && frames.every(f => !/filter|box-shadow|width|height|top|left/.test(f)), 'Bit\'s moves change place, size, turn and (for the blink) opacity only: ' + frames.length);
+    const blinkRule = /:root:not\(\[data-still\]\) :is\(([^)]*)\) \.blink\{animation:bit-blink/.exec(block);
+    ok(blinkRule && blinkRule[1] === floats[1] && /\.bit \.blink\{opacity:0\}/.test(css), 'blinking only where Bit floats; anywhere else the eyes stay open');
+  }
+  console.log('T 2.7 Bit moves: done');
 }
 // ---- 2.5: a lesson as a file for friends, the Android back button, the hint to install ----
 {
@@ -676,7 +815,7 @@ const imp = A => { A.ACT['imp-open'](); const h = A.els.app.innerHTML; A.ACT['im
 {
   let seed = 20261118; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff };
   const clock = { t: new Date(2026, 10, 18, 7, 0, 0).getTime() }; let A = fresh(clock, { lvl: 1, coins: 0 });
-  const all = A.S.words.map(w => w.id); let rounds = 0, opened = 0, coinsFromChests = 0, maxInv = 0, boostedRounds = 0, bad = [];
+  const all = A.S.words.map(w => w.id); let rounds = 0, opened = 0, coinsFromChests = 0, maxInv = 0, boostedRounds = 0, chestSkins = 0, bad = [];
   const note = m => { if (bad.length < 6) bad.push(m) };
   for (let d = 0; d < 90; d++) {
     const dayStart = new Date(2026, 10, 18 + d, 0, 0, 0).getTime();
@@ -698,7 +837,7 @@ const imp = A => { A.ACT['imp-open'](); const h = A.els.app.innerHTML; A.ACT['im
       rounds++;
       if (A.S.result && A.S.result.coinSum !== A.S.prog.coins - c0) note('day ' + d + ': coin sum ' + A.S.result.coinSum + ' but wallet +' + (A.S.prog.coins - c0));
       // open some of the chests
-      for (const c of A.S.prog.inv.slice()) if (rnd() < .8) { const before = A.S.prog.coins; let r; do { r = A.tapChest(c.id, rnd) } while (r && !r.open); if (r) { opened++; coinsFromChests += A.S.prog.coins - before; if (A.S.prog.coins - before !== r.loot.coins + r.loot.freezeCoins) note('chest paid ' + (A.S.prog.coins - before) + ' but showed ' + JSON.stringify(r.loot)) } }
+      for (const c of A.S.prog.inv.slice()) if (rnd() < .8) { const before = A.S.prog.coins; let r; do { r = A.tapChest(c.id, rnd) } while (r && !r.open); if (r) { opened++; if (r.loot.skin) { chestSkins++; if (!A.S.prog.outfits[r.loot.skin]) note('a skin was shown but not given') } coinsFromChests += A.S.prog.coins - before; if (A.S.prog.coins - before !== r.loot.coins + r.loot.freezeCoins) note('chest paid ' + (A.S.prog.coins - before) + ' but showed ' + JSON.stringify(r.loot)) } }
       const p = A.S.prog; maxInv = Math.max(maxInv, p.inv.length);
       if (!(p.coins >= 0) || !(p.freezes >= 0 && p.freezes <= 2) || !Number.isFinite(p.xp) || (p.boost && !(p.boost.rounds > 0))) note('day ' + d + ': state off ' + JSON.stringify([p.coins, p.freezes, p.xp, p.boost]));
       if (p.inv.some(c => A.TIERS.indexOf(c.tier) < 0 || !c.id || c.status !== 'READY' || 'unlockWindowEnd' in c)) note('day ' + d + ': odd chest in the bag');
@@ -709,6 +848,7 @@ const imp = A => { A.ACT['imp-open'](); const h = A.els.app.innerHTML; A.ACT['im
   ok(!bad.length, 'play-through found: ' + bad.join(' | '));
   const p = A.S.prog; ok(p.chestsWon >= p.chestsOpened && p.chestsOpened === opened, 'every opened chest was won first: ' + p.chestsWon + ' won, ' + opened + ' opened');
   ok(boostedRounds / rounds < .3, 'the booster stays a small extra: ' + boostedRounds + ' of ' + rounds + ' rounds boosted');
-  console.log('T play-through: 90 days,', rounds, 'rounds,', boostedRounds, 'boosted,', p.chestsWon, 'chests won,', opened, 'opened,', p.chestUps, 'upgrades,', coinsFromChests, 'coins from chests, wallet', p.coins, '(earned ' + p.coinsEarned + '), level', A.levelInfo(p.xp).n, ', most chests waiting', maxInv);
+  ok(chestSkins <= 12, 'skins from chests in 90 days: not a flood (how many on average is measured over many runs, see CHEST): ' + chestSkins);
+  console.log('T play-through: 90 days,', rounds, 'rounds,', chestSkins, 'skins from chests,', boostedRounds, 'boosted,', p.chestsWon, 'chests won,', opened, 'opened,', p.chestUps, 'upgrades,', coinsFromChests, 'coins from chests, wallet', p.coins, '(earned ' + p.coinsEarned + '), level', A.levelInfo(p.xp).n, ', most chests waiting', maxInv);
 }
 console.log(fails ? fails + ' FAILED' : 'ALL OK'); process.exitCode = fails ? 1 : 0;

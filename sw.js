@@ -1,9 +1,9 @@
 // Voc a Bit service worker: lets the app start without internet and picks up new versions.
 // The page and the lesson lists are asked from the network first, with a short time limit so a poor
 // connection never keeps the app from starting. Icons, manifest and fonts come from the cache.
-const CACHE = 'wordbox-v2.6';
+const CACHE = 'wordbox-v2.7';
 const PREFIX = 'wordbox-v';          // other apps live on the same address; only our own caches are touched
-const CORE = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './lists/index.json'];
+const CORE = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './lists/index.json', './skins/bit.webp'];
 const FONTS = /^fonts\.(googleapis|gstatic)\.com$/;
 const WAIT = 3500;                   // ms before a cached copy answers instead of a slow network
 
@@ -20,11 +20,13 @@ self.addEventListener('activate', event => {
     const fresh = await caches.open(CACHE);
     for (const key of await caches.keys()) {
       if (key === CACHE || key.indexOf(PREFIX) !== 0) continue;
-      // Fonts move over to the new cache, so the first offline start after an update still has them.
+      // Fonts and the pictures of the figures (skins/) move over to the new cache, so the first offline start after an
+      // update still has them. A picture never changes under its name: a new drawing gets a new file name.
       const old = await caches.open(key);
       try {
         for (const req of await old.keys()) {
-          if (!FONTS.test(new URL(req.url).hostname)) continue;
+          const u = new URL(req.url);
+          if (!FONTS.test(u.hostname) && !(u.origin === self.location.origin && u.pathname.includes('/skins/'))) continue;
           const res = await old.match(req);
           if (res && res.ok && !(await fresh.match(req))) await fresh.put(req, res);
         }

@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 18.11.2026 · Version 2.6 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 23.11.2026 · Version 2.7 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,21 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.7 (23.11.2026, Wunsch Thomas: Adventskalender, „um ihm das Warten auf Heiligabend zu versüßen“).**
+  - 24 Türchen, Karte auf der Startseite ab dem 1. Dezember, vorher keine Spur. Hinter jedem Türchen: englisches Weihnachtswort des Tages mit Vorlesen, ein Rätsel oder Wissen über Weihnachten in Großbritannien, an 16 Tagen ein Geschenk (Truhen, Münzen, Serien-Schutz, kleiner Booster).
+  - Entscheidungen Thomas: Türchen sind frei (keine Lernbedingung). An den Tagen 6., 13., 20. und 24. liegt ein Skin der Winter-Linie hinter dem Türchen (siehe unten).
+  - Nichts verfällt: Verpasste Türchen warten, auch nach Weihnachten. Kein Satz des Kalenders droht oder drängt (Test dazu).
+  - **Familienfotos:** Thomas wollte 24 Fotos aus dem Album hinter den Türchen. Die App nutzt zurzeit nur sein Sohn, die Web-Adresse und das Repo sind aber öffentlich. Deshalb liegen die Fotos nicht in der App, sondern in einem privaten Paket, das nur auf das Handy geladen wird (`tools/advent-paket.py`, siehe Aufgabe 10). Im Paket können je Türchen ein Foto, ein Satz und ein Gutschein stehen.
+  - Geprüft im Browser mit vorgestelltem Datum und einem Paket aus Probebildern: Karte, Raster, Türchen mit Foto, Neustart (Foto kommt aus der Datenbank, Geschenk nur einmal), hell und dunkel. **Nicht am iPhone geprüft:** ob die Home-Bildschirm-App die Datei annimmt und die Fotos über Tage behält.
+  - **Winter-Linie „Frostnacht-Legenden“ eingebaut (23.11., Bilder von Thomas mit ChatGPT gemacht, weil ihm die gezeichneten Figuren nicht so gut gefielen).** Neun Bildraster liegen als `skins/*.webp` im Repo (zusammen 1,8 MB), geschnitten mit `tools/make-skins.py`.
+    - Der neue Bit ist die Standardfigur. Der gezeichnete Bit bleibt als „Bit Klassik“ für alle wählbar, die 14 gezeichneten Skins stehen im Shop unter „Klassiker“. Wer einen alten Skin trägt, behält ihn an.
+    - Acht neue Skins im Shop (80 bis 500 Münzen): Schneeschatten-Shinobi, Rentier-Ranger, Polar-Popstar, Keks-Krieger, Turbo-Wichtel, Kapitän Knack, Frostflügel, Aurora-Legende.
+    - Adventskalender: Türchen 6 schenkt den Rentier-Ranger, 13 den Keks-Krieger, 20 den Kapitän Knack, 24 die Aurora-Legende. Wer den Skin schon hat, bekommt die Diamanttruhe des Tages. Ein Türchen, das vor den Skins geöffnet wurde, reicht den Skin beim nächsten Start nach.
+    - Truhen können einen fehlenden Skin enthalten: Silber 1 % (nur Selten), Gold 3 % (bis Episch), Diamant 10 % (bis Legendär), Mythisch nie. Jeder Skin lässt sich auch kaufen. **Korrektur vom selben Tag:** Zuerst standen die Chancen doppelt so hoch, und ich hatte Thomas „4 Skins in 90 Tagen“ genannt. Das war ein einzelner Lauf. Über 24 Läufe gemessen waren es 9 (eine Runde am Tag) bis 11 (zwei Runden), also die Hälfte aller Skins in drei Monaten. Mit den halbierten Chancen sind es etwa 5 bis 6 (Spanne 2 bis 11).
+    - Von mir gesetzt, von Thomas noch nicht bestätigt: neuer Bit als Standard, die Preise, welcher Skin hinter welchem Türchen liegt, die Chancen in den Truhen.
+    - Das Abzeichen „Skin-Sammler“ verlangt jetzt 22 statt 14 Skins; wer es hat, behält es.
+  - **Bit bewegt sich (23.11., Wunsch Thomas nach einer Animations-Demo von ChatGPT).** Bit schwebt sanft auf dem Start, im Shop (die gewählte Figur), nach einer Runde und im Profil. Im Quiz steht er still, solange die Frage offen ist, und antwortet einmal: Hüpfer bei richtig, Kopfschütteln bei falsch. Alle 22 Skins haben einen Glanzstreifen, der alle paar Sekunden über die Figur läuft (Wunsch Thomas; zuerst hatte ihn nur die Aurora-Legende). Bit selbst und Bit Klassik glänzen nicht. Der Streifen läuft nur dort, wo Bit schwebt; im Shop nur bei der gewählten Figur. Einen ruhigen Lichtschein haben nur die beiden mythischen Skins. Abschaltbar unter Einstellungen → „Bit bewegt sich“; „Bewegung reduzieren“ im Handy wird beachtet. Anders als in der Demo: kein pulsierender Leuchtrand (Akku), Glanz nur auf der Figur statt als Oval darüber. Blinzeln ist bestellt: Die Nachrichten für ChatGPT stehen in `entwurf/chatgpt-blinzeln.md` (je Figur das Raster noch einmal, mit geschlossenen Augen in den drei Feldern fröhlich, denkt nach, staunt), die Antworten kommen nach `entwurf/xmas/blinzeln/`. **Stand 23.11. abends:** Für die Aurora-Legende ist das Blinzeln eingebaut und im Film geprüft (alle 4,4 s, vier Bilder lang, nur wo Bit schwebt). Das Bild von ChatGPT war außerhalb der Augen auf den Pixel gleich, die Nachricht taugt also. Danach Frage Thomas: Passen dieselben Augen nicht auf alle Figuren? Gemessen und ausprobiert: ja. Alle neun Bild-Figuren blinzeln jetzt mit den geschlossenen Augen der Aurora-Legende (`tools/make-skins.py` leiht sie aus und findet die Stelle selbst). Weitere Bilder von ChatGPT sind dafür nicht nötig. Die 14 gezeichneten Klassiker und Bit Klassik blinzeln nicht. Sprechen bräuchte weitere Felder. Gemessen in Chrome ohne Fenster: Schweben −3 bis +2 px, Hüpfer 12 px, Kopfschütteln ±9 Grad, bei offener Frage keine Bewegung. Film dazu in `entwurf/` (nicht im Repo). Nicht am iPhone geprüft.
+    - Geprüft im Browser: Startseite mit neuem Bit, Shop mit drei Abschnitten, Kauf und Tragen, Stimmungswechsel im Quiz. Nicht am iPhone geprüft, auch nicht, wie schnell die Bilder dort beim ersten Mal laden.
 - **Version 2.6 (18.11.2026, „Hebel 1“ aus der Lern-Überlegung: vom Ankreuzen zum Selbst-Schreiben).** Anlass: Bis 2.5 enthielt „Weiter lernen“ keine einzige Schreibfrage; ein Wort galt als „sitzt“, ohne je geschrieben worden zu sein, die Klassenarbeit verlangt aber Schreiben. Befund aus der Forschung dazu: Geübt werden sollte in der Form, in der geprüft wird.
   - **Leiter:** Im Mix folgt die Frageart dem Fach: neu und Fach 1 erkennen, Fach 2 mit Hilfe (Lücke oder Hörfrage), Fach 3 aus dem Kopf schreiben, Fach 4–5 gemischt mit gelegentlichem Schreiben. Höchstens vier von zehn Fragen werden geschrieben.
   - **Tor:** Von Fach 3 nach Fach 4 („sitzt“) kommt ein Wort nur durch Schreiben. Richtig angekreuzt zählt, das Wort wartet aber in Fach 3; die Rückmeldung sagt es („Das Wort sitzt, sobald du es selbst geschrieben hast“), die Vokabelliste zeigt „als Nächstes: schreiben“. Wörter, die vorher in Fach 4 oder 5 lagen, bleiben dort.
@@ -149,6 +164,25 @@ Eine unabhängige Durchsicht fand nichts, was den Lernstand gefährdet, aber 15 
 - Quest „Lerne N neue Wörter“ zählt die erste richtige Antwort eines Wortes, auch im zweiten Versuch.
 - „Sicherung laden“ zahlt für neue Abzeichen die Münzen. Alle Fragen beantwortet und dann X = fertige Runde. Stations-Knopf nennt die echte Fragenzahl. Flamme am Update-Tag. Abzeichen-Blatt ohne Division durch null. `sw.js` mit try/catch beim Umziehen der Schriften.
 
+### 10. Adventskalender: Fotopaket bauen und laden (Thomas, bis 30.11.) – offen
+
+1. Einen Ordner **außerhalb** von `wordbox` anlegen, zum Beispiel `~/Downloads/voc-a-bit-advent-privat`.
+2. Bis zu 24 Fotos hineinlegen. Welches Foto zu welchem Türchen gehört, steht in `texte.txt` (`7 Foto: IMG_0260.JPG`) oder im Dateinamen (`07.jpg`).
+3. In `texte.txt` stehen auch die Sätze und Gutscheine, eine Zeile je Eintrag: `7: Weißt du noch? Unser Sommer am Meer.` und `7 Gutschein: Heute suchst du den Film aus.`
+
+**Stand 23.11.:** Thomas hat 24 Fotos in den Ordner gelegt (April 2025 bis Oktober 2026, unnummeriert). Die Reihenfolge und 24 kurze Sätze hat Claude auf seinen Wunsch geschrieben und in `texte.txt` eingetragen; vier Gutscheine stehen dort als Vorschlag, auskommentiert. Das Paket ist gebaut (24 Fotos, 3,2 MB) und von der App im Test angenommen. Offen: Thomas liest die Sätze gegen, dann Schritte 5 bis 7.
+4. Paket bauen (das Skript sieht sich die Fotos nicht an, es verkleinert und verpackt sie nur):
+
+```bash
+cd ~/Downloads/wordbox && python3 tools/advent-paket.py ~/Downloads/voc-a-bit-advent-privat
+```
+
+5. Die Datei `Voc-a-Bit-Adventspaket-2026.json` per AirDrop aufs iPhone schicken und in „Dateien“ sichern.
+6. In der App laden. Vor dem 1. Dezember: Vokabeln → „Neue Vokabeln hinzufügen“ → „Datei öffnen“. Ab dem 1. Dezember auch: Erfolge → Einstellungen → Adventskalender → „Fotopaket laden“.
+7. Prüfen: Unter Einstellungen steht dann „Auf diesem Gerät liegt ein Fotopaket: 24 Fotos …“. Die Datei danach vom iPhone löschen, damit sie nicht herumliegt.
+
+Die App muss vorher auf 2.7 sein. Nach einer Neuinstallation der App das Paket einfach noch einmal laden.
+
 ### 9. Lernerfolg: die übrigen Hebel aus der Überlegung vom 18.11. – offen, Thomas entscheidet die Reihenfolge
 
 Thomas wollte wissen, wie die App nach dem Stand der Lernforschung mehr Lernerfolg bringt. Fünf Hebel, nach Wirkung sortiert; Hebel 1 ist Version 2.6.
@@ -204,6 +238,7 @@ Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-T
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 23.11.2026 | Mac, Browser in Handy-Größe, Version 2.7 | Mit echtem Datum (23.11.) keine Spur vom Kalender. Uhr der Seite auf 3.12. gestellt: Karte „3 Türchen warten auf dich“, Raster mit 24 Türchen, Türchen 8 nennt seinen Tag und bleibt zu. Paket aus 22 Probebildern über Einstellungen geladen (23 Einträge in der Datenbank). Türchen 3: Foto, Satz, Wort des Tages, +10 Münzen. Nach Neuladen: Türchen offen, Foto kommt aus der Datenbank, kein zweites Geschenk. Türchen 1: Rätsel zeigt Antwort auf Tippen, Foto bleibt. Türchen 6 im Dunkelmodus mit Gutschein und Diamanttruhe. Keine Fehler in der Konsole. |
 | 18.11.2026 | Mac, Browser in Handy-Größe, Version 2.6 | Hinweis „Ab Fach 3 schreibst du die Wörter selbst“. Knopf „Weiter lernen“ nennt „9 Wiederholungen + 1 neues Wort“ bei 12 wartenden Wörtern. Hörfrage: Wort wird beim Erscheinen vorgelesen, Knopf „Anhören“, Bedeutung, Eingabefeld; richtig geschrieben +4 XP, Fach 2 → 3. Schreibfragen am Tor: Fach 3 → 4. Neue Wörter weiter zum Ankreuzen. Keine Fehler in der Konsole. |
 | 18.11.2026 | Mac, Browser mit Android-Kennung (375 px), Version 2.5 | Wächter-Eintrag nach dem Start da. Zurück: Reiter → Start, Einstellungen → Erfolge → Start, Runde mit Antwort → „Jetzt aufhören?“ → Runde läuft weiter, Import-Durchsicht → Eingabe. „Teilen“ übergibt `Voc a Bit - Theme 2 Celebrations.txt` (text/plain, 29 kB). Auf einem Stand ohne Theme 2 eingefügt: 152 erkannt, 5 schon vorhanden, 147 gespeichert mit Seiten und Abschnitten, Stationen im Lernpfad. Installieren-Karte hell und dunkel, Knopf ruft Chrome einmal. Einstellungen ohne iPhone-Hinweise. Anleitung: „Teilen“ zeigt drei Schritte, „Datei senden“ übergibt die Datei mit Kopfzeilen, Karte „Lektion von einem Freund?“ auf der Import-Seite. |
 | 18.11.2026 | Mac, Browser, Version 2.4 | Stand aus 2.3 mit 3.400 XP geladen: Hinweis „Mehr XP für jede richtige Antwort!“, Level 11 „noch 425 XP“, Leiste „1,5x XP für deine nächste Runde“, richtige Antwort „+5 XP · 1,5x“, Ergebnis mit Zeile „XP-Booster“, Booster danach verbraucht. Keine Fehler in der Konsole. |

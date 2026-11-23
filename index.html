@@ -94,6 +94,15 @@ ol,ul{margin:0;padding:0;list-style:none}
 .ms{width:1em;height:1em;font-size:24px;display:inline-block;flex:none;vertical-align:middle;overflow:visible}
 .art{width:24px;height:24px;display:inline-block;flex:none;vertical-align:middle}
 .bit{display:block;flex:none}
+/* a picture figure has air around it for hats and sparkles; enlarged a little it stands as tall as the drawn ones.
+   scale is a property of its own, so the animations that use transform keep working */
+.bit.pic{scale:1.16}
+/* shiny: every skin has a streak of light that runs across it now and then, cut to the outline of the figure. Until
+   it runs it waits beside the figure. aura: the rarest skins also have a soft light around them; it does not move
+   (a moving shadow would be drawn anew in every frame) */
+.bit.aura{filter:drop-shadow(0 0 3px rgba(110,235,220,.55))}
+.bit.shiny .sheen{transform:translateX(-300px)}
+.bit .blink{opacity:0}      /* the closed eyes lie over the figure and show for a blink only */
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 #app{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .ipa{font-family:var(--f-ipa);color:var(--ink-3);font-size:.9em;font-weight:400}
@@ -290,6 +299,42 @@ ol,ul{margin:0;padding:0;list-style:none}
 .review .art{width:40px;height:40px}
 .review h3{font-size:17px}
 .review p{font-size:14px;color:var(--ink-2);line-height:1.3}
+.advent-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px 16px;border:0;border-radius:var(--r-lg);background:var(--hue);color:#fff;box-shadow:0 5px 0 var(--hue-deep)}
+.advent-card:active{transform:translateY(3px);box-shadow:0 2px 0 var(--hue-deep)}
+.advent-card .ic{width:48px;height:48px;border-radius:15px;background:var(--surface);display:grid;place-items:center;flex:none}
+.advent-card .ic .art{width:32px;height:32px}
+.advent-card b{font:900 18px var(--f-ui);display:block}
+.advent-card small{font-size:14px;line-height:1.3;display:block}
+.advent-card .count{min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:var(--surface);color:var(--ink);font:900 15px var(--f-ui);display:grid;place-items:center;flex:none}
+.advent-card .ms{flex:none}
+.doors{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding-bottom:8px}
+.door{position:relative;aspect-ratio:1;border:0;border-radius:18px;background:var(--hue);color:#fff;box-shadow:0 5px 0 var(--hue-deep);display:grid;place-items:center;font:900 26px var(--f-ui)}
+.door b{font:inherit}
+.door:active{transform:translateY(3px);box-shadow:0 2px 0 var(--hue-deep)}
+.door .art,.door .ms{position:absolute;right:7px;top:7px;width:20px;height:20px}
+.door.is-ready::after{content:"";position:absolute;inset:-5px;border-radius:23px;border:3px solid var(--gold);pointer-events:none}
+.door.is-open{background:var(--surface);color:var(--ink-2);box-shadow:inset 0 0 0 2px var(--line-2)}
+.door.is-open:active{transform:none;box-shadow:inset 0 0 0 2px var(--line-2)}
+.door-dlg{gap:12px;align-items:stretch}
+.door-dlg .pill{align-self:center}
+.door-pic{width:100%;max-height:38vh;object-fit:contain;border-radius:16px;background:var(--surface-2)}
+.door-dlg > .btn-xl{position:sticky;bottom:6px;flex:none}
+.door-text{font-size:16px;line-height:1.4;color:var(--ink)}
+.door-gift{text-align:left}
+.door-gift .art{width:32px;height:32px;flex:none}
+.door-word{display:flex;gap:10px;align-items:center;text-align:left;padding:12px 14px;border-radius:var(--r-md);background:var(--surface-2)}
+.door-word small{display:block;font:800 12px var(--f-ui);color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em}
+.door-word b{font:900 20px var(--f-ui);display:block}
+.door-word .de{font-size:15px;color:var(--ink-2);line-height:1.3}
+.door-word .ex{font-size:14px;color:var(--ink-2);font-style:italic;margin-top:2px;line-height:1.3}
+.fun{display:flex;flex-direction:column;gap:6px;align-items:center;padding:12px 14px;border-radius:var(--r-md);background:var(--royal-soft);color:var(--ink)}
+.fun b{font:800 16px var(--f-ui);line-height:1.3}
+.fun small{font-size:14px;color:var(--ink-2);line-height:1.35}
+.fun .ans{font:900 19px var(--f-ui);color:var(--royal)}
+.loots{list-style:none;margin:0;padding:10px 14px;display:flex;flex-direction:column;gap:8px;text-align:left;border-radius:var(--r-md);background:var(--gold-soft);color:var(--gold-ink)}
+.loots li{display:flex;align-items:center;gap:10px;font-size:15px}
+.loots .art{width:28px;height:28px;flex:none}
+.loots .bit,.loot .bit{width:52px;height:52px;flex:none}
 .install{display:flex;flex-direction:column;gap:10px}
 .install .inst-head{display:flex;align-items:center;gap:12px}
 .install .ic{width:44px;height:44px;border-radius:14px;background:var(--royal-soft);color:var(--royal);display:grid;place-items:center;flex:none}
@@ -607,6 +652,13 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 @keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 @keyframes tada{0%{transform:scale(.4) rotate(-12deg);opacity:0}60%{transform:scale(1.15) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
 @keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
+/* Bit moves (since 2.7). Floating uses the property translate, the one-shot moves use transform and a picture figure
+   is enlarged with scale: three properties of their own, so one never cancels another. */
+@keyframes bit-float{0%,100%{translate:0 2px}50%{translate:0 -3px}}
+@keyframes bit-hop{0%{transform:translateY(0)}30%{transform:translateY(-12px) scale(1.04,.97)}55%{transform:translateY(0) scale(.97,1.04)}75%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+@keyframes bit-no{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg)}45%{transform:rotate(8deg)}70%{transform:rotate(-5deg)}88%{transform:rotate(3deg)}}
+@keyframes bit-sheen{0%,58%{transform:translateX(-300px)}84%,100%{transform:translateX(420px)}}
+@keyframes bit-blink{0%,94%{opacity:0}94.01%,97%{opacity:1}97.01%,100%{opacity:0}}
 @keyframes fade-in{from{opacity:0}}
 @keyframes fade-out{to{opacity:0}}
 @keyframes vt-in-right{from{opacity:0;transform:translateX(28px)}}
@@ -614,6 +666,10 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 @keyframes vt-in-up{from{opacity:0;transform:translateY(36px)}}
 @keyframes vt-out-down{to{opacity:0;transform:translateY(24px)}}
 @media (prefers-reduced-motion: no-preference){
+  .door.is-ready::after{animation:doorRing 1.6s ease-in-out infinite}
+  @keyframes doorRing{0%,100%{opacity:.35}50%{opacity:1}}
+  .door-dlg.opened{animation:doorIn .5s var(--spring) both}
+  @keyframes doorIn{from{transform:scale(.7) rotate(-4deg);opacity:0}to{transform:none;opacity:1}}
   .main.enter > *{animation:rise .38s var(--out) both}
   .main.enter > :nth-child(2){animation-delay:.04s}
   .main.enter > :nth-child(3){animation-delay:.08s}
@@ -621,7 +677,16 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
   .main.enter > :nth-child(n+5){animation-delay:.16s}
   .node-flag{animation:bob 1.6s ease-in-out 3}      /* three bobs, under five seconds: nothing on the page moves endlessly */
   .node-pop{animation:pop .3s var(--out) both;transform-origin:calc(50% + var(--x,0px)) 0}
-  .hero-bit.wave{animation:wiggle .9s ease-in-out 2}
+  /* Bit floats where he is the host of the screen: start page, result, profile, and the chosen figure in the shop.
+     Never in the quiz: while a question is open nothing next to it may move. Unlike everything else here the
+     floating goes on without end, so it can be switched off (Einstellungen → „Bit bewegt sich“, data-still on the
+     root). --ft is the place in the cycle at the moment of drawing (set by bit()): the page is drawn anew often,
+     and without it Bit would jump back to the start of the movement each time. */
+  :root:not([data-still]) :is(.hero-bit,.res-bit,.profile .bit,.outfit.on .bit){--float:bit-float 3.2s ease-in-out var(--ft,0s) infinite}
+  .hero-bit,.res-bit,.profile .bit,.outfit.on .bit{animation:var(--float,none)}
+  :root:not([data-still]) :is(.hero-bit,.res-bit,.profile .bit,.outfit.on .bit) .blink{animation:bit-blink 4.4s linear var(--bt,0s) infinite}
+  :root:not([data-still]) :is(.hero-bit,.res-bit,.profile .bit,.outfit.on .bit).shiny .sheen{animation:bit-sheen 4.6s ease-in-out var(--st,0s) infinite}      /* only where Bit floats: 22 streaks at once in the shop would be too much, and the quiz stays calm */
+  .hero-bit.wave{animation:wiggle .9s ease-in-out 2,var(--float,none)}
   .qbody.enter{animation:slide-in .28s var(--out) both}
   .sheet.in{animation:sheet-up .32s var(--out) both}
   .sheet.in .sheet-head .art{animation:pop .45s var(--out) .08s both}
@@ -629,9 +694,11 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
   .opt.is-right.fx{animation:pulse .4s var(--out)}
   .opt.is-wrong.fx{animation:shake .38s}
   .typebox input.no.fx{animation:shake .38s}
-  .qbit.fx{animation:pop .4s var(--out)}
+  .qbit.hop{animation:bit-hop .5s var(--out)}                 /* right answer: a little jump */
+  .qbit.no{animation:bit-no .45s ease-in-out;transform-origin:50% 85%}      /* wrong answer: he shakes his head */
   .combo.fx{animation:pulse .5s var(--out)}
   .result.enter .res-bit,.result.enter .big-art,.result.enter .lvl-badge{animation:tada .6s var(--out) both}
+  .result.enter .res-bit{animation:tada .6s var(--out) both,var(--float,none)}
   .result.enter h1{animation:rise .4s var(--out) .15s both}
   .result.enter .res-hero p,.result.enter .res-sub{animation:rise .4s var(--out) .22s both}
   .result.enter .stat{animation:pop .45s var(--out) both}
@@ -647,6 +714,7 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
   .dialog{animation:pop .32s var(--out) both}
   .bsheet{animation:sheet-up .3s var(--out) both}
   .outfit.on .bit.fx,.bought{animation:pop .4s var(--out)}
+  .outfit.on .bit.fx{animation:pop .4s var(--out),var(--float,none)}
   .skel{animation:fade-in 1.2s ease-in-out infinite alternate}
   .chest-tap.shake .chest-big{animation:chest-shake .45s var(--out)}
   .chest-tap.up .chest-big{animation:tada .6s var(--out)}
@@ -685,7 +753,7 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 const app = document.getElementById('app');
 const toastEl = document.getElementById('toast');
 const DAY = 864e5;
-const APP_VERSION = '2.6';      // must match CACHE in sw.js; tools/check.sh compares both
+const APP_VERSION = '2.7';      // must match CACHE in sw.js; tools/check.sh compares both
 /* Waiting days per box (index = box). 'fast' is the family's physical card box: one box per day,
    so a word answered right every day goes new -> 2 -> 3 -> 4 -> 5 in four days. 'long' spaces further apart.
    Waiting is counted in calendar days: a word answered in the evening is due again the next morning. */
@@ -703,11 +771,11 @@ const store = {
 };
 
 function freshProg() {
-  return { v: 1, econ: 2, name: '', goal: 150, sound: true, speak: true, haptics: true, theme: 'auto', xp: 0, days: {}, streak: 0, best: 0, last: '',
+  return { v: 1, econ: 2, name: '', goal: 150, sound: true, speak: true, haptics: true, motion: true, theme: 'auto', xp: 0, days: {}, streak: 0, best: 0, last: '',
     rounds: 0, perfect: 0, typedRight: 0, pastRight: 0, extraRight: 0, bestCombo: 0, photos: 0, goalDays: 0, goalDay: '', earlyRounds: 0, weekendRounds: 0, speedRounds: 0, modesUsed: {}, mastered: {},
     coins: 0, coinsEarned: 0, freezes: 0, freezeUsed: 0, frozen: {}, roundDays: {}, since2: '', outfit: '', outfits: {}, today: null, quests: null, questsDone: 0, chests: 0, targetsDone: 0,
     badges: {}, w: {}, sel: null, mode: 'mix', len: 10, tempo: 'fast', onboarded: false, v2: false, removedLists: [], targets: [], lvl: 0, shopSeen: 0,
-    inv: [], boost: null, dayChest: '', news: '', chestsWon: 0, chestsOpened: 0, chestUps: 0, updatedAt: 0 };
+    inv: [], boost: null, dayChest: '', news: '', chestsWon: 0, chestsOpened: 0, chestUps: 0, advent: null, updatedAt: 0 };
 }
 
 /* Release 1.3 made XP about five times scarcer (econ 2). Progress saved before that is scaled once,
@@ -731,6 +799,7 @@ function migrateProg(p) {
   if ('boost' in p && !(obj(p.boost) && num(p.boost.mult) && num(p.boost.rounds) && p.boost.rounds > 0)) p.boost = null;
   if (p.w) for (const id in p.w) if (!obj(p.w[id])) delete p.w[id];
   if (p.days) for (const k in p.days) if (!num(p.days[k])) delete p.days[k];
+  if ('advent' in p && p.advent !== null && !(obj(p.advent) && num(p.advent.y) && obj(p.advent.open))) p.advent = null;
   if (p.targets) p.targets = p.targets.filter(t => obj(t) && Array.isArray(t.ids) && typeof t.due === 'string').map(t => { if (!obj(t.base)) t.base = {}; if (!num(t.need)) t.need = 2; if ('write' in t && !num(t.write)) delete t.write; if ('baseT' in t && !obj(t.baseT)) t.baseT = {}; return t });
   if (p.quests) {      // quests: either the places of 2.3 or the day list of 2.2, anything else is drawn again
     const slotsOk = Array.isArray(p.quests.slots) && p.quests.slots.every(q => obj(q) && typeof q.id === 'string' && num(q.need) && obj(q.stat) && typeof q.done === 'string');
@@ -769,7 +838,7 @@ const S = {
   storageOk: true, restore: null,
   filter: 'all', unitFilter: null, search: '',
   quiz: null, result: null, imp: null, confirm: null, delUnit: null, resetAsk: false, tform: null, delTarget: null,
-  openNode: null, sheet: null, chest: null, update: '', stale: false, dayShown: '', installLater: false
+  openNode: null, sheet: null, chest: null, update: '', stale: false, dayShown: '', installLater: false, door: null, advAsk: false
 };
 
 /* ---------- the system underneath ----------
@@ -1546,9 +1615,53 @@ const OUTFITS = [                                   // in shop order, cheapest f
   { id: 'frost', t: 'Frostkaiser', cost: 200, tier: 3, since: 2.1 },
   { id: 'dragon', t: 'Drachenkrieger', cost: 250, tier: 3 },
   { id: 'mecha', t: 'Mecha-Titan', cost: 280, tier: 3, since: 2.1 },
-  { id: 'galaxy', t: 'Galaxienwächter', cost: 400, tier: 4, since: 2.1 }
+  { id: 'galaxy', t: 'Galaxienwächter', cost: 400, tier: 4, since: 2.1 },
+  // line 'fn' = Frostnacht-Legenden, the winter line of 2.7 (pictures, see PICS). Four of them are also behind doors of the
+  // advent calendar, every one can be bought, and a chest may hold one: no skin depends on luck or on a date.
+  { id: 'fn-shinobi', t: 'Schneeschatten-Shinobi', cost: 80, tier: 1, since: 2.7, line: 'fn' },
+  { id: 'fn-ranger', t: 'Rentier-Ranger', cost: 100, tier: 1, since: 2.7, line: 'fn' },
+  { id: 'fn-idol', t: 'Polar-Popstar', cost: 150, tier: 2, since: 2.7, line: 'fn' },
+  { id: 'fn-lebkuchen', t: 'Keks-Krieger', cost: 170, tier: 2, since: 2.7, line: 'fn' },
+  { id: 'fn-tueftler', t: 'Turbo-Wichtel', cost: 190, tier: 2, since: 2.7, line: 'fn' },
+  { id: 'fn-nussknacker', t: 'Kapitän Knack', cost: 260, tier: 3, since: 2.7, line: 'fn' },
+  { id: 'fn-eisdrache', t: 'Frostflügel', cost: 300, tier: 3, since: 2.7, line: 'fn' },
+  { id: 'fn-polarlicht', t: 'Aurora-Legende', cost: 500, tier: 4, since: 2.7, line: 'fn' }
 ];
 const RARITY = ['', 'Selten', 'Episch', 'Legendär', 'Mythisch'];
+/* Picture skins (since 2.7). The new look of Bit and the winter line "Frostnacht-Legenden" are pictures, not
+   drawings: one file per figure in skins/, a sheet of 3 x 2 cells of 360 px with the six moods. The sheets were made
+   with ChatGPT (own designs, no known characters) and cut by tools/make-skins.py. bit() shows one cell of the sheet.
+   PICS: id of the look → file name. '' is Bit himself; the Bit that was drawn before 2.7 stays as "Bit Klassik".
+   A file is loaded when its figure is first shown and then kept by the service worker; Bit's own ships with the app. */
+const PICS = { '': 'bit', 'fn-shinobi': 'fn-shinobi', 'fn-ranger': 'fn-ranger', 'fn-idol': 'fn-idol', 'fn-lebkuchen': 'fn-lebkuchen',
+  'fn-tueftler': 'fn-tueftler', 'fn-nussknacker': 'fn-nussknacker', 'fn-eisdrache': 'fn-eisdrache', 'fn-polarlicht': 'fn-polarlicht' };
+const PIC_CELL = { happy: [0, 0], cheer: [1, 0], oops: [2, 0], think: [0, 1], wow: [1, 1], sleep: [2, 1] };
+/* --ft: where the floating stands right now, so a figure that is drawn again goes on where the last one was. */
+const floatAt = () => { const t = Date.now(), at = ms => '-' + ((t % ms) / 1000).toFixed(2) + 's'; return 'style="--ft:' + at(3200) + ';--st:' + at(4600) + ';--bt:' + at(4400) + '"' };      // floating, streak, blinking
+let picN = 0;      // every shiny figure on the page needs a mask of its own
+/* The streak of light: two slanted white bars that slide across the figure. The figure itself is the mask, so nothing
+   shines beside it. outline: what the mask is made of. k: the bars are measured for a 360 square; a drawn figure
+   lives in a 120 square and scales them down. */
+const sheen = (outline, k) => { const id = 'bm' + (++picN), bar = (x, w) => `<rect x="${x}" y="-40" width="${w}" height="440" fill="url(#${id}g)" transform="skewX(-18)"/>`;
+  return `<defs><mask id="${id}" style="mask-type:alpha">${outline}</mask><linearGradient id="${id}g"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><g mask="url(#${id})"><g${k === 1 ? '' : ` transform="scale(${k})"`}><g class="sheen">${bar(0, 64)}${bar(84, 18)}</g></g></g>` };
+/* Every skin shines (wish of the family, 2.7); Bit himself and Bit Klassik do not, so a skin is something one can see.
+   The rarest skins (Mythisch) also have the soft light around them. */
+const shinyLook = id => OUTFITS.some(o => o.id === id);
+const auraLook = id => OUTFITS.some(o => o.id === id && o.tier === 4);
+const lookCls = id => (shinyLook(id) ? ' shiny' : '') + (auraLook(id) ? ' aura' : '');
+/* Blinking: figures listed here have a second file skins/<file>-blink.webp, a strip of three cells with nothing but
+   the closed eyes for the moods that have open ones. It lies over the figure and shows for a moment. A figure that is
+   not listed does not blink. (The strips come from tools/make-skins.py, which names the figures it made one for.
+   Only the Aurora-Legende has closed eyes drawn for it; the others borrow his, see the script.) */
+const BLINK = ['', 'fn-shinobi', 'fn-ranger', 'fn-idol', 'fn-lebkuchen', 'fn-tueftler', 'fn-nussknacker', 'fn-eisdrache', 'fn-polarlicht'];      // every picture figure; the drawn ones do not blink
+const BLINK_CELL = { happy: 0, think: 1, wow: 2 };
+const bitPic = (file, mood, cls, look) => { const m = PIC_CELL[mood] ? mood : 'happy', c = PIC_CELL[m];
+  const img = `<image href="skins/${file}.webp" x="${-360 * c[0]}" y="${-360 * c[1]}" width="1080" height="720"/>`;
+  const eyes = BLINK.indexOf(look) >= 0 && m in BLINK_CELL ? `<image class="blink" href="skins/${file}-blink.webp" x="${-360 * BLINK_CELL[m]}" y="0" width="1080" height="360"/>` : '';
+  return `<svg class="bit pic${lookCls(look)} ${cls}" ${floatAt()} viewBox="0 0 360 360" aria-hidden="true" focusable="false">${img}${eyes}${shinyLook(look) ? sheen(img, 1) : ''}</svg>` };
+const FREE_LOOKS = [{ id: '', t: 'Bit', tier: 0 }, { id: 'classic', t: 'Bit Klassik', tier: 0 }];      // everyone has these two
+const knownLook = id => id === '' || id === 'classic' || Object.prototype.hasOwnProperty.call(SKINS, id) || Object.prototype.hasOwnProperty.call(PICS, id);
+const ownsLook = id => id === '' || id === 'classic' || !!(S.prog.outfits || {})[id];
 /* h hair, hs hair shadow, hl hair light, iris + glow eyes, cloth + trim clothes and gear; optional: ol outline for hair
    that would vanish against the page, blush cheek colour */
 const SKINS = {
@@ -1570,7 +1683,9 @@ const SKINS = {
 };
 function bit(mood = 'happy', outfit, cls = '') {
   const o = outfit === undefined ? ((typeof S !== 'undefined' && S.prog.outfit) || '') : outfit;
-  const k = SKINS[o] ? o : '', c = SKINS[k];
+  const look = knownLook(o) ? o : '';
+  if (Object.prototype.hasOwnProperty.call(PICS, look)) return bitPic(PICS[look], mood, cls, look);
+  const k = look === 'classic' ? '' : look, c = SKINS[k];      // 'classic': the Bit drawn before 2.7, with the palette under ''
   const ink = '#161D42', skin = '#FFE1C8', shade = '#F2C3A2', gear = '#2B3577', edge = '#8E9AE0', gold = '#FFC21A', goldD = '#D99A00';
   const line = (d, col, w) => `<path d="${d}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
   const spark = (x, y, r, col = gold) => `<path d="M${x} ${y - r}l${r * .28} ${r * .72} ${r * .72} ${r * .28}-${r * .72} ${r * .28}-${r * .28} ${r * .72}-${r * .28}-${r * .72}-${r * .72}-${r * .28} ${r * .72}-${r * .28}z" fill="${col}"/>`;
@@ -1719,9 +1834,13 @@ function bit(mood = 'happy', outfit, cls = '') {
       spark(60, 47.5, 5, gold) + `<ellipse cx="60" cy="7" rx="23" ry="5" fill="none" stroke="${gold}" stroke-width="3"/><ellipse cx="60" cy="7" rx="23" ry="5" fill="none" stroke="#FFF3B0" stroke-width="1"/>`;
     body = torso + spark(60, 111, 5.5, gold) + `<circle cx="10" cy="100" r="4.600" fill="#FF8AD8"/>` + line('M3 102.500q7-5 14-5', '#FFD9F3', 1.6);
   }
-  return `<svg class="bit ${cls}" viewBox="0 0 120 120" aria-hidden="true" focusable="false">` + back + body + ears +
+  const drawing = back + body + ears +
     `<path d="M60 22c24 0 38 17 38 40 0 24-17 43-38 43S22 86 22 62c0-23 14-40 38-40z" fill="${skin}"/>` +
-    blush + eyes + line('M58.800 86.500q1.700 1.300 3.200.200', shade, 1.8) + mouth + fringe + brows + front + extra + `</svg>`;
+    blush + eyes + line('M58.800 86.500q1.700 1.300 3.200.200', shade, 1.8) + mouth + fringe + brows + front + extra;
+  const svgOpen = `<svg class="bit${lookCls(look)} ${cls}" ${floatAt()} viewBox="0 0 120 120" aria-hidden="true" focusable="false">`;
+  if (!shinyLook(look)) return svgOpen + drawing + `</svg>`;
+  const did = 'bd' + (picN + 1);      // the drawing gets a name, so the mask of the streak can point at it instead of repeating it
+  return svgOpen + `<g id="${did}">` + drawing + `</g>` + sheen(`<use href="#${did}"/>`, 1 / 3) + `</svg>`;
 }
 /* Small multi-colour pictures; the monochrome line icons stay in the sprite. */
 const ART = {
@@ -1733,6 +1852,7 @@ const ART = {
   crown: `<path d="M3.500 18.500 2 7.500l5.500 4.500L12 4l4.500 8L22 7.500l-1.500 11z" fill="#FFC21A" stroke="#E3A100" stroke-width="1.200" stroke-linejoin="round"/><rect x="4" y="19.300" width="16" height="2.500" rx="1.200" fill="#E3A100"/>`,
   shield: `<path d="M12 1.800 3.500 5v6.300c0 5.200 3.600 9.300 8.500 10.900 4.900-1.600 8.500-5.700 8.500-10.900V5z" fill="#4DB8FF"/><path d="M12 1.800v20.400c4.900-1.600 8.500-5.700 8.500-10.900V5z" fill="#2E9BEA"/><path d="M12 7v9M8.100 9.200l7.800 4.600M15.900 9.200l-7.800 4.600" stroke="#fff" stroke-width="1.700" stroke-linecap="round"/>`,
   target: `<circle cx="12" cy="12" r="10" fill="#E5484D"/><circle cx="12" cy="12" r="6.700" fill="#fff"/><circle cx="12" cy="12" r="3.400" fill="#E5484D"/>`,
+  gift: `<path d="M3.500 11.500h17v7.500a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z" fill="#D43A40"/><path d="M2.500 7.500h19v4.300h-19z" fill="#F0575C"/><path d="M10.400 7.500h3.200V21h-3.200z" fill="#FFC21A"/><path d="M12 7.500C10.600 4 6.300 3.300 6.300 5.700c0 1.700 2.900 2 5.700 1.800zm0 0c1.400-3.500 5.700-4.200 5.700-1.800 0 1.700-2.900 2-5.700 1.800z" fill="#FFC21A"/>`,
   chest: `<path d="M3 10.500h18v8.300a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="#B5733C"/><path d="M5.500 3.500h13A2.500 2.500 0 0 1 21 6v4.500H3V6a2.500 2.500 0 0 1 2.500-2.500z" fill="#D08B4C"/><path d="M3 9.300h18v2.400H3z" fill="#FFC21A"/><rect x="9.800" y="8" width="4.400" height="5.600" rx="1.200" fill="#FFD95A" stroke="#B97F00" stroke-width="1"/><path d="M7 3.500v5.800M17 3.500v5.800M7 11.700v9.100M17 11.700v9.100" stroke="#8A5A2B" stroke-width="1.200"/>`,
   chestOpen: `<path d="M3 11.500h18v7.300a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="#B5733C"/><path d="M4.200 1.800h15.600l1.200 6H3z" fill="#D08B4C"/><path d="M3 7.800h18v1.700H3z" fill="#8A5A2B"/><path d="M4.500 11.500 6 8.300h12l1.500 3.200z" fill="#FFD95A"/><circle cx="9" cy="9.600" r="1.900" fill="#FFC21A" stroke="#B97F00" stroke-width=".700"/><circle cx="13.500" cy="9" r="1.900" fill="#FFC21A" stroke="#B97F00" stroke-width=".700"/><circle cx="16.200" cy="10.300" r="1.500" fill="#FFC21A" stroke="#B97F00" stroke-width=".700"/><path d="M7 11.500v9.300M17 11.500v9.300" stroke="#8A5A2B" stroke-width="1.200"/>`,
   check: `<circle cx="12" cy="12" r="10" fill="#17A865"/><path d="m7.200 12.300 3.200 3.200 6.400-6.600" stroke="#fff" stroke-width="2.600" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
@@ -1859,12 +1979,19 @@ const TIERS = ['COMMON', 'RARE', 'EPIC', 'MEGA'];
    was a matter of luck. Since 2.4 the steady XP are higher instead and the booster is a small extra: about every
    fifth round, mostly 1,5x, only the Diamond chest gives 2x. */
 const CHEST = {
-  COMMON: { t: 'Holztruhe',    coins: [4, 8],    boost: [0, 1, 0],     freeze: 0 },
-  RARE:   { t: 'Silbertruhe',  coins: [10, 18],  boost: [.08, 1.5, 1], freeze: .10 },
-  EPIC:   { t: 'Goldtruhe',    coins: [25, 45],  boost: [.20, 1.5, 1], freeze: .25 },
-  MEGA:   { t: 'Diamanttruhe', coins: [60, 120], boost: [1, 2, 1],     freeze: .50 }
+  COMMON: { t: 'Holztruhe',    coins: [4, 8],    boost: [0, 1, 0],     freeze: 0,   skin: [0, 0] },
+  RARE:   { t: 'Silbertruhe',  coins: [10, 18],  boost: [.08, 1.5, 1], freeze: .10, skin: [.01, 1] },
+  EPIC:   { t: 'Goldtruhe',    coins: [25, 45],  boost: [.20, 1.5, 1], freeze: .25, skin: [.03, 2] },
+  MEGA:   { t: 'Diamanttruhe', coins: [60, 120], boost: [1, 2, 1],     freeze: .50, skin: [.10, 3] }
 };
-const CHEST_SOURCE = { DAILY_QUEST: 'Quest', DAILY: 'Heute geübt', PATH_MILESTONE: 'Lernpfad', LEVEL_UP: 'Neues Level', STREAK: 'Serie', EARLY_BIRD: 'Frühaufsteher', NIGHT_OWL: 'Nachteule' };
+/* skin: [chance, highest rarity] (since 2.7). A chest may hold a skin the child does not have yet: Selten from a
+   silver chest, up to Episch from gold, up to Legendär from diamond. Mythisch never comes from a chest. The chance
+   is small on purpose, and every skin can also be bought: nobody depends on luck. Played through 24 times over 90
+   days with the real code: about 5 skins at one round a day, about 6 at two (between 2 and 11). With twice these
+   chances it was 9 and 11, half of all skins in three months. One single run had shown 4 and misled: these numbers
+   need many runs, the dice inside a round are not fixed. */
+const chestSkins = maxTier => OUTFITS.filter(o => o.tier <= maxTier && !ownsLook(o.id));
+const CHEST_SOURCE = { DAILY_QUEST: 'Quest', DAILY: 'Heute geübt', PATH_MILESTONE: 'Lernpfad', LEVEL_UP: 'Neues Level', STREAK: 'Serie', ADVENT: 'Adventskalender', EARLY_BIRD: 'Frühaufsteher', NIGHT_OWL: 'Nachteule' };
 const UPGRADE_CHANCE = .2, FREEZE_MAX = 2, FREEZE_FULL_COINS = 12, ROUNDS_PER_CHEST = 5;
 const STREAK_CHESTS = { 3: 'COMMON', 7: 'RARE', 14: 'RARE', 30: 'EPIC', 50: 'EPIC', 100: 'MEGA' };
 
@@ -1883,6 +2010,7 @@ function rollLoot(tier, rnd = Math.random) {
   const loot = { coins: lo + Math.floor(rnd() * (hi - lo + 1)), boost: null, freeze: false, freezeCoins: 0 };
   if (rnd() < d.boost[0]) loot.boost = { mult: d.boost[1], rounds: d.boost[2] };
   if (d.freeze && rnd() < d.freeze) loot.freeze = true;
+  if (d.skin && d.skin[0] && rnd() < d.skin[0]) { const pool = chestSkins(d.skin[1]); if (pool.length) loot.skin = pool[Math.min(pool.length - 1, Math.floor(rnd() * pool.length))].id }
   return loot;
 }
 function applyLoot(loot) {
@@ -1890,7 +2018,11 @@ function applyLoot(loot) {
   addCoins(loot.coins);
   if (loot.boost) addBoost(loot.boost.mult, loot.boost.rounds);
   if (loot.freeze) { if ((p.freezes || 0) < FREEZE_MAX) p.freezes = (p.freezes || 0) + 1; else { loot.freezeCoins = FREEZE_FULL_COINS; addCoins(FREEZE_FULL_COINS) } }
+  if (loot.skin) { if (ownsLook(loot.skin)) delete loot.skin; else giveLook(loot.skin) }
 }
+/* A skin that was not bought: from a chest or from a door of the advent calendar. It is not put on, the child decides. */
+function giveLook(id) { const p = S.prog; p.outfits = p.outfits || {}; if (!p.outfits[id]) p.outfits[id] = todayKey() }
+const lookName = id => { const o = OUTFITS.find(x => x.id === id); return o ? o.t : 'Skin' };
 /* One tap on a chest. Taps 1 and 2 may lift it one tier, tap 3 opens it and pays out. Every tap is saved at once,
    so closing the app in between does not give a second roll. */
 function tapChest(id, rnd = Math.random) {
@@ -1912,6 +2044,223 @@ const xpMult = () => { const b = S.prog.boost; return b && b.rounds > 0 && b.mul
 function addBoost(mult, rounds) { const b = S.prog.boost, on = xpMult() > 1; S.prog.boost = { mult: Math.max(mult, on ? b.mult : 1), rounds: (on ? b.rounds : 0) + rounds } }
 function useBoost() { const b = S.prog.boost; if (!b) return; b.rounds--; if (!(b.rounds > 0)) S.prog.boost = null }      // one boosted round is over
 const boosted = (xp, m) => Math.round(xp * m) - xp;                      // the extra XP a booster adds
+
+/* ---------- advent calendar (since 2.7) ----------
+   24 doors in December, a present from the family to sweeten the wait for Christmas Eve. The rules:
+   - A door can be opened from its day on (the date of the device) and never closes again. A missed door waits,
+     also after Christmas. No countdown, nothing expires (see "Kein Zeitdruck").
+   - Opening is free. It is a present, not a reward for learning.
+   - Behind every door: the English Christmas word of the day, something to smile about, now and then a gift.
+   - Family photos and words from the parents are private. They never ship with the app, because this page is
+     public: they come as one file that is loaded on this device only (advImport) and lives in the device's own
+     database, outside the learning progress and its backup.
+   prog.advent = { y, open: { day: 'YYYY-MM-DD' } }. The card on the start page shows from 1 December to 6 January,
+   after that the calendar stays reachable under Erfolge.
+   The update that brings the calendar says nothing about it (NEWS stays as it was): it simply is there on 1 December. */
+const ADVENT_YEAR = 2026;
+/* One entry per door. fun: ['q', question, answer, help in German] a joke or riddle that hides its answer,
+   ['f', headline, text] something about Christmas in Britain, ['t', tongue twister, help].
+   gift: chest (tier), coins, freeze (Serien-Schutz), boost [factor, rounds].
+   skin: the skin of the winter line that this door gives (6, 13, 20 and 24 December). Whoever has it already,
+   bought or found, gets the chest of the day instead. */
+const ADVENT = [
+  { en: 'Advent calendar', de: 'Adventskalender', ex: 'I open my Advent calendar every morning.', fun: ['q', 'What falls in winter but never gets hurt?', 'Snow!', 'Was fällt im Winter und tut sich nie weh? Der Schnee.'], gift: { chest: 'RARE' } },
+  { en: 'snowflake', de: 'Schneeflocke', ex: 'Every snowflake looks different.', fun: ['q', 'What do snowmen eat for breakfast?', 'Snowflakes!', 'Was essen Schneemänner zum Frühstück? Schneeflocken. Das klingt wie Cornflakes.'] },
+  { en: 'candle', de: 'Kerze', ex: 'We light a candle every Sunday.', fun: ['f', 'Ein Baum aus Norwegen', 'Der große Weihnachtsbaum auf dem Trafalgar Square in London ist jedes Jahr ein Geschenk aus Norwegen. Das ist seit 1947 so.'], gift: { coins: 10 } },
+  { en: 'gingerbread', de: 'Lebkuchen', ex: 'Grandma bakes gingerbread.', fun: ['q', 'What do you call an old snowman?', 'Water!', 'Wie nennt man einen alten Schneemann? Wasser.'] },
+  { en: 'stocking', de: 'Weihnachtsstrumpf', ex: 'Children hang up a stocking on Christmas Eve.', fun: ['f', 'Geschenke am Morgen', 'Britische Kinder hängen am 24. Dezember abends einen Strumpf auf. Die Geschenke gibt es erst am Morgen des 25. Dezember.'], gift: { freeze: 1 } },
+  { en: 'Father Christmas', de: 'Weihnachtsmann', ex: 'Father Christmas brings the presents.', fun: ['f', 'Father Christmas', 'In Großbritannien heißt der Weihnachtsmann Father Christmas. Den Nikolaustag feiert dort fast niemand.'], gift: { chest: 'MEGA' }, skin: 'fn-ranger' },
+  { en: 'reindeer', de: 'Rentier', ex: 'Reindeer live in the cold north.', fun: ['q', 'Why is it so cold at Christmas?', 'Because it\'s in Decembrrr!', 'Warum ist es an Weihnachten so kalt? Weil es im „Dezembrrr“ ist.'] },
+  { en: 'sleigh', de: 'Schlitten vom Weihnachtsmann', ex: 'The sleigh is full of presents.', fun: ['t', 'Seven Santas sing silly songs.', 'Ein Zungenbrecher: Sieben Weihnachtsmänner singen alberne Lieder. Schaffst du ihn dreimal schnell?'], gift: { coins: 10 } },
+  { en: 'chimney', de: 'Schornstein', ex: 'He comes down the chimney.', fun: ['f', 'Post für Father Christmas', 'Viele britische Kinder schreiben im Dezember einen Brief an Father Christmas, mit ihren Wünschen.'] },
+  { en: 'bauble', de: 'Christbaumkugel', ex: 'We hang red baubles on the tree.', fun: ['q', 'Where do snowmen keep their money?', 'In a snow bank!', 'Wo haben Schneemänner ihr Geld? In der „Schneebank“. A snow bank ist eigentlich ein Schneehaufen.'], gift: { boost: [1.5, 1] } },
+  { en: 'tinsel', de: 'Lametta', ex: 'The tinsel shines in the light.', fun: ['f', 'Christmas jumper', 'Im Dezember tragen viele Briten einen Christmas jumper: einen bunten Weihnachtspulli, gern mit Rentier oder Schneemann.'] },
+  { en: 'mistletoe', de: 'Mistelzweig', ex: 'There is mistletoe over the door.', fun: ['f', 'Unter dem Mistelzweig', 'Wer unter einem Mistelzweig steht, darf geküsst werden. So will es ein alter britischer Brauch.'], gift: { chest: 'EPIC' } },
+  { en: 'carol', de: 'Weihnachtslied', ex: 'We sing carols at school.', fun: ['f', 'Carol singers', 'Carol singers ziehen im Advent von Haus zu Haus und singen Weihnachtslieder, oft für einen guten Zweck.'], gift: { chest: 'MEGA' }, skin: 'fn-lebkuchen' },
+  { en: 'to wrap', de: 'einpacken', ex: 'I wrap a present for my mum.', fun: ['q', 'What do elves learn at school?', 'The elf-abet!', 'Was lernen Wichtel in der Schule? Das „Elf-abet“, also das Alphabet. Elf heißt Wichtel.'] },
+  { en: 'present', de: 'Geschenk', ex: 'This present is for you.', fun: ['f', 'Boxing Day', 'Der 26. Dezember heißt in Großbritannien Boxing Day und ist ein Feiertag. Viele gehen zum Fußball oder einkaufen.'], gift: { coins: 15 } },
+  { en: 'Christmas cracker', de: 'Knallbonbon', ex: 'We pull a Christmas cracker at dinner.', fun: ['f', 'Christmas crackers', 'Zwei ziehen an einem Knallbonbon, bis es knallt. Darin stecken eine Papierkrone, ein Witz und ein kleines Geschenk. Erfunden hat es Tom Smith in London, vor rund 180 Jahren.'] },
+  { en: 'mince pie', de: 'süßes Weihnachtstörtchen', ex: 'Mince pies are sweet.', fun: ['f', 'Mince pies', 'Mince pies sind kleine süße Törtchen mit Trockenfrüchten. Vor langer Zeit war wirklich Fleisch darin, daher der Name.'], gift: { freeze: 1 } },
+  { en: 'holly', de: 'Stechpalme', ex: 'Holly has got red berries.', fun: ['q', 'What do you call a snowman in summer?', 'A puddle!', 'Wie nennt man einen Schneemann im Sommer? Eine Pfütze.'] },
+  { en: 'robin', de: 'Rotkehlchen', ex: 'There is a robin on the card.', fun: ['f', 'Die erste Weihnachtskarte', 'Die erste gedruckte Weihnachtskarte kam 1843 aus London. Auf britischen Karten ist bis heute oft ein Rotkehlchen zu sehen.'], gift: { chest: 'EPIC' } },
+  { en: 'wreath', de: 'Kranz', ex: 'There is a wreath on our door.', fun: ['f', 'Christmas pudding', 'Zum Weihnachtsessen gehört Christmas pudding, ein dunkler Kuchen mit Trockenfrüchten. Früher wurde eine Münze darin versteckt: Wer sie fand, sollte Glück haben.'], gift: { chest: 'MEGA' }, skin: 'fn-nussknacker' },
+  { en: 'sledge', de: 'Schlitten zum Rodeln', ex: 'We go down the hill on a sledge.', fun: ['q', 'What do you get if you cross a snowman and a vampire?', 'Frostbite!', 'Was kommt heraus, wenn man einen Schneemann mit einem Vampir kreuzt? Frostbite heißt Erfrierung, bite heißt Biss.'], gift: { coins: 15 } },
+  { en: 'Christmas Eve', de: 'Heiligabend', ex: 'Christmas Eve is on 24 December.', fun: ['f', 'Die Rede des Königs', 'Am 25. Dezember um drei Uhr nachmittags spricht der König im Fernsehen. Viele Familien schauen The King\'s Christmas message zusammen.'], gift: { boost: [2, 1] } },
+  { en: 'Christmas tree', de: 'Weihnachtsbaum', ex: 'We decorate the Christmas tree together.', fun: ['f', 'Pantomime', 'Im Winter gehen britische Familien ins Theater, in die pantomime. Das Publikum ruft laut mit, zum Beispiel: He\'s behind you!'], gift: { chest: 'EPIC' } },
+  { en: 'Merry Christmas!', de: 'Frohe Weihnachten!', ex: 'Merry Christmas and a happy New Year!', fun: ['f', 'Merry Christmas!', 'In Großbritannien wünscht man sich Merry Christmas oder Happy Christmas. Das wünscht dir heute auch Bit.'], gift: { chest: 'MEGA', coins: 50 }, skin: 'fn-polarlicht' }
+];
+const advTime = n => new Date(ADVENT_YEAR, 11, n).getTime();                 // door n may be opened from this moment on
+const advStarted = () => Date.now() >= advTime(1);                            // before 1 December there is no calendar at all
+const advSeason = () => advStarted() && Date.now() < new Date(ADVENT_YEAR + 1, 0, 7).getTime();      // card on the start page until 6 January
+const advReady = n => n >= 1 && n <= 24 && Date.now() >= advTime(n);
+const advOpened = n => { const a = S.prog.advent; return !!(a && a.y === ADVENT_YEAR && a.open && a.open[n]) };
+const advCount = () => { let k = 0; for (let n = 1; n <= 24; n++) if (advOpened(n)) k++; return k };
+const advWaiting = () => { const k = []; for (let n = 1; n <= 24; n++) if (advReady(n) && !advOpened(n)) k.push(n); return k };
+const advSkin = n => { const k = ADVENT[n - 1].skin; return typeof k === 'string' && OUTFITS.some(o => o.id === k) ? k : '' };
+/* A door of a skin day that was opened before the skins existed (it held a diamond chest then): the skin follows. */
+function advOwed() { const out = []; for (let n = 1; n <= 24; n++) { const k = advSkin(n); if (k && advOpened(n) && !ownsLook(k)) { giveLook(k); out.push(k) } } return out }
+/* Opens door n and books its gift, once. null = not yet its day. */
+function advOpen(n) {
+  if (!advReady(n)) return null;
+  const p = S.prog; if (!p.advent || p.advent.y !== ADVENT_YEAR) p.advent = { y: ADVENT_YEAR, open: {} };
+  if (p.advent.open[n]) return { n, fresh: false, got: [] };
+  p.advent.open[n] = todayKey();
+  const g = ADVENT[n - 1].gift || {}, got = [], sk = advSkin(n);
+  if (sk && !ownsLook(sk)) { giveLook(sk); got.push(['skin', sk]) }
+  else if (g.chest) { addChest(g.chest, 'ADVENT'); got.push(['chest', g.chest]) }
+  if (g.coins) { addCoins(g.coins); got.push(['coins', g.coins]) }
+  if (g.freeze) { if ((p.freezes || 0) < FREEZE_MAX) { p.freezes = (p.freezes || 0) + 1; got.push(['freeze', 1]) } else { addCoins(FREEZE_FULL_COINS); got.push(['coins', FREEZE_FULL_COINS]) } }
+  if (g.boost) { addBoost(g.boost[0], g.boost[1]); got.push(['boost', g.boost[0]]) }
+  persist();
+  return { n, fresh: true, got };
+}
+/* One sentence for the card: what waits, or when the next door comes. It never says what was missed. */
+function advLine() {
+  const w = advWaiting();
+  if (w.length === 1) return 'Türchen ' + w[0] + ' wartet auf dich.';
+  if (w.length > 1) return w.length + ' Türchen warten auf dich.';
+  if (advCount() >= 24) return 'Alle 24 Türchen sind offen. Frohe Weihnachten!';
+  for (let n = 1; n <= 24; n++) if (!advReady(n)) return 'Türchen ' + n + ' öffnet sich am ' + n + '. Dezember.';
+  return '';
+}
+
+/* The private pack. advPack is what the views may know at once: day → { text, gift, pic }. The pictures themselves
+   are read from the database only for a door that is open. They are stored scrambled, as they come in the file:
+   that is no protection, it only keeps a curious child from opening them as pictures in the Files app. */
+let advPack = { days: {} };
+const ADV_MEM = new Map();          // pictures on a device without a database: they last until the app is closed
+function advDb() {
+  return new Promise(res => {
+    try {
+      if (typeof indexedDB === 'undefined' || !indexedDB) return res(null);
+      const rq = indexedDB.open('wordbox-advent', 1);
+      rq.onupgradeneeded = () => { rq.result.createObjectStore('kv') };
+      rq.onsuccess = () => res(rq.result); rq.onerror = () => res(null); rq.onblocked = () => res(null);
+    } catch (e) { res(null) }
+  });
+}
+/* Runs one request in the store. Resolves with its result, or undefined when the device has no database. */
+function advKv(mode, fn) {
+  return advDb().then(db => new Promise(res => {
+    if (!db) return res(undefined);
+    try {
+      const tx = db.transaction('kv', mode), rq = fn(tx.objectStore('kv'));
+      tx.oncomplete = () => { db.close(); res(rq ? rq.result : true) };
+      tx.onerror = tx.onabort = () => { db.close(); res(undefined) };
+    } catch (e) { res(undefined) }
+  }));
+}
+function advInit() {
+  advKv('readonly', s => s.get('meta')).then(m => {
+    if (m && m.y === ADVENT_YEAR && m.days && typeof m.days === 'object') { advPack = { days: m.days }; softRender() }
+  }, () => {});
+}
+/* Reads a pack file. Pure: nothing is stored. null = not a pack or an empty one. */
+function advReadPack(d) {
+  if (!d || typeof d !== 'object' || d.type !== 'voc-a-bit-advent' || !d.days || typeof d.days !== 'object') return null;
+  const out = { y: +d.year || 0, days: {} }, str = (v, max) => typeof v === 'string' ? v.trim().slice(0, max) : '';
+  for (let n = 1; n <= 24; n++) {
+    const x = d.days[n]; if (!x || typeof x !== 'object') continue;
+    let img = null;
+    if (typeof x.img === 'string' && x.img.length > 100 && x.img.length < 1500000) {
+      try { const b = atob(x.img), a = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); img = a } catch (e) {}
+    }
+    const text = str(x.text, 400), gift = str(x.gift, 200);
+    if (img || text || gift) out.days[n] = { img, text, gift };
+  }
+  return Object.keys(out.days).length ? out : null;
+}
+/* Stores a pack in place of the one before. The views know it at once; resolves true when the database has it. */
+function advSave(pack) {
+  const meta = { y: pack.y, days: {} }; ADV_MEM.clear();
+  for (const n in pack.days) { const d = pack.days[n]; meta.days[n] = { text: d.text, gift: d.gift, pic: !!d.img }; if (d.img) ADV_MEM.set(+n, d.img) }
+  advPack = { days: meta.days }; advForget();
+  return advKv('readwrite', s => { s.clear(); for (const n in pack.days) if (pack.days[n].img) s.put(pack.days[n].img.buffer, 'pic-' + n); return s.put(meta, 'meta') })
+    .then(ok => { if (ok === undefined) return false; ADV_MEM.clear(); return true });
+}
+function advClear() { advPack = { days: {} }; ADV_MEM.clear(); advForget(); return advKv('readwrite', s => s.clear()) }
+/* Takes a parsed file. false = no pack for this calendar. The toast comes when the device has stored it. */
+function advImport(data) {
+  const pack = advReadPack(data);
+  if (!pack || pack.y !== ADVENT_YEAR) return false;
+  const n = Object.keys(pack.days).length, pics = Object.keys(pack.days).filter(k => pack.days[k].img).length;
+  advSave(pack).then(kept => {
+    toast(kept ? 'Fotopaket geladen: ' + pics + (pics === 1 ? ' Foto' : ' Fotos') + ' für ' + n + ' Türchen.' : 'Fotopaket geladen. Dieses Gerät merkt es sich aber nur, bis die App geschlossen wird.', 'check_circle');
+    softRender();
+  });
+  return true;
+}
+const advPlain = (bytes, n) => { const key = 'voc-a-bit-advent-' + ADVENT_YEAR + '-' + n, out = new Uint8Array(bytes.length); for (let i = 0; i < bytes.length; i++) out[i] = bytes[i] ^ key.charCodeAt(i % key.length); return out };
+/* The picture of door n as it was before packing, or null. Only an open door gets its picture. */
+function advPic(n) {
+  if (!advOpened(n) || !(advPack.days[n] && advPack.days[n].pic)) return Promise.resolve(null);
+  if (ADV_MEM.has(n)) return Promise.resolve(advPlain(ADV_MEM.get(n), n));
+  return advKv('readonly', s => s.get('pic-' + n)).then(buf => buf ? advPlain(new Uint8Array(buf), n) : null);
+}
+let advUrl = '', advUrlN = 0;       // the picture on screen, kept while its door is shown
+function advForget() { try { if (advUrl) URL.revokeObjectURL(advUrl) } catch (e) {} advUrl = ''; advUrlN = 0 }
+/* Puts the picture into the door that is on screen. Runs after every render, because a render replaces the page. */
+function advShowPic(n) {
+  const put = () => { const img = document.getElementById('advPic'); if (img && S.door && S.door.n === n && advUrl) { img.src = advUrl; img.hidden = false } };
+  if (advUrlN === n && advUrl) { put(); return }
+  advPic(n).then(bytes => {
+    if (!bytes || !S.door || S.door.n !== n) return;
+    try { advForget(); advUrl = URL.createObjectURL(new Blob([bytes], { type: 'image/jpeg' })); advUrlN = n; put() } catch (e) {}
+  }, () => {});
+}
+
+const ADV_ORDER = [7, 18, 3, 22, 11, 1, 15, 24, 9, 20, 5, 13, 17, 2, 21, 8, 12, 23, 6, 16, 4, 19, 10, 14];      // scattered, as on a paper calendar
+const ADV_HUES = ['rose', 'green', 'royal', 'violet', 'teal', 'orange'];
+function adventCard() {
+  if (!advSeason()) return '';
+  const w = advWaiting().length;
+  return `<button class="advent-card hue-green" data-act="adv-go"><span class="ic">${art('gift')}</span><span class="grow"><b>Adventskalender</b><small>${esc(advLine())}</small></span>${w ? `<span class="count" aria-hidden="true">${w}</span>` : ''}${icon('arrow_forward')}</button>`;
+}
+function viewAdvent() {
+  const doors = ADV_ORDER.map((n, i) => {
+    const open = advOpened(n), ready = !open && advReady(n);
+    const label = 'Türchen ' + n + (open ? ', geöffnet' : ready ? ', bereit zum Öffnen' : ', öffnet sich am ' + n + '. Dezember');
+    return `<button class="door hue-${ADV_HUES[i % ADV_HUES.length]} ${open ? 'is-open' : ready ? 'is-ready' : 'is-shut'}" data-act="adv-door" data-n="${n}" aria-label="${label}"><b>${n}</b>${open ? icon('check') : ready ? art('star') : ''}</button>`;
+  }).join('');
+  return `
+  <div class="sub-h"><button class="iconbtn plain" data-act="nav" data-v="home" aria-label="Zurück zum Start">${icon('arrow_back')}</button><h2>Adventskalender</h2><span class="pill">${advCount()} von 24</span></div>
+  <p class="small muted">${esc(advLine())} Jedes Türchen bleibt für dich da, auch wenn du mal ein paar Tage nicht reinschaust.</p>
+  <div class="doors">${doors}</div>`;
+}
+function advGiftLine([kind, v]) {
+  if (kind === 'skin') return `<li>${bit('cheer', v)}<span><b>Neuer Skin: ${esc(lookName(v))}!</b> Er wartet im Shop auf dich.</span></li>`;
+  if (kind === 'chest') return `<li>${chestArt(v)}<span>Eine <b>${CHEST[v].t}</b> liegt in deiner Tasche.</span></li>`;
+  if (kind === 'coins') return `<li>${art('coin')}<span><b>+${v} Münzen</b></span></li>`;
+  if (kind === 'freeze') return `<li>${art('shield')}<span><b>Ein Serien-Schutz</b> für deine Serie</span></li>`;
+  if (kind === 'boost') return `<li>${art('bolt')}<span><b>${fmtMult(v)} XP</b> für deine nächste Runde</span></li>`;
+  return '';
+}
+function viewDoor() {
+  const D = S.door, n = D.n, a = ADVENT[n - 1], pk = advPack.days[n] || null, f = a.fun;
+  const priv = pk ? `${pk.pic ? `<img id="advPic" class="door-pic" alt="Foto zu Türchen ${n}" hidden>` : ''}${pk.text ? `<p class="door-text selectable">${esc(pk.text)}</p>` : ''}${pk.gift ? `<div class="notice door-gift">${art('gift')}<div><b>Gutschein</b><br>${esc(pk.gift)}</div></div>` : ''}` : '';
+  const fun = f[0] === 'q'
+    ? `<div class="fun"><b>${esc(f[1])}</b>${D.show ? `<span class="ans">${esc(f[2])}</span><small>${esc(f[3])}</small>` : `<button class="btn btn-soft btn-sm" data-act="door-show">Antwort zeigen</button>`}</div>`
+    : `<div class="fun"><b>${esc(f[1])}</b><small>${esc(f[2])}</small></div>`;
+  const got = D.fresh && D.got.length ? `<ul class="loots">${D.got.map(advGiftLine).join('')}</ul>` : '';
+  return `<div class="overlay"><div class="dialog door-dlg${fxc('door', 'opened')}" role="dialog" aria-modal="true" aria-labelledby="dT">
+    <span class="pill pill-gold">${n}. Dezember</span><h2 id="dT">Türchen ${n}</h2>
+    ${priv}${got}
+    <div class="door-word"><div class="grow"><small>Wort des Tages</small><b>${esc(a.en)}</b><div class="de">${esc(a.de)}</div><div class="ex">${esc(a.ex)}</div></div><button class="iconbtn sm" data-act="say" data-t="${esc(a.en)}" aria-label="${esc(a.en)} vorlesen">${icon('volume_up')}</button></div>
+    ${fun}
+    <button class="btn btn-primary btn-xl wide" data-act="door-close" id="doorOk">${D.fresh ? 'Schön!' : 'Schließen'}</button></div></div>`;
+}
+/* For the parents, under Einstellungen. Before 1 December it only shows once a pack is on the device, so the
+   surprise stays one; until then the pack is loaded under Vokabeln → Neue Vokabeln hinzufügen → Datei öffnen. */
+function advSettings() {
+  const days = Object.keys(advPack.days), have = days.length; if (!advStarted() && !have) return '';
+  const pics = days.filter(k => advPack.days[k].pic).length;
+  const rm = !have ? '' : S.advAsk ? `<span class="small" style="align-self:center">Wirklich entfernen?</span><button class="btn btn-line btn-sm" data-act="adv-clear-no">Nein</button><button class="btn btn-danger btn-sm" data-act="adv-clear-yes">Entfernen</button>`
+    : `<button class="btn btn-line btn-sm" data-act="adv-clear-ask">Fotos entfernen</button>`;
+  return `<section class="card stack">
+    <div><h3>Adventskalender</h3><p class="small muted" style="margin-top:4px">${have ? `Auf diesem Gerät liegt ein Fotopaket: ${pics} ${pics === 1 ? 'Foto' : 'Fotos'}, Inhalt für ${have} Türchen. Jedes erscheint erst hinter seinem Türchen.` : 'Für Eltern: Hier lässt sich ein Fotopaket laden. Es bleibt nur auf diesem Gerät.'}</p></div>
+    <div class="row" style="gap:8px;flex-wrap:wrap"><label class="btn btn-soft btn-sm" for="advFile" style="cursor:pointer">${icon('upload')}Fotopaket laden</label><input id="advFile" class="sr" type="file" data-ch="adv-file">${rm}</div>
+  </section>`;
+}
 
 /* ---------- learning path ---------- */
 /* A lesson becomes a row of stations of about 7 to 14 words: a new station starts with a new book page,
@@ -1988,6 +2337,7 @@ function armBack() {
 function backStep() {
   if (!S.prog.onboarded) return false;
   if (S.sheet) { S.sheet = null; render(); return true }
+  if (S.door) { ACT['door-close'](); return true }
   if (S.chest) { S.chest = null; render(); return true }
   if (S.view === 'quiz' && S.quiz) { if (S.confirm) ACT['quit-no'](); else ACT.quit(); return true }
   if (S.view === 'result' && S.result) { ACT.done(); return true }
@@ -2044,6 +2394,7 @@ function transit(fn, kind) {
 function applyTheme() {
   const t = S.prog.theme, root = document.documentElement, L = '#F3F5FB', D = '#0B1026';
   if (t === 'light' || t === 'dark') root.dataset.theme = t; else delete root.dataset.theme;
+  if (S.prog.motion === false) root.dataset.still = '1'; else delete root.dataset.still;      // „Bit bewegt sich“ off: no floating, no streak of light
   document.querySelectorAll('meta[name="theme-color"]').forEach((m, i) => m.setAttribute('content', t === 'light' ? L : t === 'dark' ? D : (i ? D : L)));
 }
 /* The page asks the server which version is current. If it is newer than this page, the start screen offers a reload. */
@@ -2057,7 +2408,7 @@ function checkUpdate() {
 }
 
 /* ---------- views: frame and shared parts ---------- */
-const TABS = ['home', 'practice', 'vocab', 'awards', 'settings', 'shop'];
+const TABS = ['home', 'practice', 'vocab', 'awards', 'settings', 'shop', 'advent'];
 const FREEZE_COST = 40;
 function topbar() {
   const p = S.prog, st = streakInfo();
@@ -2070,7 +2421,7 @@ function topbar() {
     </div></div>${boostBar()}</header>`;
 }
 function navbar() {
-  const cur = S.view === 'settings' || S.view === 'shop' ? 'awards' : S.view;
+  const cur = S.view === 'settings' || S.view === 'shop' ? 'awards' : S.view === 'advent' ? 'home' : S.view;
   const items = [['home', 'home', 'Start'], ['practice', 'school', 'Üben'], ['vocab', 'menu_book', 'Vokabeln'], ['awards', 'emoji_events', 'Erfolge']];
   return `<nav class="nav" aria-label="Hauptnavigation"><div class="nav-in">${items.map(([v, ic, t]) =>
     `<button data-act="nav" data-v="${v}" ${cur === v ? 'aria-current="page"' : ''}><span class="nic">${icon(ic, cur === v ? 'fill' : '')}</span><span>${t}</span></button>`).join('')}</div></nav>`;
@@ -2122,7 +2473,7 @@ function viewHome() {
     <button class="btn btn-primary btn-xl wide" data-act="continue">${icon('play_arrow', 'fill')}Weiter lernen</button>
     <div class="hero-sub">${esc(plan.label)}</div>
   </section>
-  ${upd}${installCard()}${chestBar()}${tcards}${todayCard()}${questCard()}${review}${pathHtml()}`;
+  ${upd}${installCard()}${adventCard()}${chestBar()}${tcards}${todayCard()}${questCard()}${review}${pathHtml()}`;
 }
 function todayCard() {
   const p = S.prog, x = xpToday(), pct = Math.min(1, x / p.goal), lv = levelInfo(p.xp);
@@ -2174,6 +2525,7 @@ function viewChest() {
   if (X.loot) {
     const L = X.loot, rows = [`<li class="loot" style="--i:0">${art('coin')}<span><b>+<i data-count="${L.coins}">${L.coins}</i> Münzen</b></span></li>`];
     if (L.boost) rows.push(`<li class="loot" style="--i:${rows.length}">${art('bolt')}<span><b>${fmtMult(L.boost.mult)} XP</b> für ${roundsLabel(L.boost.rounds)}</span></li>`);
+    if (L.skin) rows.push(`<li class="loot" style="--i:${rows.length}">${bit('cheer', L.skin)}<span><b>Neuer Skin: ${esc(lookName(L.skin))}!</b> Er wartet im Shop auf dich.</span></li>`);
     if (L.freeze) rows.push(`<li class="loot" style="--i:${rows.length}">${art('shield')}<span>${L.freezeCoins ? `<b>+${L.freezeCoins} Münzen</b> statt Serien-Schutz, deine Tasche ist voll` : '<b>Serien-Schutz</b> für einen freien Tag'}</span></li>`);
     const more = (S.prog.inv || [])[0];
     return `<div class="overlay"><div class="dialog chest-dlg${fxc('chest-open', 'opened')}" role="dialog" aria-modal="true" aria-labelledby="chT">
@@ -2356,25 +2708,31 @@ function viewAwards() {
     ${tile('shield', p.freezes || 0, 'Serien-Schutz')}
   </div>
   <div class="duo"><button class="btn btn-gold" data-act="nav" data-v="shop">${art('chest')}Shop</button><button class="btn btn-line" data-act="nav" data-v="settings">${icon('settings')}Einstellungen</button></div>
+  ${advStarted() ? `<button class="btn btn-soft wide" data-act="adv-go">${art('gift')}Adventskalender</button>` : ''}
   <div class="sec-h"><h2>Abzeichen</h2><span class="pill">${nGot} von ${BADGES.length}</span></div>
   <div class="badges">${badges}</div>`;
 }
-const NEW_SKINS = 2.1;                    // skins of this version carry a „Neu“ tag in the shop until they are bought
+const NEW_SKINS = 2.7;                    // skins of this version carry a „Neu“ tag in the shop until they are bought
 function viewShop() {
   const p = S.prog, coins = p.coins || 0, fz = p.freezes || 0;
-  const cur = SKINS[p.outfit] ? p.outfit : '';
-  // Bit's own look comes first and is always there; the skins are bought once and can be switched freely.
-  const outfits = [{ id: '', t: 'Bit', tier: 0 }].concat(OUTFITS).map(o => { const own = !o.id || !!(p.outfits || {})[o.id], on = cur === o.id;
+  const cur = knownLook(p.outfit) ? p.outfit : '';
+  // Bit's own looks come first and are always there; the skins are bought once (or found) and can be switched freely.
+  const tile = o => { const own = ownsLook(o.id), on = cur === o.id;
     return `<div class="card outfit${on ? ' on' : ''}${o.tier === 4 ? ' myth' : ''}">${!own && o.since === NEW_SKINS ? '<span class="newtag">Neu</span>' : ''}${bit(on ? 'cheer' : 'happy', o.id, on ? fxc('skin', 'fx') : '')}<b>${o.t}</b><span class="rar rar-${o.tier}">${o.tier ? RARITY[o.tier] : 'Standard'}</span>
       ${own ? `<button class="btn ${on ? 'btn-line' : 'btn-soft'} btn-sm wide" data-act="wear" data-o="${o.id}" aria-pressed="${on}">${on ? icon('check') + 'Ausgewählt' : 'Auswählen'}</button>`
-            : `<button class="btn btn-primary btn-sm wide" data-act="buy-outfit" data-o="${o.id}" aria-label="${o.t} kaufen für ${o.cost} Münzen"><span class="price">${art('coin')}${o.cost}</span></button>`}</div>` }).join('');
+            : `<button class="btn btn-primary btn-sm wide" data-act="buy-outfit" data-o="${o.id}" aria-label="${o.t} kaufen für ${o.cost} Münzen"><span class="price">${art('coin')}${o.cost}</span></button>`}</div>` };
+  const frost = OUTFITS.filter(o => o.line === 'fn'), drawn = OUTFITS.filter(o => !o.line), have = OUTFITS.filter(o => ownsLook(o.id)).length;
   return `
   <div class="sub-h"><button class="iconbtn plain" data-act="nav" data-v="awards" aria-label="Zurück zu den Erfolgen">${icon('arrow_back')}</button><h2>Shop</h2><span class="wallet" aria-label="${fmt(coins)} Münzen">${art('coin')}${fmt(coins)}</span></div>
   <section class="card shop-item">${art('shield')}<div class="grow"><h3>Serien-Schutz</h3><p>Rettet deine Serie, wenn du einen Tag nicht übst. Du hast ${fz} von 2.</p></div>
     <button class="btn btn-primary btn-sm" data-act="buy-freeze" aria-label="Serien-Schutz kaufen für ${FREEZE_COST} Münzen">${fz >= 2 ? 'Voll' : `<span class="price">${art('coin')}${FREEZE_COST}</span>`}</button></section>
-  <div class="sec-h"><h2>Skins für Bit</h2><span class="pill">${Object.keys(p.outfits || {}).filter(id => SKINS[id]).length} von ${OUTFITS.length}</span></div>
-  <div class="outfits">${outfits}</div>
-  <p class="small muted" style="text-align:center">Münzen gibt es aus Truhen, für das Tagesziel, fehlerfreie Runden, neue Level und Abzeichen. Truhen bekommst du für Quests, die erste Runde am Tag, jede fünfte Runde, neue Level und deine Serie. Sie warten, bis du Zeit hast.</p>`;
+  <div class="sec-h"><h2>Skins für Bit</h2><span class="pill">${have} von ${OUTFITS.length}</span></div>
+  <div class="outfits">${FREE_LOOKS.map(tile).join('')}</div>
+  <div class="sec-h"><h2>Frostnacht-Legenden</h2><span class="pill pill-gold">Neu</span></div>
+  <div class="outfits">${frost.map(tile).join('')}</div>
+  <div class="sec-h"><h2>Klassiker</h2></div>
+  <div class="outfits">${drawn.map(tile).join('')}</div>
+  <p class="small muted" style="text-align:center">Münzen gibt es aus Truhen, für das Tagesziel, fehlerfreie Runden, neue Level und Abzeichen. Truhen bekommst du für Quests, die erste Runde am Tag, jede fünfte Runde, neue Level und deine Serie. Sie warten, bis du Zeit hast. Mit etwas Glück steckt in einer Truhe ein Skin.</p>`;
 }
 function viewSettings() {
   const p = S.prog;
@@ -2397,8 +2755,10 @@ function viewSettings() {
     ${sw('sound', 'Soundeffekte', 'Töne bei richtig, falsch und Erfolgen')}
     ${sw('speak', 'Vorlesen', 'Das englische Wort nach jeder Antwort hören.' + (IOS ? ' Am iPhone bleibt die Stimme stumm, wenn der Stummschalter an ist. Die Töne laufen trotzdem.' : ''))}
     ${sw('haptics', 'Vibration', 'Ein kleines Tippen bei jeder Antwort.' + (IOS ? ' Am iPhone ab iOS 18.' : ''))}
+    ${sw('motion', 'Bit bewegt sich', 'Bit schwebt auf dem Start, im Shop und nach einer Runde. Schalte es aus, wenn es dich ablenkt.')}
     <div class="setting"><div class="grow"><b>Ton testen</b><div class="small muted">${IOS ? 'Nichts zu hören? Lautstärke hochdrehen und den Stummschalter an der Seite ausschalten.' : 'Nichts zu hören? Dreh die Lautstärke hoch.'}</div></div><button class="btn btn-soft btn-sm" data-act="sound-test">${icon('volume_up')}Test</button></div>
   </section>
+  ${advSettings()}
   <section class="card stack">
     <div><h3>Sicherung</h3><p class="small muted" style="margin-top:4px">Dein Fortschritt liegt nur auf diesem Gerät. Speichere ab und zu eine Sicherung, zum Beispiel vor einem Gerätewechsel.</p></div>
     ${S.storageOk ? '' : '<div class="err">Dieser Browser speichert gerade nichts (privates Fenster?). Öffne Voc a Bit in einem normalen Fenster.</div>'}
@@ -2461,7 +2821,7 @@ function viewQuiz() {
       ${Q.mult > 1 ? `<span class="qboost" aria-label="XP-Booster ${fmtMult(Q.mult)}">${fmtMult(Q.mult)}</span>` : ''}<span class="combo${hot ? ' on' : ''}${fxc('combo', 'fx')}" aria-label="${Q.combo} richtig in Folge">${art(hot ? 'flame' : 'flameOff')}<b>${Q.combo}</b></span></header>
     <main class="qbody${fxc('q', 'enter')}" id="main" tabindex="-1">
       ${extraTag}<h1 class="qlabel">${esc(q.label)}</h1>
-      <div class="qask">${bit(mood, undefined, 'qbit' + (Q.answered ? fxc('ans', 'fx') : ''))}<div class="bubble">${ask}</div></div>
+      <div class="qask">${bit(mood, undefined, 'qbit' + (Q.answered ? fxc('ans', Q.lastOk ? 'hop' : 'no') : ''))}<div class="bubble">${ask}</div></div>
       ${answers}
     </main>
   </div>${sheet}${confirm}`;
@@ -2578,6 +2938,7 @@ function overlays() {
   if (!S.prog.onboarded) return S.view === 'home' ? viewOnboard() : '';
   if (!S.prog.v2 && S.view === 'home') return viewWhatsNew();
   if (S.chest) return viewChest();
+  if (S.door) return viewDoor();
   return S.sheet ? viewSheet() : '';
 }
 
@@ -2704,6 +3065,9 @@ function parseText(text) {
 }
 function startReview(res, fileTitle) {
   const I = S.imp;
+  // The private photo pack of the advent calendar may be opened here too, so it can be loaded before December
+  // without a button that would give the surprise away.
+  if (res && res.data && res.data.type === 'voc-a-bit-advent') { if (advImport(res.data)) { S.imp = null; go('vocab') } else { I.err = 'Dieses Adventspaket passt nicht zu dieser Version.'; render() } return }
   if (res && res.data && res.data.app === 'wordbox') { I.err = 'Das ist eine Voc-a-Bit-Sicherung. Spiel sie unter Erfolge → Einstellungen → Sicherung laden ein.'; render(); return }
   if (!res || !res.words.length) { I.err = 'Keine Vokabeln erkannt. Schreib eine pro Zeile, zum Beispiel: to choose ; (aus)wählen ; chose'; render(); return }
   const d = res.data;
@@ -2769,12 +3133,13 @@ function render() {
   else if (v === 'result' && S.result) html = viewResult();
   else if (v === 'import' && S.imp) html = viewImport();
   else {
-    if (TABS.indexOf(v) < 0) S.view = 'home';
-    const body = { home: viewHome, practice: viewPractice, vocab: viewVocab, awards: viewAwards, settings: viewSettings, shop: viewShop }[S.view]();
+    if (TABS.indexOf(v) < 0 || (v === 'advent' && !advStarted())) S.view = 'home';
+    const body = { home: viewHome, practice: viewPractice, vocab: viewVocab, awards: viewAwards, settings: viewSettings, shop: viewShop, advent: viewAdvent }[S.view]();
     html = topbar() + `<main class="main${fxc('view', 'enter')}" id="main" tabindex="-1">${body}</main>` + navbar() + overlays();
   }
   app.innerHTML = html;
   FX.clear(); S.stale = false; S.dayShown = todayKey(); armBack();
+  if (S.door) advShowPic(S.door.n);
   // Numbers that count up and bars that grow are marked in the HTML and started here.
   app.querySelectorAll('[data-count]').forEach(el => countTo(el, +el.dataset.from || 0, +el.dataset.count));
   const bars = app.querySelectorAll('[data-grow]');
@@ -2790,7 +3155,7 @@ function countTo(el, from, to) {
 const typing = () => { const a = document.activeElement; return !!a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && a.type !== 'checkbox' };
 function softRender() { if (S.view === 'quiz' || S.view === 'result' || S.view === 'import' || typing()) { S.stale = true; return } render() }
 function go(v, kind) {
-  transit(() => { S.view = v; S.delUnit = null; S.resetAsk = false; S.sheet = null; S.chest = null; if (v !== 'home') S.openNode = null; fx('view'); render(); window.scrollTo(0, 0) }, kind);
+  transit(() => { S.view = v; S.delUnit = null; S.resetAsk = false; S.sheet = null; S.chest = null; S.door = null; S.advAsk = false; if (v !== 'home') S.openNode = null; fx('view'); render(); window.scrollTo(0, 0) }, kind);
 }
 function spend(n) {
   const have = S.prog.coins || 0;
@@ -2903,7 +3268,7 @@ const ACT = {
     persist(); render(); SFX.badge(); haptic('win'); confetti();
     toast(fresh.length ? o.t + ' freigeschaltet. Neues Abzeichen: ' + fresh[0].t : o.t + ' freigeschaltet. Steht Bit richtig gut!', 'check_circle');
   },
-  wear: t => { const p = S.prog, id = t.dataset.o || ''; if (id && !(p.outfits || {})[id]) return; if (p.outfit === id) return; p.outfit = id; fx('skin'); persist(); render(); haptic('tap') },
+  wear: t => { const p = S.prog, id = t.dataset.o || ''; if (!knownLook(id) || !ownsLook(id)) return; if (p.outfit === id) return; p.outfit = id; fx('skin'); persist(); render(); haptic('tap') },
   'unit-share': t => { if (!S.units.some(x => x.id === t.dataset.u)) return; S.sheet = { type: 'share', u: t.dataset.u }; render(); const b = document.getElementById('sheetOk'); if (b) b.focus({ preventScroll: true }) },
   // Must run inside the tap: the share sheet of the system only opens from a touch.
   'unit-send': t => {
@@ -2913,6 +3278,20 @@ const ACT = {
       .then(how => { if (how === 'shared') toast('Geteilt! Öffnen unter „Neue Vokabeln hinzufügen“ → „Datei öffnen“.', 'check_circle'); else if (how === 'download') toast('Als Datei gespeichert. Schick sie deinen Freunden.', 'download') })
       .catch(() => toast('Teilen hat nicht geklappt.', 'info'));
   },
+  'adv-go': () => { if (advStarted()) go('advent', 'push') },
+  'adv-door': t => {
+    const n = +t.dataset.n;
+    if (!advReady(n)) { toast('Türchen ' + n + ' öffnet sich am ' + n + '. Dezember.', 'info'); haptic('tap'); return }
+    const r = advOpen(n); if (!r) return;
+    S.door = { n, fresh: r.fresh, got: r.got, show: false }; if (r.fresh) fx('door'); render();
+    if (r.fresh) { SFX.chestOpen(); haptic('win'); confetti() } else haptic('tap');
+    const b = document.getElementById('doorOk'); if (b) b.focus({ preventScroll: true });
+  },
+  'door-show': () => { if (S.door) { S.door.show = true; render() } },
+  'door-close': () => { S.door = null; advForget(); render() },
+  'adv-clear-ask': () => { S.advAsk = true; render() },
+  'adv-clear-no': () => { S.advAsk = false; render() },
+  'adv-clear-yes': () => { S.advAsk = false; advClear(); render(); toast('Die Fotos sind von diesem Gerät entfernt.', 'delete') },
   install: () => { const e = installEvt; if (!e) return; installEvt = null; try { e.prompt() } catch (x) {} render() },
   'install-later': () => { S.installLater = true; render() },
   'del-ask': t => { S.delUnit = t.dataset.u; S.openUnit = t.dataset.u; render() },
@@ -2936,11 +3315,11 @@ const ACT = {
   goal: t => { S.prog.goal = +t.dataset.n; const paid = payGoal(); persist(); render(); if (paid) { SFX.coin(); toast('Tagesziel geschafft: 10 Münzen!', 'check_circle') } },
   tempo: t => { const to = t.dataset.t, from = S.prog.tempo || 'fast'; if (!TEMPOS[to] || to === from) return; reschedule(S.prog, from, to); S.prog.tempo = to; persist(); render(); toast(to === 'fast' ? 'Schnell: jeden Tag ein Fach weiter.' : 'Langzeit: Abstände 1, 3, 7 und 14 Tage.', 'inventory_2') },
   theme: t => { S.prog.theme = t.dataset.t; persist(); applyTheme(); render() },
-  tog: t => { const k = t.dataset.k; S.prog[k] = S.prog[k] === false; persist(); render(); if (k === 'sound' && S.prog.sound) SFX.ok(); if (k === 'haptics') haptic('ok') },
+  tog: t => { const k = t.dataset.k; S.prog[k] = S.prog[k] === false; persist(); if (k === 'motion') applyTheme(); render(); if (k === 'sound' && S.prog.sound) SFX.ok(); if (k === 'haptics') haptic('ok') },
   'reset-ask': () => { S.resetAsk = true; render() },
   'reset-no': () => { S.resetAsk = false; render() },
   'reset-yes': () => {
-    const o = S.prog, keep = { name: o.name, goal: o.goal, sound: o.sound, speak: o.speak, haptics: o.haptics, theme: o.theme, tempo: o.tempo, removedLists: o.removedLists || [], onboarded: true, v2: true, lvl: 1, shopSeen: OUTFITS.length, news: NEWS[0] };
+    const o = S.prog, keep = { name: o.name, goal: o.goal, sound: o.sound, speak: o.speak, haptics: o.haptics, motion: o.motion, theme: o.theme, tempo: o.tempo, removedLists: o.removedLists || [], onboarded: true, v2: true, lvl: 1, shopSeen: OUTFITS.length, news: NEWS[0] };
     S.prog = Object.assign(freshProg(), keep); S.resetAsk = false; persist(); updateBadge(); go('home'); toast('Fortschritt zurückgesetzt.', 'autorenew');
   },
   'sound-test': () => { unlockAudio(); const was = S.prog.sound; S.prog.sound = true; SFX.win(); S.prog.sound = was; say('Hello! The sound is working.'); haptic('win'); toast('Du solltest jetzt eine Melodie und eine Stimme hören.' + (IOS ? ' Keine Stimme? Dann ist der Stummschalter an.' : ''), 'volume_up') },
@@ -2994,6 +3373,13 @@ const ACT = {
   'imp-reset': () => { S.imp.step = 'pick'; S.imp.words = []; S.imp.err = ''; render() }
 };
 const CH = {
+  'adv-file': t => {
+    const f = t.files && t.files[0]; if (!f) return;
+    readFile(f, (text, err) => {
+      let d = null; try { d = JSON.parse(String(text).replace(/^\uFEFF/, '')) } catch (e) {}
+      if (err || !advImport(d)) toast('Das ist kein Fotopaket für diesen Adventskalender.', 'info');
+    });
+  },
   tw: t => { const sel = new Set(selIds()); t.checked ? sel.add(t.dataset.id) : sel.delete(t.dataset.id); S.prog.sel = Array.from(sel); persist(); render() },
   tg: t => { const g = (S._groups || [])[+t.dataset.g]; if (!g) return; const sel = new Set(selIds()); for (const w of g.words) t.checked ? sel.add(w.id) : sel.delete(w.id); S.prog.sel = Array.from(sel); persist(); render() },
   name: t => { S.prog.name = t.value.trim().slice(0, 24); persist() },      // no render: it would swallow the tap that ended the typing
@@ -3035,7 +3421,7 @@ app.addEventListener('change', e => { const t = e.target; const f = t.dataset &&
 app.addEventListener('input', e => { const t = e.target; const f = t.dataset && IN[t.dataset.in]; if (f) f(t, e) });
 app.addEventListener('toggle', e => { const d = e.target; if (d.matches && d.matches('details.unit')) { if (d.open) S.openUnit = d.dataset.u; else if (S.openUnit === d.dataset.u) S.openUnit = null } }, true);
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (S.sheet) { S.sheet = null; render() } else if (S.confirm) { S.confirm = null; render() } return }
+  if (e.key === 'Escape') { if (S.sheet) { S.sheet = null; render() } else if (S.door) ACT['door-close'](); else if (S.confirm) { S.confirm = null; render() } return }
   if (S.view === 'result' && S.result) { if (e.key === 'Enter') { const b = document.getElementById('nextBtn'); if (b) { e.preventDefault(); b.click() } } return }
   if (S.view !== 'quiz' || !S.quiz || S.confirm) return;
   const Q = S.quiz, q = Q.list[Q.i];
@@ -3134,7 +3520,7 @@ try {
 } catch (e) { bootOk = false; rescue(e) }
 /* Rewards that fell due while the app was closed, or that a new version added for things already done,
    are booked here. quiet = no toast (used when the app comes back from the background). */
-const NEWS = ['2.6', 'Neu: Ab Fach 3 schreibst du die Wörter selbst. So sitzen sie richtig.'];      // [version, one line], shown once to players who had the version before
+const NEWS = ['2.7', 'Neu: Bit hat einen neuen Look! Im Shop warten neue Skins.'];      // [version, one line], shown once to players who had the version before
 function settleUp(quiet) {
   if (!S.prog.onboarded) return;
   activeTargets().forEach(targetInfo);
@@ -3142,6 +3528,7 @@ function settleUp(quiet) {
   const p = S.prog, lv = levelInfo(p.xp); let lvCoins = 0;
   // A level reached in a round that was never finished (app closed) is paid here. The first start only notes the level.
   if (!p.lvl) p.lvl = lv.n; else if (lv.n > p.lvl) { lvCoins = 20 * (lv.n - p.lvl); addCoins(lvCoins); for (let i = p.lvl; i < lv.n; i++) addChest('RARE', 'LEVEL_UP'); p.lvl = lv.n }
+  const owed = advOwed();                                     // before checkBadges: a skin that follows counts for the badges
   const fresh = checkBadges(), q = checkQuests(), paid = payGoal();
   addCoins(5 * fresh.length);
   // The shop grows with updates. shopSeen is the number of skins the player has been told about (version 2.0 had 6).
@@ -3149,11 +3536,12 @@ function settleUp(quiet) {
   const news = p.v2 && p.news !== NEWS[0] ? NEWS[1] : ''; p.news = NEWS[0];
   persist(); updateBadge();
   if (quiet || !S.prog.v2) return;
-  const msg = news ? news + (lvCoins ? ' Du bist jetzt Level ' + lv.n + '!' : '') : newSkins > 0 ? newSkins + ' neue Skins im Shop! Schau unter Erfolge.' : lvCoins ? 'Level ' + lv.n + ': ' + lv.name + '! ' + lvCoins + ' Münzen.' : fresh.length ? (fresh.length === 1 ? 'Neues Abzeichen: ' + fresh[0].t : fresh.length + ' neue Abzeichen! Schau unter Erfolge.')
+  const msg = owed.length ? 'Aus deinem Adventskalender: Der Skin ' + lookName(owed[0]) + ' wartet im Shop.' : news ? news + (lvCoins ? ' Du bist jetzt Level ' + lv.n + '!' : '') : newSkins > 0 ? newSkins + ' neue Skins im Shop! Schau unter Erfolge.' : lvCoins ? 'Level ' + lv.n + ': ' + lv.name + '! ' + lvCoins + ' Münzen.' : fresh.length ? (fresh.length === 1 ? 'Neues Abzeichen: ' + fresh[0].t : fresh.length + ' neue Abzeichen! Schau unter Erfolge.')
     : q.done.length ? 'Quest geschafft: Eine Truhe wartet auf dich!' : paid ? 'Tagesziel geschafft: 10 Münzen!' : '';
   if (msg) setTimeout(() => { toast(msg, 'emoji_events'); SFX.badge(); softRender() }, 900); else targetReminder();
 }
 if (bootOk) { try { settleUp(false) } catch (e) { bootOk = false; rescue(e) } }
+if (bootOk) advInit();
 if (bootOk) { syncLists(); checkUpdate() }
 /* Back from the background: a new day gets fresh numbers, and lessons and version are checked again after ten minutes. */
 document.addEventListener('visibilitychange', () => {
