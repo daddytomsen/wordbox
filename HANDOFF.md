@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 23.11.2026 · Version 2.7 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 23.11.2026 · Version 2.8 (gebaut; live ist 2.7, bis Thomas „pushen“ sagt) · vorher: Version 2.7 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,11 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.8 (23.11.2026 spät, Korrektur): Die Winter-Linie wartet auf den 1. Dezember.** Thomas hatte vorgegeben, dass Skins und Adventskalender erst zum 1.12. freigeschaltet werden. In 2.7 (live seit 23.11. abends) wartete nur der Kalender; der neue Bit, die acht Frostnacht-Skins im Shop und die Zeile „Bit hat einen neuen Look“ kamen sofort mit dem Update. Mein Fehler: Ich hatte die Skins ohne Stichtag gebaut.
+  - Jetzt gilt bis zum 30.11.: gezeichneter Bit, 14 Skins im Shop, keine Skins aus Truhen, kein Hinweis. Ab dem 1.12. (Datum des Geräts) öffnet alles von selbst: neuer Bit, Frostnacht-Legenden, Skins in Truhen, einmal der Hinweis, dazu wie gehabt der Kalender.
+  - Wer in den Tagen mit 2.7 schon einen Winter-Skin gekauft oder gefunden hat, behält ihn und kann ihn tragen. Wer den neuen Bit schon gesehen hat, sieht bis zum 1.12. wieder den gezeichneten.
+  - Nicht gesperrt (bewusst, bitte widersprechen, falls anders gewollt): Bit schwebt und reagiert im Quiz, die 14 gezeichneten Skins glänzen. Blinzeln kommt mit den Bild-Figuren am 1.12.
+  - Geprüft: Tests für „24.11.“ (Sperre zu), „30.11. abends“, „1.12.“, Gerät mit 2.7-Stand, neues Gerät; im Browser mit heutigem Datum und mit `?tag=1`.
 - **Version 2.7 (23.11.2026, Wunsch Thomas: Adventskalender, „um ihm das Warten auf Heiligabend zu versüßen“).**
   - 24 Türchen, Karte auf der Startseite ab dem 1. Dezember, vorher keine Spur. Hinter jedem Türchen: englisches Weihnachtswort des Tages mit Vorlesen, ein Rätsel oder Wissen über Weihnachten in Großbritannien, an 16 Tagen ein Geschenk (Truhen, Münzen, Serien-Schutz, kleiner Booster).
   - Entscheidungen Thomas: Türchen sind frei (keine Lernbedingung). An den Tagen 6., 13., 20. und 24. liegt ein Skin der Winter-Linie hinter dem Türchen (siehe unten).
@@ -170,7 +175,7 @@ Eine unabhängige Durchsicht fand nichts, was den Lernstand gefährdet, aber 15 
 2. Bis zu 24 Fotos hineinlegen. Welches Foto zu welchem Türchen gehört, steht in `texte.txt` (`7 Foto: IMG_0260.JPG`) oder im Dateinamen (`07.jpg`).
 3. In `texte.txt` stehen auch die Sätze und Gutscheine, eine Zeile je Eintrag: `7: Weißt du noch? Unser Sommer am Meer.` und `7 Gutschein: Heute suchst du den Film aus.`
 
-**Stand 23.11.:** Thomas hat 24 Fotos in den Ordner gelegt (April 2025 bis Oktober 2026, unnummeriert). Die Reihenfolge und 24 kurze Sätze hat Claude auf seinen Wunsch geschrieben und in `texte.txt` eingetragen; vier Gutscheine stehen dort als Vorschlag, auskommentiert. Das Paket ist gebaut (24 Fotos, 3,2 MB) und von der App im Test angenommen. Offen: Thomas liest die Sätze gegen, dann Schritte 5 bis 7.
+**Stand 23.11.:** Thomas hat 24 Fotos in den Ordner gelegt (April 2025 bis Oktober 2026, unnummeriert). Die Reihenfolge und 24 kurze Sätze hat Claude auf seinen Wunsch geschrieben und in `texte.txt` eingetragen; vier Gutscheine stehen dort als Vorschlag, auskommentiert. Das Paket ist gebaut (24 Fotos, 3,2 MB) und von der App im Test angenommen. Thomas hat die Sätze freigegeben und das Paket am 23.11. am iPhone geladen (Version 2.7). Erledigt bis auf den Blick am 1.12., ob die Fotos noch da sind.
 4. Paket bauen (das Skript sieht sich die Fotos nicht an, es verkleinert und verpackt sie nur):
 
 ```bash
@@ -238,6 +243,7 @@ Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-T
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 23.11.2026 | iPhone, Version 2.7 | Thomas meldet: Fotopaket über „Datei öffnen“ geladen, hat geklappt. Die App auf dem Home-Bildschirm nimmt die Datei also an. Offen bleibt, ob die Fotos bis in den Dezember gespeichert bleiben (am 1.12. Türchen 1 ansehen). |
 | 23.11.2026 | Mac, Browser in Handy-Größe, Version 2.7 | Mit echtem Datum (23.11.) keine Spur vom Kalender. Uhr der Seite auf 3.12. gestellt: Karte „3 Türchen warten auf dich“, Raster mit 24 Türchen, Türchen 8 nennt seinen Tag und bleibt zu. Paket aus 22 Probebildern über Einstellungen geladen (23 Einträge in der Datenbank). Türchen 3: Foto, Satz, Wort des Tages, +10 Münzen. Nach Neuladen: Türchen offen, Foto kommt aus der Datenbank, kein zweites Geschenk. Türchen 1: Rätsel zeigt Antwort auf Tippen, Foto bleibt. Türchen 6 im Dunkelmodus mit Gutschein und Diamanttruhe. Keine Fehler in der Konsole. |
 | 18.11.2026 | Mac, Browser in Handy-Größe, Version 2.6 | Hinweis „Ab Fach 3 schreibst du die Wörter selbst“. Knopf „Weiter lernen“ nennt „9 Wiederholungen + 1 neues Wort“ bei 12 wartenden Wörtern. Hörfrage: Wort wird beim Erscheinen vorgelesen, Knopf „Anhören“, Bedeutung, Eingabefeld; richtig geschrieben +4 XP, Fach 2 → 3. Schreibfragen am Tor: Fach 3 → 4. Neue Wörter weiter zum Ankreuzen. Keine Fehler in der Konsole. |
 | 18.11.2026 | Mac, Browser mit Android-Kennung (375 px), Version 2.5 | Wächter-Eintrag nach dem Start da. Zurück: Reiter → Start, Einstellungen → Erfolge → Start, Runde mit Antwort → „Jetzt aufhören?“ → Runde läuft weiter, Import-Durchsicht → Eingabe. „Teilen“ übergibt `Voc a Bit - Theme 2 Celebrations.txt` (text/plain, 29 kB). Auf einem Stand ohne Theme 2 eingefügt: 152 erkannt, 5 schon vorhanden, 147 gespeichert mit Seiten und Abschnitten, Stationen im Lernpfad. Installieren-Karte hell und dunkel, Knopf ruft Chrome einmal. Einstellungen ohne iPhone-Hinweise. Anleitung: „Teilen“ zeigt drei Schritte, „Datei senden“ übergibt die Datei mit Kopfzeilen, Karte „Lektion von einem Freund?“ auf der Import-Seite. |

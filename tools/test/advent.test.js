@@ -3,7 +3,7 @@ const { load, lists } = require('./harness');
 const units = lists();
 let fails = 0; const ok = (c, msg) => { if (!c) { fails++; console.log('  FAIL', msg) } };
 const at = (y, m, d, h = 16) => new Date(y, m - 1, d, h, 0, 0).getTime();
-const store = extra => ({ 'wordbox.units.v1': JSON.stringify(units), 'wordbox.prog.v1': JSON.stringify(Object.assign({ v: 1, econ: 2, tempo: 'fast', onboarded: true, v2: true, sound: false, speak: false, goal: 150, lvl: 1, coins: 0, news: '2.6' }, extra || {})) });
+const store = extra => ({ 'wordbox.units.v1': JSON.stringify(units), 'wordbox.prog.v1': JSON.stringify(Object.assign({ v: 1, econ: 2, tempo: 'fast', onboarded: true, v2: true, sound: false, speak: false, goal: 150, lvl: 1, coins: 0, news: '2.6', shopSeen: 14 }, extra || {})) });
 const app = (t, extra, more) => load(Object.assign({ clock: { t }, storage: store(extra) }, more || {}));
 const html = (A, view) => { A.S.view = view; A.S.result = null; A.render(); return A.els.app.innerHTML };
 const text = h => h.replace(/<svg[\s\S]*?<\/svg>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
@@ -39,7 +39,9 @@ async function main() {
     ok(!/Advent/.test(html(A, 'home')) && !/Advent/.test(html(A, 'awards')) && !/Advent/.test(html(A, 'settings')), 'no trace on start page, Erfolge and settings');
     A.ACT['adv-go'](); ok(A.S.view !== 'advent', 'the calendar cannot be entered');
     A.S.view = 'advent'; A.render(); ok(A.S.view === 'home', 'a stray view falls back to the start page');
-    A.timers.slice().forEach(f => f()); ok(!/Advent|Türchen|Kalender/.test(toast(A)) && /Bit hat einen neuen Look/.test(toast(A)) && A.S.prog.news === A.NEWS[0], 'the update toast tells of the new look and gives nothing away about the calendar: ' + toast(A));
+    A.timers.slice().forEach(f => f()); ok(toast(A).trim() === '' && A.S.prog.news === '2.6', 'on 30 November the update says nothing at all: "' + toast(A) + '"');
+    const D1 = app(at(2026, 12, 1, 7)); D1.timers.slice().forEach(f => f());
+    ok(/Bit hat einen neuen Look/.test(toast(D1)) && !/Advent|Türchen|Kalender/.test(toast(D1)) && D1.S.prog.news === D1.NEWS[0], 'on 1 December it tells of the new look and keeps the calendar a surprise: ' + toast(D1));
   }
   // 1 December: door 1 opens, door 2 waits for its day; a gift is booked once
   {
@@ -105,7 +107,7 @@ async function main() {
     B.timers.slice().forEach(f => f()); ok(/Kapitän Knack/.test(toast(B)), 'and the app says so: ' + toast(B));
     const C = load({ clock: { t: at(2026, 12, 22) }, storage: B.mem }); C.timers.slice().forEach(f => f()); ok(!/Nussknacker/.test(toast(C)) && C.advOwed().length === 0, 'only once');
     // before December nothing of this shows in the shop: the skins are there, the calendar is not named
-    const D = load({ clock: { t: at(2026, 11, 25) }, storage: store() }); ok(/Frostnacht-Legenden/.test(text(html(D, 'shop'))) && !/Advent|Türchen|Kalender/.test(text(html(D, 'shop'))), 'the shop shows the winter line and keeps the calendar a secret');
+    const D = load({ clock: { t: at(2026, 12, 2) }, storage: store() }); ok(/Frostnacht-Legenden/.test(text(html(D, 'shop'))) && !/Advent|Türchen|Kalender/.test(text(html(D, 'shop'))), 'the shop shows the winter line and keeps the calendar a secret');
   }
   // no sentence of the calendar presses: no "nur noch", nothing about missing out
   {

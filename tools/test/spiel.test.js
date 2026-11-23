@@ -146,13 +146,13 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   tap('buy-outfit', 'dragon'); ok(!A.S.prog.outfits.dragon && A.S.prog.coins === afterFirst, 'no purchase without enough coins');
   tap('wear', ''); ok(A.S.prog.outfit === '', 'back to Bit');
   tap('wear', 'ninja'); ok(A.S.prog.outfit === 'ninja', 'and to the skin again');
-  A.S.view = 'shop'; A.render(); ok(/Skins für Bit/.test(A.els.app.innerHTML) && A.els.app.innerHTML.indexOf('1 von ' + A.OUTFITS.length) > 0, 'shop shows the skins and the count');
+  A.S.view = 'shop'; A.render(); ok(/Skins für Bit/.test(A.els.app.innerHTML) && A.els.app.innerHTML.indexOf('1 von ' + A.shopOutfits().length) > 0, 'shop shows the skins and the count');
   const saved = JSON.parse(A.mem['wordbox.prog.v1']); ok(saved.outfit === 'ninja' && saved.coins === afterFirst, 'skin and coins are saved');
   for (const line of [undefined, 'fn']) { const L = A.OUTFITS.filter(o => o.line === line); ok(L.length >= 8 && L.every((o, i) => !i || o.cost >= L[i - 1].cost), 'skins of a line are listed from cheap to dear: ' + (line || 'drawn')) }
   ok(new Set(A.OUTFITS.map(o => o.id)).size === A.OUTFITS.length && new Set(A.OUTFITS.map(o => o.t)).size === A.OUTFITS.length, 'skin ids and names are unique');
   // the shop hint comes once for players of the version before, never for new players
-  const B = fresh({ t: day(2026, 11, 17) }, {}); ok(B.S.prog.shopSeen === B.OUTFITS.length, 'a player from 2.0 is told about the new skins once: ' + B.S.prog.shopSeen);
-  const B2 = load({ clock: { t: day(2026, 11, 17) }, storage: B.mem }); ok(B2.S.prog.shopSeen === B2.OUTFITS.length, 'and it stays noted after a restart');
+  const B = fresh({ t: day(2026, 11, 17) }, {}); ok(B.S.prog.shopSeen === B.shopOutfits().length && B.shopOutfits().length === 14, 'a player from 2.0 is told about the new skins once: ' + B.S.prog.shopSeen);
+  const B2 = load({ clock: { t: day(2026, 11, 17) }, storage: B.mem }); ok(B2.S.prog.shopSeen === B2.shopOutfits().length, 'and it stays noted after a restart');
   console.log('T skins:', ids.length, 'figures x', moods.length, 'moods');
 }
 // ---- findings of the review on 10.11.2026 ----
@@ -362,12 +362,14 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   // a level that the new curve hands out is paid once at the start: 20 coins and a silver chest
   {
     // old curve: level 15 (5950–6750), new: level 16 from 6375. The control save has the level paid already; both get the same coins for badges.
-    const xp = 6400, K = fresh({ t: at(16) }, { xp, lvl: 16, coins: 0, news: '2.3' }), base = K.S.prog.coins;
+    const xp = 6400, K = fresh({ t: at(16) }, { xp, lvl: 16, coins: 0, news: '2.3', shopSeen: 14 }), base = K.S.prog.coins;
     ok(!K.S.prog.inv.length, 'control: no chest without a new level');
-    const A = fresh({ t: at(16) }, { xp, lvl: 15, coins: 0, news: '2.3' }), p = A.S.prog;
+    const A = fresh({ t: at(16) }, { xp, lvl: 15, coins: 0, news: '2.3', shopSeen: 14 }), p = A.S.prog;
     ok(A.levelInfo(xp).n === 16 && p.lvl === 16 && p.coins === base + 20 && p.inv.length === 1 && p.inv[0].tier === 'RARE' && p.inv[0].source === 'LEVEL_UP', 'owed level paid at start: ' + JSON.stringify([p.lvl, p.coins - base, p.inv.map(c => c.tier)]));
-    A.timers.slice().forEach(f => f()); ok(/Neu:/.test(A.els.toast.innerHTML) && /Level 16/.test(A.els.toast.innerHTML), 'the note after the update names the new level: ' + A.els.toast.innerHTML.replace(/<[^>]+>/g, ''));
-    K.timers.slice().forEach(f => f()); ok(/Neu:/.test(K.els.toast.innerHTML) && !/Level/.test(K.els.toast.innerHTML), 'without a new level only the news line');
+    A.timers.slice().forEach(f => f()); ok(/Level 16/.test(A.els.toast.innerHTML) && !/Neu:/.test(A.els.toast.innerHTML), 'in November the note names the new level: ' + A.els.toast.innerHTML.replace(/<[^>]+>/g, ''));
+    K.timers.slice().forEach(f => f()); ok(!/Level|Neu:/.test(K.els.toast.innerHTML), 'without a new level nothing is said');
+    const dec = new Date(2026, 11, 2, 16).getTime(), A2 = fresh({ t: dec }, { xp, lvl: 15, coins: 0, news: '2.3', shopSeen: 14 }); A2.timers.slice().forEach(f => f());
+    ok(/Neu:/.test(A2.els.toast.innerHTML) && /Level 16/.test(A2.els.toast.innerHTML), 'in December the news line carries the level: ' + A2.els.toast.innerHTML.replace(/<[^>]+>/g, ''));
     const B = load({ clock: { t: at(17) }, storage: A.mem }); ok(B.S.prog.lvl === 16 && B.S.prog.coins === base + 20 && B.S.prog.inv.length === 1, 'and not a second time');
     const C = fresh({ t: at(16) }, { xp: 3400, lvl: 11, coins: 0, news: '2.3' }); ok(C.S.prog.lvl === 11 && !C.S.prog.inv.length, 'level 11 stays level 11');
   }
@@ -398,10 +400,67 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
   }
   console.log('T 2.4 steady XP: done');
 }
+// ---- 2.8: the winter line waits for 1 December. Until then the app looks as it did before ----
+{
+  const nov = (d, h = 16) => new Date(2026, 10, d, h, 0, 0).getTime(), dec = (d, h = 7) => new Date(2026, 11, d, h, 0, 0).getTime();
+  const plain = h => h.replace(/<svg[\s\S]*?<\/svg>/g, '');
+  // 24 November, a save from 2.6: no new Bit, no new skins, no word about either
+  {
+    const clock = { t: nov(24) }, A = fresh(clock, { coins: 1000, lvl: 1, news: '2.6', shopSeen: 14 });
+    ok(!A.winterOn() && A.shopOutfits().length === 14 && A.shopOutfits().every(o => !o.line), 'before 1 December the shop knows 14 skins');
+    ok(!/<image/.test(A.bit('happy', '')) && A.bit('happy', '') === A.bit('happy', 'classic'), 'Bit is the drawn Bit');
+    A.S.view = 'home'; A.render(); ok(!/skins\//.test(A.els.app.innerHTML), 'no picture of the winter line on the start page');
+    A.S.view = 'shop'; A.render(); const shop = plain(A.els.app.innerHTML);
+    ok(!/Frostnacht|Klassiker|Bit Klassik|Schneeschatten|Polarlicht|newtag|Glück/.test(shop) && shop.indexOf('0 von 14') > 0 && !/skins\//.test(A.els.app.innerHTML), 'the shop looks as in 2.6: 0 von 14, no winter line, no word about chests with skins');
+    ok((shop.match(/data-act="buy-outfit"/g) || []).length === 14 && (shop.match(/data-act="wear"/g) || []).length === 1, 'fourteen skins to buy, one Bit');
+    A.ACT['buy-outfit']({ dataset: { o: 'fn-idol' } }); ok(!A.S.prog.outfits['fn-idol'] && A.S.prog.coins === 1000, 'a skin of the winter line cannot be bought yet');
+    A.timers.slice().forEach(f => f()); ok(A.els.toast.innerHTML === '' && A.S.prog.news === '2.6' && A.S.prog.shopSeen === 14, 'the update says nothing: "' + A.els.toast.innerHTML + '"');
+    // chests hold no skin yet, whatever the dice
+    const seq = (...v) => { let i = 0; return () => v[Math.min(i++, v.length - 1)] };
+    ok(A.chestSkins(3).length === 0 && !A.rollLoot('MEGA', seq(.5, .99, .99, 0, 0)).skin && !A.rollLoot('EPIC', () => 0).skin, 'no skin from a chest before the line is out');
+    // the badge for all skins counts the 14 that can be had
+    const b = A.BADGES.find(x => x.id === 'outfitAll'); ok(b.pr(A.S.prog).join() === '0,14', 'Skin-Sammler counts 14: ' + b.pr(A.S.prog).join());
+    A.OUTFITS.filter(o => !o.line).forEach(o => A.giveLook(o.id)); ok(b.ok(A.S.prog), 'and is earned with the 14');
+    // 30 November, 23:59 → 1 December: the same save, the gate opens by itself
+    clock.t = nov(30, 23); ok(!A.winterOn(), 'still closed on the evening of 30 November');
+    const B = load({ clock: { t: dec(1, 6) }, storage: A.mem });
+    ok(B.winterOn() && B.shopOutfits().length === 22 && /skins\/bit\.webp/.test(B.bit('happy', '')), '1 December: 22 skins, Bit is the new Bit');
+    B.timers.slice().forEach(f => f()); ok(/Bit hat einen neuen Look/.test(B.els.toast.innerHTML) && B.S.prog.news === B.NEWS[0] && B.S.prog.shopSeen === 22, 'and the app says so, once: ' + B.els.toast.innerHTML.replace(/<[^>]+>/g, ''));
+    const B2 = load({ clock: { t: dec(1, 15) }, storage: B.mem }); B2.timers.slice().forEach(f => f()); ok(!/neuen Look/.test(B2.els.toast.innerHTML), 'not a second time');
+    B.S.view = 'shop'; B.render(); const s2 = plain(B.els.app.innerHTML);
+    ok(/Frostnacht-Legenden/.test(s2) && /Klassiker/.test(s2) && />Bit Klassik</.test(s2) && (s2.match(/class="newtag"/g) || []).length === 8 && /Glück/.test(s2), 'the shop of 1 December: winter line, classics, Bit Klassik');
+    ok(!B.BADGES.find(x => x.id === 'outfitAll').ok(B.S.prog) || true, 'the badge that was earned with 14 stays (badges are never taken back)');
+    ok(B.rollLoot('MEGA', seq(.5, .99, .99, 0, 0)).skin, 'chests may hold a skin now');
+  }
+  // someone who had 2.7 in November: read its news line, wears the new Bit, bought a winter skin, chose Bit Klassik once
+  {
+    const A = fresh({ t: nov(24) }, { coins: 50, lvl: 1, news: '2.7', shopSeen: 22, outfit: 'fn-idol', outfits: { 'fn-idol': '2026-11-23', ninja: '2026-11-01' } });
+    ok(/skins\/fn-idol\.webp/.test(A.bit('happy')) && A.S.prog.outfits['fn-idol'], 'a winter skin that was bought stays and stays on');
+    A.S.view = 'shop'; A.render(); const shop = plain(A.els.app.innerHTML);
+    const fnNames = A.OUTFITS.filter(o => o.line === 'fn'), mine = fnNames.find(o => o.id === 'fn-idol').t;
+    ok(shop.indexOf('<b>' + mine + '</b>') > 0 && !/Frostnacht/.test(shop) && fnNames.every(o => o.id === 'fn-idol' || shop.indexOf('<b>' + o.t + '</b>') < 0) && shop.indexOf('2 von 15') > 0, 'the shop shows it among the others, and nothing else of the line: ' + (shop.match(/\d+ von \d+/g) || []).join());
+    A.ACT.wear({ dataset: { o: '' } }); ok(A.S.prog.outfit === '' && !/<image/.test(A.bit('happy')), 'Bit himself is the drawn Bit again until December');
+    A.ACT.wear({ dataset: { o: 'fn-idol' } }); ok(A.S.prog.outfit === 'fn-idol', 'the bought skin can be put on again');
+    const C = fresh({ t: nov(24) }, { lvl: 1, news: '2.7', shopSeen: 22, outfit: 'classic' }); C.S.view = 'shop'; C.render();
+    ok(!/<image/.test(C.bit('happy')) && (plain(C.els.app.innerHTML).match(/aria-pressed="true"/g) || []).length === 1, 'Bit Klassik chosen in November: shown as Bit, and Bit is the one marked');
+    C.timers.slice().forEach(f => f()); ok(C.els.toast.innerHTML === '', 'no word in November');
+    const D = load({ clock: { t: dec(1, 8) }, storage: C.mem }); D.timers.slice().forEach(f => f());
+    ok(/neuen Look/.test(D.els.toast.innerHTML) && D.S.prog.outfit === 'classic' && !/<image/.test(D.bit('happy')), 'on 1 December the news comes again for everyone; who chose Bit Klassik keeps him');
+  }
+  // a new player in November starts with the drawn Bit and hears of the winter line on 1 December
+  {
+    const A = load({ clock: { t: nov(26) }, storage: { 'wordbox.units.v1': JSON.stringify(units) } });
+    A.S.prog.name = 'Neu'; A.ACT['ob-go']({}); ok(A.S.prog.onboarded && A.S.prog.shopSeen === 14 && A.S.prog.news === '' && !/<image/.test(A.bit('happy')), 'started in November: 14 skins known, nothing said');
+    const B = load({ clock: { t: dec(3, 16) }, storage: A.mem }); B.timers.slice().forEach(f => f()); ok(/neuen Look/.test(B.els.toast.innerHTML), 'told in December');
+    const N = load({ clock: { t: dec(5, 16) }, storage: { 'wordbox.units.v1': JSON.stringify(units) } }); N.ACT['ob-skip']({});
+    ok(N.S.prog.shopSeen === 22 && N.S.prog.news === N.NEWS[0] && /skins\/bit\.webp/.test(N.bit('happy')), 'started in December: the new Bit from the first minute, nothing to announce');
+  }
+  console.log('T 2.8 the winter line waits for 1 December: done');
+}
 // ---- 2.7: picture skins. The new Bit, the winter line, a skin from a chest ----
 {
   const fs = require('fs'), path = require('path'), ROOT = path.join(__dirname, '..', '..');
-  const at = h => new Date(2026, 10, 25, h, 0, 0).getTime();
+  const at = h => new Date(2026, 11, 2, h, 0, 0).getTime();
   const moods = ['happy', 'cheer', 'oops', 'think', 'wow', 'sleep'];
   const A = fresh({ t: at(16) }, { coins: 0, lvl: 1 });
   // every picture skin has its file, and every mood shows another cell of the sheet
@@ -461,7 +520,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
 // ---- 2.7: Bit moves. He floats where he hosts a screen, answers an answer in the quiz, and can be told to hold still ----
 {
   const fs = require('fs'), path = require('path'), src = fs.readFileSync(path.join(__dirname, '..', '..', 'index.html'), 'utf8');
-  const at = h => new Date(2026, 10, 25, h, 0, 0).getTime(), ids = units[1].words.map(w => w.id);
+  const at = h => new Date(2026, 11, 2, h, 0, 0).getTime(), ids = units[1].words.map(w => w.id);
   // the quiz: still while the question is open, one move for the answer, and only once
   {
     const A = fresh({ t: at(16) }, { lvl: 1 }), qbit = () => (/<svg class="bit[^"]*qbit[^"]*"/.exec(A.els.app.innerHTML) || [''])[0];

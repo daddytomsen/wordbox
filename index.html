@@ -753,7 +753,7 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 const app = document.getElementById('app');
 const toastEl = document.getElementById('toast');
 const DAY = 864e5;
-const APP_VERSION = '2.7';      // must match CACHE in sw.js; tools/check.sh compares both
+const APP_VERSION = '2.8';      // must match CACHE in sw.js; tools/check.sh compares both
 /* Waiting days per box (index = box). 'fast' is the family's physical card box: one box per day,
    so a word answered right every day goes new -> 2 -> 3 -> 4 -> 5 in four days. 'long' spaces further apart.
    Waiting is counted in calendar days: a word answered in the evening is due again the next morning. */
@@ -1040,7 +1040,7 @@ const BADGES = [
   { id: 'coins100', ic: 'star', t: 'Sparschwein', d: '100 Münzen verdient.', ok: p => (p.coinsEarned || 0) >= 100, pr: p => [p.coinsEarned || 0, 100] },
   { id: 'coins1000', ic: 'star', t: 'Goldgrube', d: '1000 Münzen verdient.', ok: p => (p.coinsEarned || 0) >= 1000, pr: p => [p.coinsEarned || 0, 1000] },
   { id: 'outfit', ic: 'auto_awesome', t: 'Neuer Look', d: 'Einen Skin für Bit freigeschaltet.', ok: p => OUTFITS.filter(o => (p.outfits || {})[o.id]).length >= 1 },
-  { id: 'outfitAll', ic: 'auto_awesome', t: 'Skin-Sammler', d: 'Alle Skins für Bit freigeschaltet.', ok: p => OUTFITS.every(o => (p.outfits || {})[o.id]), pr: p => [OUTFITS.filter(o => (p.outfits || {})[o.id]).length, OUTFITS.length] },
+  { id: 'outfitAll', ic: 'auto_awesome', t: 'Skin-Sammler', d: 'Alle Skins für Bit freigeschaltet.', ok: p => shopOutfits().every(o => (p.outfits || {})[o.id]), pr: p => [shopOutfits().filter(o => (p.outfits || {})[o.id]).length, shopOutfits().length] },
   { id: 'freeze', ic: 'lock', t: 'Gerettet', d: 'Der Serien-Schutz hat deine Serie gerettet.', ok: p => (p.freezeUsed || 0) >= 1 },
   { id: 'gold5', ic: 'star', t: '5 Gold-Stationen', d: '5 Stationen auf dem Lernpfad vergoldet.', ok: (p, c) => c.gold >= 5, pr: (p, c) => [c.gold, 5] },
   { id: 'gold15', ic: 'star', t: '15 Gold-Stationen', d: '15 Stationen auf dem Lernpfad vergoldet.', ok: (p, c) => c.gold >= 15, pr: (p, c) => [c.gold, 15] },
@@ -1659,7 +1659,15 @@ const bitPic = (file, mood, cls, look) => { const m = PIC_CELL[mood] ? mood : 'h
   const img = `<image href="skins/${file}.webp" x="${-360 * c[0]}" y="${-360 * c[1]}" width="1080" height="720"/>`;
   const eyes = BLINK.indexOf(look) >= 0 && m in BLINK_CELL ? `<image class="blink" href="skins/${file}-blink.webp" x="${-360 * BLINK_CELL[m]}" y="0" width="1080" height="360"/>` : '';
   return `<svg class="bit pic${lookCls(look)} ${cls}" ${floatAt()} viewBox="0 0 360 360" aria-hidden="true" focusable="false">${img}${eyes}${shinyLook(look) ? sheen(img, 1) : ''}</svg>` };
-const FREE_LOOKS = [{ id: '', t: 'Bit', tier: 0 }, { id: 'classic', t: 'Bit Klassik', tier: 0 }];      // everyone has these two
+/* The winter line is a Christmas surprise: it opens on 1 December together with the advent calendar, not on the
+   day the update arrives (wish of the family; version 2.7 showed it at once, 2.8 put this gate in). Until then the
+   app looks as it did before: Bit is the drawn Bit, the shop has the 14 drawn skins, chests hold no skins and no
+   word is said about it. A skin of the line that someone got while 2.7 was out stays theirs and can be worn.
+   From 1 December on the gate is open for good. */
+const winterOn = () => advStarted();
+/* The skins the shop shows: all of them once the gate is open; before that the drawn ones and what is owned. */
+function shopOutfits() { return winterOn() ? OUTFITS : OUTFITS.filter(o => !o.line || ownsLook(o.id)) }
+const FREE_LOOKS = [{ id: '', t: 'Bit', tier: 0 }, { id: 'classic', t: 'Bit Klassik', tier: 0 }];      // everyone has these two (before the gate opens they are one and the same)
 const knownLook = id => id === '' || id === 'classic' || Object.prototype.hasOwnProperty.call(SKINS, id) || Object.prototype.hasOwnProperty.call(PICS, id);
 const ownsLook = id => id === '' || id === 'classic' || !!(S.prog.outfits || {})[id];
 /* h hair, hs hair shadow, hl hair light, iris + glow eyes, cloth + trim clothes and gear; optional: ol outline for hair
@@ -1684,7 +1692,7 @@ const SKINS = {
 function bit(mood = 'happy', outfit, cls = '') {
   const o = outfit === undefined ? ((typeof S !== 'undefined' && S.prog.outfit) || '') : outfit;
   const look = knownLook(o) ? o : '';
-  if (Object.prototype.hasOwnProperty.call(PICS, look)) return bitPic(PICS[look], mood, cls, look);
+  if (Object.prototype.hasOwnProperty.call(PICS, look) && (look !== '' || winterOn())) return bitPic(PICS[look], mood, cls, look);      // Bit himself turns into the picture when the gate opens
   const k = look === 'classic' ? '' : look, c = SKINS[k];      // 'classic': the Bit drawn before 2.7, with the palette under ''
   const ink = '#161D42', skin = '#FFE1C8', shade = '#F2C3A2', gear = '#2B3577', edge = '#8E9AE0', gold = '#FFC21A', goldD = '#D99A00';
   const line = (d, col, w) => `<path d="${d}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
@@ -1990,7 +1998,7 @@ const CHEST = {
    days with the real code: about 5 skins at one round a day, about 6 at two (between 2 and 11). With twice these
    chances it was 9 and 11, half of all skins in three months. One single run had shown 4 and misled: these numbers
    need many runs, the dice inside a round are not fixed. */
-const chestSkins = maxTier => OUTFITS.filter(o => o.tier <= maxTier && !ownsLook(o.id));
+const chestSkins = maxTier => winterOn() ? OUTFITS.filter(o => o.tier <= maxTier && !ownsLook(o.id)) : [];      // skins in chests come with the winter line
 const CHEST_SOURCE = { DAILY_QUEST: 'Quest', DAILY: 'Heute geübt', PATH_MILESTONE: 'Lernpfad', LEVEL_UP: 'Neues Level', STREAK: 'Serie', ADVENT: 'Adventskalender', EARLY_BIRD: 'Frühaufsteher', NIGHT_OWL: 'Nachteule' };
 const UPGRADE_CHANCE = .2, FREEZE_MAX = 2, FREEZE_FULL_COINS = 12, ROUNDS_PER_CHEST = 5;
 const STREAK_CHESTS = { 3: 'COMMON', 7: 'RARE', 14: 'RARE', 30: 'EPIC', 50: 'EPIC', 100: 'MEGA' };
@@ -2715,24 +2723,25 @@ function viewAwards() {
 const NEW_SKINS = 2.7;                    // skins of this version carry a „Neu“ tag in the shop until they are bought
 function viewShop() {
   const p = S.prog, coins = p.coins || 0, fz = p.freezes || 0;
-  const cur = knownLook(p.outfit) ? p.outfit : '';
+  const open = winterOn(), cur = !knownLook(p.outfit) || (!open && p.outfit === 'classic') ? '' : p.outfit;
   // Bit's own looks come first and are always there; the skins are bought once (or found) and can be switched freely.
   const tile = o => { const own = ownsLook(o.id), on = cur === o.id;
     return `<div class="card outfit${on ? ' on' : ''}${o.tier === 4 ? ' myth' : ''}">${!own && o.since === NEW_SKINS ? '<span class="newtag">Neu</span>' : ''}${bit(on ? 'cheer' : 'happy', o.id, on ? fxc('skin', 'fx') : '')}<b>${o.t}</b><span class="rar rar-${o.tier}">${o.tier ? RARITY[o.tier] : 'Standard'}</span>
       ${own ? `<button class="btn ${on ? 'btn-line' : 'btn-soft'} btn-sm wide" data-act="wear" data-o="${o.id}" aria-pressed="${on}">${on ? icon('check') + 'Ausgewählt' : 'Auswählen'}</button>`
             : `<button class="btn btn-primary btn-sm wide" data-act="buy-outfit" data-o="${o.id}" aria-label="${o.t} kaufen für ${o.cost} Münzen"><span class="price">${art('coin')}${o.cost}</span></button>`}</div>` };
-  const frost = OUTFITS.filter(o => o.line === 'fn'), drawn = OUTFITS.filter(o => !o.line), have = OUTFITS.filter(o => ownsLook(o.id)).length;
+  const shown = shopOutfits(), frost = shown.filter(o => o.line === 'fn'), drawn = shown.filter(o => !o.line), have = shown.filter(o => ownsLook(o.id)).length;
   return `
   <div class="sub-h"><button class="iconbtn plain" data-act="nav" data-v="awards" aria-label="Zurück zu den Erfolgen">${icon('arrow_back')}</button><h2>Shop</h2><span class="wallet" aria-label="${fmt(coins)} Münzen">${art('coin')}${fmt(coins)}</span></div>
   <section class="card shop-item">${art('shield')}<div class="grow"><h3>Serien-Schutz</h3><p>Rettet deine Serie, wenn du einen Tag nicht übst. Du hast ${fz} von 2.</p></div>
     <button class="btn btn-primary btn-sm" data-act="buy-freeze" aria-label="Serien-Schutz kaufen für ${FREEZE_COST} Münzen">${fz >= 2 ? 'Voll' : `<span class="price">${art('coin')}${FREEZE_COST}</span>`}</button></section>
-  <div class="sec-h"><h2>Skins für Bit</h2><span class="pill">${have} von ${OUTFITS.length}</span></div>
-  <div class="outfits">${FREE_LOOKS.map(tile).join('')}</div>
+  <div class="sec-h"><h2>Skins für Bit</h2><span class="pill">${have} von ${shown.length}</span></div>
+  ${open ? `<div class="outfits">${FREE_LOOKS.map(tile).join('')}</div>
   <div class="sec-h"><h2>Frostnacht-Legenden</h2><span class="pill pill-gold">Neu</span></div>
   <div class="outfits">${frost.map(tile).join('')}</div>
   <div class="sec-h"><h2>Klassiker</h2></div>
-  <div class="outfits">${drawn.map(tile).join('')}</div>
-  <p class="small muted" style="text-align:center">Münzen gibt es aus Truhen, für das Tagesziel, fehlerfreie Runden, neue Level und Abzeichen. Truhen bekommst du für Quests, die erste Runde am Tag, jede fünfte Runde, neue Level und deine Serie. Sie warten, bis du Zeit hast. Mit etwas Glück steckt in einer Truhe ein Skin.</p>`;
+  <div class="outfits">${drawn.map(tile).join('')}</div>`
+  : `<div class="outfits">${[FREE_LOOKS[0]].concat(frost, drawn).map(tile).join('')}</div>`}
+  <p class="small muted" style="text-align:center">Münzen gibt es aus Truhen, für das Tagesziel, fehlerfreie Runden, neue Level und Abzeichen. Truhen bekommst du für Quests, die erste Runde am Tag, jede fünfte Runde, neue Level und deine Serie. Sie warten, bis du Zeit hast.${open ? ' Mit etwas Glück steckt in einer Truhe ein Skin.' : ''}</p>`;
 }
 function viewSettings() {
   const p = S.prog;
@@ -3262,7 +3271,7 @@ const ACT = {
   },
   'buy-outfit': t => {
     const o = OUTFITS.find(x => x.id === t.dataset.o), p = S.prog;
-    if (!o || (p.outfits || {})[o.id] || !spend(o.cost)) return;
+    if (!o || shopOutfits().indexOf(o) < 0 || (p.outfits || {})[o.id] || !spend(o.cost)) return;
     p.outfits = p.outfits || {}; p.outfits[o.id] = todayKey(); p.outfit = o.id; fx('skin');
     const fresh = checkBadges(); addCoins(5 * fresh.length);
     persist(); render(); SFX.badge(); haptic('win'); confetti();
@@ -3319,7 +3328,7 @@ const ACT = {
   'reset-ask': () => { S.resetAsk = true; render() },
   'reset-no': () => { S.resetAsk = false; render() },
   'reset-yes': () => {
-    const o = S.prog, keep = { name: o.name, goal: o.goal, sound: o.sound, speak: o.speak, haptics: o.haptics, motion: o.motion, theme: o.theme, tempo: o.tempo, removedLists: o.removedLists || [], onboarded: true, v2: true, lvl: 1, shopSeen: OUTFITS.length, news: NEWS[0] };
+    const o = S.prog, keep = { name: o.name, goal: o.goal, sound: o.sound, speak: o.speak, haptics: o.haptics, motion: o.motion, theme: o.theme, tempo: o.tempo, removedLists: o.removedLists || [], onboarded: true, v2: true, lvl: 1, shopSeen: shopOutfits().length, news: winterOn() ? NEWS[0] : '' };
     S.prog = Object.assign(freshProg(), keep); S.resetAsk = false; persist(); updateBadge(); go('home'); toast('Fortschritt zurückgesetzt.', 'autorenew');
   },
   'sound-test': () => { unlockAudio(); const was = S.prog.sound; S.prog.sound = true; SFX.win(); S.prog.sound = was; say('Hello! The sound is working.'); haptic('win'); toast('Du solltest jetzt eine Melodie und eine Stimme hören.' + (IOS ? ' Keine Stimme? Dann ist der Stummschalter an.' : ''), 'volume_up') },
@@ -3348,8 +3357,8 @@ const ACT = {
     saveUnits(); settleUp(true); persist(); applyTheme(); updateBadge(); go('home'); toast('Sicherung geladen.', 'check_circle');
   },
   'ob-goal': t => { S.prog.goal = +t.dataset.n; render() },
-  'ob-go': () => { const p = S.prog; p.name = (p.name || '').trim().slice(0, 24); p.onboarded = true; p.v2 = true; p.lvl = levelInfo(p.xp).n; p.shopSeen = OUTFITS.length; p.news = NEWS[0]; persist(); render(); SFX.ok(); haptic('ok') },
-  'ob-skip': () => { S.prog.name = ''; S.prog.onboarded = true; S.prog.v2 = true; S.prog.lvl = levelInfo(S.prog.xp).n; S.prog.shopSeen = OUTFITS.length; S.prog.news = NEWS[0]; persist(); render() },
+  'ob-go': () => { const p = S.prog; p.name = (p.name || '').trim().slice(0, 24); p.onboarded = true; p.v2 = true; p.lvl = levelInfo(p.xp).n; p.shopSeen = shopOutfits().length; p.news = winterOn() ? NEWS[0] : ''; persist(); render(); SFX.ok(); haptic('ok') },
+  'ob-skip': () => { S.prog.name = ''; S.prog.onboarded = true; S.prog.v2 = true; S.prog.lvl = levelInfo(S.prog.xp).n; S.prog.shopSeen = shopOutfits().length; S.prog.news = winterOn() ? NEWS[0] : ''; persist(); render() },
   'v2-ok': () => { const p = S.prog; p.v2 = true; addCoins(50); persist(); render(); confetti(); SFX.level(); haptic('win'); toast('50 Münzen für dich. Schau mal im Shop vorbei!', 'check_circle') },
   'imp-open': () => { S.imp = S.imp || { step: 'pick', text: '', title: '', words: [], err: '', showPrompt: false }; go('import', 'push') },
   'imp-back': () => { S.imp = null; go('vocab') },
@@ -3520,7 +3529,10 @@ try {
 } catch (e) { bootOk = false; rescue(e) }
 /* Rewards that fell due while the app was closed, or that a new version added for things already done,
    are booked here. quiet = no toast (used when the app comes back from the background). */
-const NEWS = ['2.7', 'Neu: Bit hat einen neuen Look! Im Shop warten neue Skins.'];      // [version, one line], shown once to players who had the version before
+/* [mark, one line]: said once. This one belongs to the winter line, so it is said on the first start from 1 December
+   on, to everyone, also to those who read the line of 2.7 in November (hence a mark of its own). It tells of Bit and
+   the skins and keeps the calendar a secret. */
+const NEWS = ['frost26', 'Neu: Bit hat einen neuen Look! Im Shop warten die Frostnacht-Legenden.'];
 function settleUp(quiet) {
   if (!S.prog.onboarded) return;
   activeTargets().forEach(targetInfo);
@@ -3532,8 +3544,8 @@ function settleUp(quiet) {
   const fresh = checkBadges(), q = checkQuests(), paid = payGoal();
   addCoins(5 * fresh.length);
   // The shop grows with updates. shopSeen is the number of skins the player has been told about (version 2.0 had 6).
-  const newSkins = p.v2 ? OUTFITS.length - (p.shopSeen || 6) : 0; p.shopSeen = OUTFITS.length;
-  const news = p.v2 && p.news !== NEWS[0] ? NEWS[1] : ''; p.news = NEWS[0];
+  const newSkins = p.v2 ? shopOutfits().length - (p.shopSeen || 6) : 0; p.shopSeen = shopOutfits().length;
+  const news = p.v2 && winterOn() && p.news !== NEWS[0] ? NEWS[1] : ''; if (winterOn()) p.news = NEWS[0];
   persist(); updateBadge();
   if (quiet || !S.prog.v2) return;
   const msg = owed.length ? 'Aus deinem Adventskalender: Der Skin ' + lookName(owed[0]) + ' wartet im Shop.' : news ? news + (lvCoins ? ' Du bist jetzt Level ' + lv.n + '!' : '') : newSkins > 0 ? newSkins + ' neue Skins im Shop! Schau unter Erfolge.' : lvCoins ? 'Level ' + lv.n + ': ' + lv.name + '! ' + lvCoins + ' Münzen.' : fresh.length ? (fresh.length === 1 ? 'Neues Abzeichen: ' + fresh[0].t : fresh.length + ' neue Abzeichen! Schau unter Erfolge.')
