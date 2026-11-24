@@ -1,6 +1,6 @@
 # Übergabe an Claude Code – Voc a Bit
 
-Stand: 23.11.2026 · Version 2.8 (gebaut; live ist 2.7, bis Thomas „pushen“ sagt) · vorher: Version 2.7 · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
+Stand: 24.11.2026 · Version 2.9 (gepusht 24.11.) · vorher: Version 2.8 (gepusht 23.11. spät, Commit 2c47c9f) · Projektordner `~/Downloads/wordbox` · live unter https://daddytomsen.github.io/wordbox/
 
 Lies zuerst `CLAUDE.md` (Aufbau, Regeln, Datenmodell). Diese Datei sagt, was fertig ist und was als Nächstes zu tun ist.
 
@@ -10,6 +10,24 @@ Thomas' Sohn (Klasse 6) übt seine Englisch-Vokabeln mit einer eigenen App auf s
 
 ## Fertig
 
+- **Version 2.9 (24.11.2026, Wunsch der Kinder): Truhen mit drei Versuchen je Stufe, dazu „Legendär“ und „Mythisch“.**
+  - Regel: Jede Truhe hat drei Versuche. Jeder Tipp versucht, sie eine Stufe zu heben. Klappt es, gibt es wieder drei Versuche; nach drei Fehlversuchen öffnet sie sich als das, was sie ist. Bis 2.8 gab es insgesamt zwei Chancen.
+  - Sechs Stufen statt vier: Holz, Silber, Gold, Diamant, Legendär, Mythisch. Die beiden neuen gibt es nur durch Upgrades. Legendär: 130 bis 190 Münzen, 2-fach XP für zwei Runden, Serien-Schutz, 25 % Skin. Mythisch: 250 bis 400 Münzen, 3-fach XP für zwei Runden, Serien-Schutz und immer ein Skin, der noch fehlt (ab dem 1.12., auch ein mythischer).
+  - Der Dialog zeigt die Versuche als drei Punkte und alle sechs Stufen als kleine Leiste. Töne: ein steigender Ton je Fehlversuch, eine Melodie beim Aufstieg, die mit jeder Stufe länger wird, eine Fanfare beim Öffnen ab Legendär. Konfetti beim Aufstieg ab Diamant.
+  - **Damit die Belohnungen nicht davonlaufen** (Vorgabe Thomas zu XP: „nicht zu viel nachgeben“): Weil Truhen jetzt viel öfter steigen, sind die Chancen je Versuch klein (Holz 14 %, Silber 12 %, Gold 6,5 %, Diamant 8 %, Legendär 5 %), und Booster in Silber- und Goldtruhen sind eine Spur seltener (6 % und 18 % statt 8 % und 20 %). Durchgespielt mit dem echten Code, 24 Läufe über 90 Tage, alt gegen neu:
+
+    | | 1 Runde/Tag alt | neu | 2 Runden/Tag alt | neu |
+    |---|---|---|---|---|
+    | Münzen aus Truhen | 5283 | 5706 | 7290 | 7765 |
+    | Runden mit Booster | 38 % | 36 % | 25 % | 26 % |
+    | XP je Tag | 71 | 73 | 130 | 133 |
+    | Skins aus Truhen | 4,5 | 5,2 | 6,0 | 6,7 |
+    | Diamant / Legendär / Mythisch | 12 / – / – | 9 / 3,2 / 0,5 | 18 / – / – | 14 / 4,5 / 0,3 |
+    | Tipps je Truhe | 3,0 | 3,8 | 3,0 | 3,8 |
+
+  - Fund beim Testen: Die Aufstiegs-Melodie kletterte im ersten Entwurf mit jeder Stufe höher und lag bei „Mythisch“ bei 15,8 kHz, was ein Handy nur als Pfeifen wiedergibt. Jetzt beginnt jede Stufe tiefer und endet höher, nichts liegt über 5 kHz; ein Test prüft das an den Noten.
+  - Von mir gesetzt, von Thomas noch nicht bestätigt: der Inhalt der beiden neuen Truhen, die Chancen je Versuch, die Farben (Legendär bernstein mit rotem Band, Mythisch nachtblau mit dreifarbigem Band).
+  - Geprüft im Browser (Handy-Größe, hell und dunkel): Leiste auf dem Start, Dialog mit Punkten und Stufenleiste, vier Aufstiege hintereinander von Silber bis Mythisch, Öffnen mit Beute, zwei Fehlversuche (ein Punkt bleibt), Speichern nach jedem Tipp. **Nicht geprüft: wie die Töne auf dem iPhone und auf Android klingen**; im Browser-Test war kein Lautsprecher im Spiel.
 - **Version 2.8 (23.11.2026 spät, Korrektur): Die Winter-Linie wartet auf den 1. Dezember.** Thomas hatte vorgegeben, dass Skins und Adventskalender erst zum 1.12. freigeschaltet werden. In 2.7 (live seit 23.11. abends) wartete nur der Kalender; der neue Bit, die acht Frostnacht-Skins im Shop und die Zeile „Bit hat einen neuen Look“ kamen sofort mit dem Update. Mein Fehler: Ich hatte die Skins ohne Stichtag gebaut.
   - Jetzt gilt bis zum 30.11.: gezeichneter Bit, 14 Skins im Shop, keine Skins aus Truhen, kein Hinweis. Ab dem 1.12. (Datum des Geräts) öffnet alles von selbst: neuer Bit, Frostnacht-Legenden, Skins in Truhen, einmal der Hinweis, dazu wie gehabt der Kalender.
   - Wer in den Tagen mit 2.7 schon einen Winter-Skin gekauft oder gefunden hat, behält ihn und kann ihn tragen. Wer den neuen Bit schon gesehen hat, sieht bis zum 1.12. wieder den gezeichneten.
@@ -243,6 +261,7 @@ Ergebnisse ins Testprotokoll. Rückweg, falls etwas Schlimmes ist: lokaler Git-T
 
 | Datum | Gerät / iOS | Ergebnis |
 |---|---|---|
+| 24.11.2026 | Mac, Browser in Handy-Größe, Version 2.9 | Sechs Truhen (je eine Stufe) in der Leiste. Silbertruhe geöffnet: drei Punkte, Stufenleiste „Stufe 2 von 6“, Text „Noch 3 Versuche. Bei jedem Upgrade gibt es 3 neue.“ Mit erzwungenem Glück vier Aufstiege bis „Mythische Truhe“: jedes Mal „Upgrade!“, wieder drei Punkte; oben keine Punkte, „Besser geht es nicht. Tippe sie an!“. Geöffnet: +341 Münzen, 3x XP für zwei Runden, Serien-Schutz (kein Skin, weil vor dem 1.12.). Holztruhe mit erzwungenem Pech: nach zwei Tipps ein Punkt, „Noch 1 Versuch. Klappt er, gibt es 3 neue.“, dritter Tipp öffnet (+8 Münzen). Jeder Tipp stand sofort im Speicher. Hell und dunkel, keine Fehler in der Konsole. Töne nicht gehört. |
 | 23.11.2026 | iPhone, Version 2.7 | Thomas meldet: Fotopaket über „Datei öffnen“ geladen, hat geklappt. Die App auf dem Home-Bildschirm nimmt die Datei also an. Offen bleibt, ob die Fotos bis in den Dezember gespeichert bleiben (am 1.12. Türchen 1 ansehen). |
 | 23.11.2026 | Mac, Browser in Handy-Größe, Version 2.7 | Mit echtem Datum (23.11.) keine Spur vom Kalender. Uhr der Seite auf 3.12. gestellt: Karte „3 Türchen warten auf dich“, Raster mit 24 Türchen, Türchen 8 nennt seinen Tag und bleibt zu. Paket aus 22 Probebildern über Einstellungen geladen (23 Einträge in der Datenbank). Türchen 3: Foto, Satz, Wort des Tages, +10 Münzen. Nach Neuladen: Türchen offen, Foto kommt aus der Datenbank, kein zweites Geschenk. Türchen 1: Rätsel zeigt Antwort auf Tippen, Foto bleibt. Türchen 6 im Dunkelmodus mit Gutschein und Diamanttruhe. Keine Fehler in der Konsole. |
 | 18.11.2026 | Mac, Browser in Handy-Größe, Version 2.6 | Hinweis „Ab Fach 3 schreibst du die Wörter selbst“. Knopf „Weiter lernen“ nennt „9 Wiederholungen + 1 neues Wort“ bei 12 wartenden Wörtern. Hörfrage: Wort wird beim Erscheinen vorgelesen, Knopf „Anhören“, Bedeutung, Eingabefeld; richtig geschrieben +4 XP, Fach 2 → 3. Schreibfragen am Tor: Fach 3 → 4. Neue Wörter weiter zum Ankreuzen. Keine Fehler in der Konsole. |

@@ -187,7 +187,7 @@ ol,ul{margin:0;padding:0;list-style:none}
 .chest-it b{font:900 13px/1.2 var(--f-ui)}
 .chest-it small{font:800 12px var(--f-ui);color:var(--ink-2)}
 .chest-it.ready small{color:var(--royal)}
-.t-COMMON{border-color:#C98850}.t-RARE{border-color:#8FA9F2}.t-EPIC{border-color:#A684FA}.t-MEGA{border-color:#14B8D4}
+.t-COMMON{border-color:#C98850}.t-RARE{border-color:#8FA9F2}.t-EPIC{border-color:#A684FA}.t-MEGA{border-color:#14B8D4}.t-LEGEND{border-color:#F59E0B}.t-MYTHIC{border-color:#C81E8C}
 .chest-dlg{align-items:center;gap:10px}
 .chest-src{font:800 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
 .chest-tap{background:none;border:0;padding:0;width:210px;height:182px;position:relative;border-radius:28px;touch-action:manipulation}
@@ -195,8 +195,14 @@ ol,ul{margin:0;padding:0;list-style:none}
 .chest-msg{min-height:38px;display:grid;place-items:center;font:800 16px var(--f-ui);color:var(--ink-2)}
 .chest-up{font:900 20px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,#C81E8C,#7C4DEB);padding:5px 18px;border-radius:999px}
 .pips3{display:flex;gap:8px;justify-content:center}
-.pips3 i{width:14px;height:14px;border-radius:50%;background:var(--line-2)}
-.pips3 i.on{background:var(--gold)}
+.pips3 i{width:16px;height:16px;border-radius:50%;background:var(--gold);border:2px solid var(--gold-deep)}      /* an attempt that is still there */
+.pips3 i.off{background:var(--line-2);border-color:var(--line-2)}      /* an attempt that is used up */
+.chest-dlg>p{text-wrap:balance}      /* two lines of about the same length instead of one word alone on the second */
+/* the six chests in a row, so one sees how far this one has climbed and what is still above it */
+.ladder{display:flex;gap:4px;justify-content:center;align-items:flex-end}
+.ladder .art{width:22px;height:22px;opacity:.28}
+.ladder .art.was{opacity:.6}
+.ladder .art.now{width:34px;height:34px;opacity:1}
 .loots{width:100%;display:flex;flex-direction:column;gap:8px}
 .dialog .loot{padding:10px 14px;border-radius:16px;background:var(--surface-2);font-size:16px}
 .dialog .loot .art{width:32px;height:32px}
@@ -753,7 +759,7 @@ details.unit summary small{color:var(--ink-3);font-size:13px}
 const app = document.getElementById('app');
 const toastEl = document.getElementById('toast');
 const DAY = 864e5;
-const APP_VERSION = '2.8';      // must match CACHE in sw.js; tools/check.sh compares both
+const APP_VERSION = '2.9';      // must match CACHE in sw.js; tools/check.sh compares both
 /* Waiting days per box (index = box). 'fast' is the family's physical card box: one box per day,
    so a word answered right every day goes new -> 2 -> 3 -> 4 -> 5 in four days. 'long' spaces further apart.
    Waiting is counted in calendar days: a word answered in the evening is due again the next morning. */
@@ -792,7 +798,7 @@ function migrateProg(p) {
     'coins', 'coinsEarned', 'freezes', 'freezeUsed', 'questsDone', 'chests', 'targetsDone', 'len', 'lvl', 'shopSeen', 'clock', 'chestsWon', 'chestsOpened', 'chestUps']) if (k in p && !num(p[k])) delete p[k];
   for (const k of ['name', 'last', 'goalDay', 'since2', 'outfit', 'mode', 'tempo', 'theme', 'dayChest', 'news']) if (k in p && typeof p[k] !== 'string') delete p[k];
   // Chests never lock or expire (since 2.3): a chest from 2.2 with opening hours simply becomes a chest.
-  if ('inv' in p) p.inv = Array.isArray(p.inv) ? p.inv.filter(c => obj(c) && typeof c.id === 'string' && ['COMMON', 'RARE', 'EPIC', 'MEGA'].indexOf(c.tier) >= 0 && (c.status === 'READY' || c.status === 'LOCKED'))
+  if ('inv' in p) p.inv = Array.isArray(p.inv) ? p.inv.filter(c => obj(c) && typeof c.id === 'string' && ['COMMON', 'RARE', 'EPIC', 'MEGA', 'LEGEND', 'MYTHIC'].indexOf(c.tier) >= 0 && (c.status === 'READY' || c.status === 'LOCKED'))
     .map(c => { c.status = 'READY'; delete c.unlockWindowStart; delete c.unlockWindowEnd; return c }) : [];
   // The booster counts rounds. One from 2.2 that still had minutes left becomes rounds (about ten minutes each).
   if (obj(p.boost) && num(p.boost.mult) && !num(p.boost.rounds) && num(p.boost.left)) p.boost = p.boost.left > 0 ? { mult: p.boost.mult, rounds: Math.max(1, Math.round(p.boost.left / 600000)) } : null;
@@ -1174,6 +1180,14 @@ function tone(seq) {
   } catch (e) {}
 }
 const NOTE = n => 440 * Math.pow(2, n / 12);       // semitones above the A of the tuning fork
+/* The notes of an upgrade, each [pitch, start, length, wave, loudness]. i: the tier the chest has reached, 1 silver … 5 mythic.
+   A higher tier starts lower and ends higher, so the run grows in both directions. Nothing goes above 5 kHz: a first
+   draft only climbed with the tier and reached 15.8 kHz at mythic, which a phone plays as a thin whistle or not at all. */
+function chestUpNotes(i) { const root = 4 - 2 * i, run = [0, 4, 7, 12, 16, 19, 24, 28].slice(0, 3 + i), last = run.length - 1, top = root + run[last], at = last * .065;
+    const seq = run.map((st, k) => [NOTE(root + st), k * .065, k === last ? .36 : .075]); seq.push([NOTE(top + 12), at, .32, 'sine', .05]);
+    if (i >= 3) seq.push([NOTE(top + 7), at + .16, .3, 'sine', .05], [NOTE(top + 16), at + .28, .42, 'sine', .05]);
+    if (i >= 5) seq.push([NOTE(root - 12), 0, .7, 'sawtooth', .04], [NOTE(top + 19), at + .42, .6, 'sine', .05]);
+    return seq }
 const SFX = {
   // "Right" climbs a semitone with every answer in a row, up to an octave: a streak is heard as well as seen.
   ok: (combo = 1) => { const k = Math.min(12, Math.max(0, combo - 1)); tone([[NOTE(7 + k), 0, .11], [NOTE(14 + k), .08, .24], [NOTE(26 + k), .08, .2, 'sine', .05]]) },
@@ -1183,8 +1197,14 @@ const SFX = {
   badge: () => tone([[880, 0, .1, 'sine'], [1174.66, .08, .1, 'sine'], [1567.98, .16, .34, 'sine']]),
   coin: () => tone([[NOTE(26), 0, .07, 'square', .05], [NOTE(31), .06, .24, 'square', .05]]),
   chestTap: () => tone([[NOTE(-14), 0, .1, 'square', .1], [NOTE(-9), .06, .12, 'triangle', .16]]),
-  chestUp: () => tone([[NOTE(7), 0, .08], [NOTE(12), .07, .08], [NOTE(16), .14, .08], [NOTE(19), .21, .08], [NOTE(24), .28, .34], [NOTE(36), .28, .3, 'sine', .05]]),
-  chestOpen: () => tone([[NOTE(3), 0, .12], [NOTE(7), .1, .12], [NOTE(10), .2, .12], [NOTE(15), .3, .4], [NOTE(27), .3, .36, 'sine', .05], [NOTE(31), .46, .3, 'square', .04]]),
+  // An attempt that did not lift the chest: a knock, higher with every attempt, so the third one sounds like the last.
+  chestTry: n => tone([[NOTE(-17 + 4 * n), 0, .09, 'square', .1], [NOTE(-12 + 4 * n), .06, .13, 'triangle', .16]]),
+  // An upgrade: a run of notes upwards. The higher the chest now is (1 silver … 5 mythic), the longer the run and the
+  // higher it starts; from the diamond chest on a shimmer rings on top of it.
+  chestUp: (i = 1) => tone(chestUpNotes(Math.max(1, Math.min(5, i)))),
+  chestOpenPlain: () => tone([[NOTE(3), 0, .12], [NOTE(7), .1, .12], [NOTE(10), .2, .12], [NOTE(15), .3, .4], [NOTE(27), .3, .36, 'sine', .05], [NOTE(31), .46, .3, 'square', .04]]),
+  // Opening: the lid tune from before; a legendary or mythic chest gets a fanfare on top.
+  chestOpen: (i = 0) => { SFX.chestOpenPlain(); if (i >= 4) tone([[NOTE(15), .62, .14, 'square', .07], [NOTE(19), .76, .14, 'square', .07], [NOTE(22), .9, .14, 'square', .07], [NOTE(27), 1.04, .5, 'square', .07], [NOTE(39), 1.04, .5, 'sine', .05]].concat(i >= 5 ? [[NOTE(31), 1.3, .6, 'sine', .06], [NOTE(34), 1.42, .7, 'sine', .06]] : [])) },
   level: () => tone([[523.25, 0, .14], [659.25, .12, .14], [783.99, .24, .14], [1046.5, .36, .2], [1318.5, .54, .5], [1568, .54, .5, 'sine', .08]])
 };
 let voice = null;
@@ -1877,18 +1897,20 @@ const CHEST_LOOK = {
   COMMON: { body: '#A8683A', lid: '#C98850', band: '#7A4E26', lock: '#E7B777', edge: '#6E4522', glow: '#FFD9A0' },
   RARE:   { body: '#5E7FD6', lid: '#8FA9F2', band: '#E3EAFB', lock: '#FFFFFF', edge: '#3F5AA3', glow: '#BFD2FF' },
   EPIC:   { body: '#7C4DEB', lid: '#A684FA', band: '#FFC21A', lock: '#FFE27A', edge: '#5330B8', glow: '#FFE27A' },
-  MEGA:   { body: '#14B8D4', lid: '#7DEBF7', band: '#FF5CA8', lock: '#FFFFFF', edge: '#0B7E96', glow: '#C9FBFF' }
-};
+  MEGA:   { body: '#14B8D4', lid: '#7DEBF7', band: '#FF5CA8', lock: '#FFFFFF', edge: '#0B7E96', glow: '#C9FBFF', bands: ['#FF5CA8', '#FFD21A', '#6DF08A'] },
+  LEGEND: { body: '#F59E0B', lid: '#FFD166', band: '#C81E1E', lock: '#FFF7D6', edge: '#B45309', glow: '#FFE9A8' },
+  MYTHIC: { body: '#2A1B6B', lid: '#5B3FD1', band: '#FF5CA8', lock: '#FFFFFF', edge: '#120B38', glow: '#F0B8FF', bands: ['#FF5CA8', '#B58CFF', '#4DE3F5'] }
+};      // bands: a band in three colours instead of one
 function chestArt(tier, cls = '') {
   const k = CHEST_LOOK[tier] || CHEST_LOOK.COMMON;
-  const band = tier === 'MEGA' ? '<path d="M3 9.300h6v2.400H3z" fill="#FF5CA8"/><path d="M9 9.300h6v2.400H9z" fill="#FFD21A"/><path d="M15 9.300h6v2.400h-6z" fill="#6DF08A"/>' : `<path d="M3 9.300h18v2.400H3z" fill="${k.band}"/>`;
+  const band = k.bands ? `<path d="M3 9.300h6v2.400H3z" fill="${k.bands[0]}"/><path d="M9 9.300h6v2.400H9z" fill="${k.bands[1]}"/><path d="M15 9.300h6v2.400h-6z" fill="${k.bands[2]}"/>` : `<path d="M3 9.300h18v2.400H3z" fill="${k.band}"/>`;
   return `<svg class="art ${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10.500h18v8.300a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="${k.body}"/><path d="M5.500 3.500h13A2.500 2.500 0 0 1 21 6v4.500H3V6a2.500 2.500 0 0 1 2.500-2.500z" fill="${k.lid}"/>` +
     `<path d="M7 3.500v5.800M17 3.500v5.800M7 11.700v9.100M17 11.700v9.100" stroke="${k.edge}" stroke-width="1.200"/>${band}<rect x="9.800" y="8" width="4.400" height="5.600" rx="1.200" fill="${k.lock}" stroke="${k.edge}" stroke-width="1"/></svg>`;
 }
 /* The big chest of the opening dialog, shut or open with its treasure showing. */
 function chestBig(tier, open) {
   const k = CHEST_LOOK[tier] || CHEST_LOOK.COMMON;
-  const band = y => tier === 'MEGA' ? `<path d="M14 ${y}h31v10H14z" fill="#FF5CA8"/><path d="M45 ${y}h30v10H45z" fill="#FFD21A"/><path d="M75 ${y}h31v10H75z" fill="#6DF08A"/>` : `<path d="M14 ${y}h92v10H14z" fill="${k.band}"/>`;
+  const band = y => k.bands ? `<path d="M14 ${y}h31v10H14z" fill="${k.bands[0]}"/><path d="M45 ${y}h30v10H45z" fill="${k.bands[1]}"/><path d="M75 ${y}h31v10H75z" fill="${k.bands[2]}"/>` : `<path d="M14 ${y}h92v10H14z" fill="${k.band}"/>`;
   const body = `<ellipse cx="60" cy="98" rx="46" ry="5.500" fill="#0B1026" opacity=".2"/><path d="M16 52h88v36a8 8 0 0 1-8 8H24a8 8 0 0 1-8-8z" fill="${k.body}"/><path d="M16 80h88v8a8 8 0 0 1-8 8H24a8 8 0 0 1-8-8z" fill="#0B1026" opacity=".14"/>` +
     `<path d="M34 58v38M86 58v38" stroke="${k.edge}" stroke-width="5"/>`;
   if (!open) return `<svg class="chest-big" viewBox="0 0 120 104" aria-hidden="true" focusable="false">${body}` +
@@ -1979,7 +2001,7 @@ function checkQuests() {
      source  DAILY_QUEST | DAILY (first round of a day) | PATH_MILESTONE | LEVEL_UP | STREAK
              (EARLY_BIRD and NIGHT_OWL only in bags from version 2.2, when chests had opening hours)
    The bag is prog.inv, the booster prog.boost = { mult, rounds }. */
-const TIERS = ['COMMON', 'RARE', 'EPIC', 'MEGA'];
+const TIERS = ['COMMON', 'RARE', 'EPIC', 'MEGA', 'LEGEND', 'MYTHIC'];
 /* What a chest holds. coins: from–to; boost: [chance, factor, rounds]; freeze: chance for a Serien-Schutz.
    The coin numbers are small on purpose, because skins cost 30 to 400 coins. A booster that counts rounds is never
    wasted, and chests upgrade while they are opened (a Gold chest becomes a Diamond chest about one time in three).
@@ -1988,19 +2010,35 @@ const TIERS = ['COMMON', 'RARE', 'EPIC', 'MEGA'];
    fifth round, mostly 1,5x, only the Diamond chest gives 2x. */
 const CHEST = {
   COMMON: { t: 'Holztruhe',    coins: [4, 8],    boost: [0, 1, 0],     freeze: 0,   skin: [0, 0] },
-  RARE:   { t: 'Silbertruhe',  coins: [10, 18],  boost: [.08, 1.5, 1], freeze: .10, skin: [.01, 1] },
-  EPIC:   { t: 'Goldtruhe',    coins: [25, 45],  boost: [.20, 1.5, 1], freeze: .25, skin: [.03, 2] },
-  MEGA:   { t: 'Diamanttruhe', coins: [60, 120], boost: [1, 2, 1],     freeze: .50, skin: [.10, 3] }
+  RARE:   { t: 'Silbertruhe',  coins: [10, 18],  boost: [.06, 1.5, 1], freeze: .10, skin: [.01, 1] },
+  EPIC:   { t: 'Goldtruhe',    coins: [25, 45],  boost: [.18, 1.5, 1], freeze: .25, skin: [.03, 2] },
+  MEGA:   { t: 'Diamanttruhe', coins: [60, 120], boost: [1, 2, 1],     freeze: .50, skin: [.10, 3] },
+  LEGEND: { t: 'Legendäre Truhe', coins: [130, 190], boost: [1, 2, 2], freeze: 1,   skin: [.25, 3] },
+  MYTHIC: { t: 'Mythische Truhe', coins: [250, 400], boost: [1, 3, 2], freeze: 1,   skin: [1, 4] }
 };
 /* skin: [chance, highest rarity] (since 2.7). A chest may hold a skin the child does not have yet: Selten from a
-   silver chest, up to Episch from gold, up to Legendär from diamond. Mythisch never comes from a chest. The chance
+   silver chest, up to Episch from gold, up to Legendär from diamond and from the legendary chest. Only the mythic
+   chest holds a skin for certain, and it may be a mythic one. The chance
    is small on purpose, and every skin can also be bought: nobody depends on luck. Played through 24 times over 90
    days with the real code: about 5 skins at one round a day, about 6 at two (between 2 and 11). With twice these
    chances it was 9 and 11, half of all skins in three months. One single run had shown 4 and misled: these numbers
    need many runs, the dice inside a round are not fixed. */
 const chestSkins = maxTier => winterOn() ? OUTFITS.filter(o => o.tier <= maxTier && !ownsLook(o.id)) : [];      // skins in chests come with the winter line
 const CHEST_SOURCE = { DAILY_QUEST: 'Quest', DAILY: 'Heute geübt', PATH_MILESTONE: 'Lernpfad', LEVEL_UP: 'Neues Level', STREAK: 'Serie', ADVENT: 'Adventskalender', EARLY_BIRD: 'Frühaufsteher', NIGHT_OWL: 'Nachteule' };
-const UPGRADE_CHANCE = .2, FREEZE_MAX = 2, FREEZE_FULL_COINS = 12, ROUNDS_PER_CHEST = 5;
+const FREEZE_MAX = 2, FREEZE_FULL_COINS = 12, ROUNDS_PER_CHEST = 5;
+/* Opening a chest (since 2.9, wish of the children): a chest has three attempts. Every tap is one attempt to lift
+   it one tier. If the attempt works, the chest is one tier better and has three attempts again; if all three fail, it
+   opens as what it is. On the highest tier there is nothing left to try: the next tap opens it. Before 2.9 a chest
+   had two chances in all and four tiers.
+   UPGRADE: the chance of one attempt on each tier. With new attempts after every upgrade a chest climbs much more
+   often than before, so the chances are smaller the higher it gets, and the loot of the two new tiers is sized so
+   that the whole pays about what it paid before. Played through 24 times over 90 days, old rules → new rules, at
+   one round a day: coins from chests 5283 → 5706, rounds with a booster 38 % → 36 %, XP a day 71 → 73, skins
+   4.5 → 5.2; about 3 legendary chests in 90 days and a mythic one every four to six months. At two rounds a day
+   7290 → 7765 coins, 25 % → 26 %, 130 → 133 XP, 6.0 → 6.7 skins, 4 to 5 legendary chests in 90 days.
+   Whoever turns one of these numbers plays it through again with many runs (see the note on skins above). */
+const ATTEMPTS = 3;
+const UPGRADE = { COMMON: .14, RARE: .12, EPIC: .065, MEGA: .08, LEGEND: .05 };
 const STREAK_CHESTS = { 3: 'COMMON', 7: 'RARE', 14: 'RARE', 30: 'EPIC', 50: 'EPIC', 100: 'MEGA' };
 
 function chestId() { try { if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID() } catch (e) {} return 'c-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10) }
@@ -2031,20 +2069,20 @@ function applyLoot(loot) {
 /* A skin that was not bought: from a chest or from a door of the advent calendar. It is not put on, the child decides. */
 function giveLook(id) { const p = S.prog; p.outfits = p.outfits || {}; if (!p.outfits[id]) p.outfits[id] = todayKey() }
 const lookName = id => { const o = OUTFITS.find(x => x.id === id); return o ? o.t : 'Skin' };
-/* One tap on a chest. Taps 1 and 2 may lift it one tier, tap 3 opens it and pays out. Every tap is saved at once,
-   so closing the app in between does not give a second roll. */
+/* One tap on a chest is one attempt to make it better. See ATTEMPTS and UPGRADE above. c.taps = attempts used on the
+   tier the chest is on now. Every tap is saved at once, so closing the app in between does not give a second roll. */
 function tapChest(id, rnd = Math.random) {
   const p = S.prog, c = (p.inv || []).find(x => x.id === id);
   if (!c) return null;
-  c.taps = (c.taps || 0) + 1;
-  if (c.taps < 3) {
-    const i = TIERS.indexOf(c.tier), up = i < TIERS.length - 1 && rnd() < UPGRADE_CHANCE;
-    if (up) { c.tier = TIERS[i + 1]; p.chestUps = (p.chestUps || 0) + 1 }
-    persist(); return { open: false, up, tier: c.tier, taps: c.taps };
+  const i = TIERS.indexOf(c.tier);
+  if (i < TIERS.length - 1) {
+    c.taps = (c.taps || 0) + 1;
+    if (rnd() < (UPGRADE[c.tier] || 0)) { c.tier = TIERS[i + 1]; c.taps = 0; p.chestUps = (p.chestUps || 0) + 1; persist(); return { open: false, up: true, tier: c.tier, taps: 0, left: ATTEMPTS } }
+    if (c.taps < ATTEMPTS) { persist(); return { open: false, up: false, tier: c.tier, taps: c.taps, left: ATTEMPTS - c.taps } }
   }
   const loot = rollLoot(c.tier, rnd); applyLoot(loot);
   p.inv = p.inv.filter(x => x !== c); p.chestsOpened = (p.chestsOpened || 0) + 1;
-  persist(); return { open: true, up: false, tier: c.tier, taps: 3, loot };
+  persist(); return { open: true, up: false, tier: c.tier, taps: c.taps || 0, left: 0, loot };
 }
 /* The XP booster lasts for a number of rounds, not minutes: it waits until the child has time to play.
    A new booster on top of a waiting one: the rounds add up and the higher factor counts. */
@@ -2541,13 +2579,16 @@ function viewChest() {
       <button class="btn btn-primary btn-xl wide" data-act="${more ? 'chest-open' : 'chest-close'}" ${more ? `data-c="${esc(more.id)}"` : ''} id="chestOk">${more ? 'Nächste Truhe' : 'Einsammeln'}</button>
       ${more ? `<button class="link" data-act="chest-close">Später weiter</button>` : ''}</div></div>`;
   }
-  const left = 3 - X.taps;
+  const at = TIERS.indexOf(X.tier), top = at >= TIERS.length - 1, left = top ? 0 : ATTEMPTS - X.taps;
+  const ladder = `<div class="ladder" role="img" aria-label="Stufe ${at + 1} von ${TIERS.length}: ${d.t}">${TIERS.map((t, i) => chestArt(t, i === at ? 'now' : i < at ? 'was' : '')).join('')}</div>`;
+  const say = top ? 'Besser geht es nicht. Tippe sie an!' : left === 1 ? 'Noch 1 Versuch. Klappt er, gibt es 3 neue.' : `Noch ${left} Versuche. Bei jedem Upgrade gibt es 3 neue.`;
   return `<div class="overlay"><div class="dialog chest-dlg" role="dialog" aria-modal="true" aria-labelledby="chT">
     <span class="chest-src">${esc(CHEST_SOURCE[X.source] || 'Truhe')}</span><h2 id="chT">${d.t}</h2>
-    <button class="chest-tap${fxc('chest-shake', 'shake')}${fxc('chest-up', 'up')}" data-act="chest-tap" id="chestTap" aria-label="${d.t} antippen, noch ${left}-mal">${chestBig(X.tier, false)}</button>
+    <button class="chest-tap${fxc('chest-shake', 'shake')}${fxc('chest-up', 'up')}" data-act="chest-tap" id="chestTap" aria-label="${d.t} antippen${top ? '' : ', noch ' + left + (left === 1 ? ' Versuch' : ' Versuche')}">${chestBig(X.tier, false)}</button>
     <div class="chest-msg" aria-live="polite">${X.up ? `<strong class="chest-up${fxc('chest-up', 'fx')}">Upgrade!</strong>` : `<span>Tippe die Truhe an!</span>`}</div>
-    <div class="pips3" aria-hidden="true">${[0, 1, 2].map(i => `<i class="${i < X.taps ? 'on' : ''}"></i>`).join('')}</div>
-    <p class="small muted">Noch ${left}-mal tippen. Mit Glück wird sie dabei besser.</p>
+    ${top ? '' : `<div class="pips3" aria-hidden="true">${[0, 1, 2].map(i => `<i class="${i < left ? '' : 'off'}"></i>`).join('')}</div>`}
+    ${ladder}
+    <p class="small muted">${say}</p>
     <button class="link" data-act="chest-close">Später öffnen, sie wartet auf dich</button></div></div>`;
 }
 function targetCard(t) {
@@ -3256,9 +3297,11 @@ const ACT = {
     const X = S.chest; if (!X || X.loot) return;
     const r = tapChest(X.id);
     if (!r) { S.chest = null; render(); toast('Diese Truhe ist nicht mehr da.', 'info'); return }
+    const tries = r.up ? 0 : r.open ? ATTEMPTS : r.taps, i = TIERS.indexOf(r.tier);
     X.tier = r.tier; X.taps = r.taps; X.up = r.up;
-    if (r.open) { X.loot = r.loot; fx('chest-open'); render(); SFX.chestOpen(); haptic('win'); confetti(); const b = document.getElementById('chestOk'); if (b) b.focus({ preventScroll: true }); return }
-    fx(r.up ? 'chest-up' : 'chest-shake'); render(); if (r.up) { SFX.chestUp(); haptic('win') } else { SFX.chestTap(); haptic('tap') }
+    if (r.open) { X.loot = r.loot; fx('chest-open'); render(); SFX.chestOpen(i); haptic('win'); confetti(); const b = document.getElementById('chestOk'); if (b) b.focus({ preventScroll: true }); return }
+    fx(r.up ? 'chest-up' : 'chest-shake'); render();
+    if (r.up) { SFX.chestUp(i); haptic('win'); if (i >= 3) confetti() } else { SFX.chestTry(tries); haptic('tap') }
     const b = document.getElementById('chestTap'); if (b) b.focus({ preventScroll: true });
   },
   'chest-close': () => { S.chest = null; render() },

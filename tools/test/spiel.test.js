@@ -261,20 +261,67 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
       ok(lo === d.coins[0] && hi === d.coins[1], tier + ' coins ' + lo + '–' + hi + ' fill the range ' + d.coins.join('–'));
       ok(Math.abs(boosts / N - d.boost[0]) < .04 && Math.abs(freezes / N - d.freeze) < .04, tier + ' chances: boost ' + (boosts / N).toFixed(2) + ' freeze ' + (freezes / N).toFixed(2));
     }
-    ok(A.CHEST.COMMON.coins[1] < A.CHEST.RARE.coins[0] && A.CHEST.RARE.coins[1] < A.CHEST.EPIC.coins[0] && A.CHEST.EPIC.coins[1] < A.CHEST.MEGA.coins[0], 'a better chest always pays more');
+    ok(A.TIERS.join() === 'COMMON,RARE,EPIC,MEGA,LEGEND,MYTHIC' && A.TIERS.every((t, i) => !i || A.CHEST[A.TIERS[i - 1]].coins[1] < A.CHEST[t].coins[0]), 'six tiers, and a better chest always pays more');
   }
-  // three taps: upgrades on tap 1 and 2 only, saved at once, tap 3 pays exactly what was rolled
+  // three attempts per tier (since 2.9): an attempt that works lifts the chest and gives three new ones; three in vain open it
   {
-    const A = fresh({ t: at(16) }, { coins: 0 });
+    const A = fresh({ t: at(16) }, { coins: 0 }), no = .99, yes = 0, saved = X => JSON.parse(X.mem['wordbox.prog.v1']).inv[0];
+    ok(A.ATTEMPTS === 3 && ['COMMON', 'RARE', 'EPIC', 'MEGA', 'LEGEND'].every(t => A.UPGRADE[t] > 0 && A.UPGRADE[t] < .2) && !('MYTHIC' in A.UPGRADE), 'three attempts; a chance for every tier but the highest: ' + JSON.stringify(A.UPGRADE));
     const c = A.addChest('COMMON', 'DAILY_QUEST');
-    let r = A.tapChest(c.id, seq(.1)); ok(r && !r.open && r.up && r.tier === 'RARE', 'tap 1 with luck lifts the chest: ' + JSON.stringify(r));
-    ok(JSON.parse(A.mem['wordbox.prog.v1']).inv[0].tier === 'RARE' && JSON.parse(A.mem['wordbox.prog.v1']).inv[0].taps === 1, 'the tap is saved');
+    let r = A.tapChest(c.id, seq(no)); ok(!r.open && !r.up && r.tier === 'COMMON' && r.taps === 1 && r.left === 2, 'attempt 1 fails: two left');
+    r = A.tapChest(c.id, seq(no)); ok(!r.open && !r.up && r.taps === 2 && r.left === 1 && saved(A).taps === 2, 'attempt 2 fails: one left, and that is saved');
+    r = A.tapChest(c.id, seq(yes)); ok(!r.open && r.up && r.tier === 'RARE' && r.taps === 0 && r.left === 3 && saved(A).tier === 'RARE' && saved(A).taps === 0, 'the last attempt works: silver, and three new attempts');
+    r = A.tapChest(c.id, seq(yes)); ok(r.up && r.tier === 'EPIC' && r.left === 3, 'works again at once: gold, three attempts again');
+    r = A.tapChest(c.id, seq(no)); ok(!r.up && r.tier === 'EPIC' && r.left === 2, 'then one in vain');
+    // closed and opened again in between: the chest goes on where it was, no attempt comes back
     const B = load({ clock: { t: at(16) }, storage: A.mem });
-    r = B.tapChest(c.id, seq(.9)); ok(r && !r.up && r.tier === 'RARE' && r.taps === 2, 'after a restart the chest goes on at tap 2, no second first roll');
-    r = B.tapChest(c.id, seq(0, .99, .99)); ok(r.open && r.loot.coins === B.CHEST.RARE.coins[0] && !r.loot.boost && !r.loot.freeze, 'tap 3 opens: ' + JSON.stringify(r.loot));
-    ok(B.S.prog.coins === B.CHEST.RARE.coins[0] && !B.S.prog.inv.length && B.S.prog.chestsOpened === 1, 'coins paid, chest gone');
+    r = B.tapChest(c.id, seq(no)); ok(!r.open && r.tier === 'EPIC' && r.taps === 2 && r.left === 1, 'after a restart it goes on at attempt 3 of gold');
+    r = B.tapChest(c.id, seq(no, 0, .99, .99, .99)); ok(r.open && r.tier === 'EPIC' && r.loot.coins === B.CHEST.EPIC.coins[0] && !r.loot.boost && !r.loot.freeze && !r.loot.skin, 'the third attempt in vain opens it as what it is: ' + JSON.stringify(r.loot));
+    ok(B.S.prog.coins === B.CHEST.EPIC.coins[0] && !B.S.prog.inv.length && B.S.prog.chestsOpened === 1 && B.S.prog.chestUps === 2, 'coins paid, chest gone, two upgrades counted');
     ok(B.tapChest(c.id) === null, 'an opened chest cannot be tapped again');
-    const M = B.addChest('MEGA', 'STREAK'); r = B.tapChest(M.id, seq(0)); ok(!r.up && r.tier === 'MEGA', 'nothing above a diamond chest');
+    // all the way up: five upgrades from wood, and on the highest tier the next tap opens
+    const C = fresh({ t: at(16) }, { coins: 0 }), w = C.addChest('COMMON', 'DAILY'); const seen = [];
+    for (let i = 0; i < 5; i++) { r = C.tapChest(w.id, seq(yes)); seen.push(r.tier) }
+    ok(seen.join() === 'RARE,EPIC,MEGA,LEGEND,MYTHIC' && !r.open && r.left === 3, 'wood can climb to mythic: ' + seen.join());
+    r = C.tapChest(w.id, seq(yes, 0, 0, 0, 0)); ok(r.open && r.tier === 'MYTHIC' && r.loot.coins === C.CHEST.MYTHIC.coins[0] && r.loot.boost.mult === 3 && r.loot.freeze, 'nothing above mythic: the next tap opens it, whatever the dice');
+    // the worst and the best case in taps: three for a chest that never climbs, and never more than three in vain on one tier
+    const D = fresh({ t: at(16) }, {}), x = D.addChest('RARE', 'DAILY'); let taps = 0; do { r = D.tapChest(x.id, seq(no)); taps++ } while (!r.open); ok(taps === 3 && r.tier === 'RARE', 'no luck at all: open after three taps');
+    // the chances are what the table says (many chests, real dice)
+    const E = fresh({ t: at(16) }, {}); const reach = {}; const N = 3000;
+    for (let i = 0; i < N; i++) { const ch = E.addChest('COMMON', 'DAILY'); do { r = E.tapChest(ch.id) } while (!r.open); reach[r.tier] = (reach[r.tier] || 0) + 1 }
+    const up0 = 1 - Math.pow(1 - E.UPGRADE.COMMON, 3); ok(Math.abs(1 - reach.COMMON / N - up0) < .035, 'a wooden chest climbs about ' + Math.round(up0 * 100) + ' % of the time: ' + (100 - 100 * reach.COMMON / N).toFixed(1));
+    ok(E.S.prog.inv.length === 0 && E.S.prog.chestsOpened === N, 'and every one of them opened in the end');
+  }
+  // the dialog: three dots for the attempts, the row of six chests, words that say what a tap does
+  {
+    const A = fresh({ t: at(16) }, { coins: 0 }), c = A.addChest('RARE', 'DAILY'), html = () => { A.S.view = 'home'; A.render(); return A.els.app.innerHTML }, text = h => h.replace(/<svg[\s\S]*?<\/svg>/g, '');
+    A.ACT['chest-open']({ dataset: { c: c.id } });
+    let h = html(); ok((text(h).match(/<i class="">/g) || []).length === 3 && !/<i class="off">/.test(text(h)) && /Noch 3 Versuche\. Bei jedem Upgrade gibt es 3 neue\./.test(text(h)), 'a fresh chest shows three attempts');
+    const row = (h.match(/<div class="ladder"[\s\S]*?<\/div>/) || [''])[0];      // only the row: small chests also sit on the page behind the dialog
+    ok((row.match(/class="art (now|was|)"/g) || []).join('|') === 'class="art was"|class="art now"|class="art "|class="art "|class="art "|class="art "' && /Stufe 2 von 6: Silbertruhe/.test(row), 'the row of six: wood behind it, silver marked, four still above');
+    A.S.prog.inv[0].taps = 2; A.S.chest.taps = 2; h = text(html()); ok((h.match(/<i class="off">/g) || []).length === 2 && /Noch 1 Versuch\. Klappt er, gibt es 3 neue\./.test(h), 'two used: one dot left and the words for the last attempt');
+    // tapping through with the real dice: the dialog always shows what is saved, and ends with the loot
+    A.S.prog.inv[0].taps = 0; A.S.chest.taps = 0; let n = 0;
+    while (!A.S.chest.loot && n < 40) { A.ACT['chest-tap'](); n++; const sv = A.S.prog.inv[0]; if (!A.S.chest.loot) ok(sv && sv.tier === A.S.chest.tier && (sv.taps || 0) === A.S.chest.taps, 'tap ' + n + ': dialog and bag agree') }
+    ok(A.S.chest.loot && n >= 3 && n <= 16 && A.S.prog.inv.length === 0 && /geöffnet!/.test(text(html())), 'after ' + n + ' taps the chest is open and gone from the bag');
+    const M = A.addChest('MYTHIC', 'STREAK'); A.ACT['chest-open']({ dataset: { c: M.id } }); h = text(html());
+    ok(/Mythische Truhe/.test(h) && /Besser geht es nicht/.test(h) && !/pips3/.test(h), 'the mythic chest has no attempts, only one tap to open');
+    A.ACT['chest-tap'](); ok(A.S.chest.loot && A.S.chest.loot.coins >= A.CHEST.MYTHIC.coins[0], 'and that tap opens it');
+    ok(A.TIERS.every(t => /<svg class="art /.test(A.chestArt(t)) && A.CHEST[t].t), 'every tier has a name and a picture: ' + A.TIERS.map(t => A.CHEST[t].t).join(', '));
+    // the sound of an upgrade grows with the tier: more notes, higher, never long enough to get in the way
+    const notes = [1, 2, 3, 4, 5].map(i => A.chestUpNotes(i));
+    ok(notes.every((s, i) => !i || s.length > notes[i - 1].length) && notes.every(s => s.every(x => x[0] > 60 && x[0] < 5000 && x[1] >= 0 && x[2] > 0 && x[1] + x[2] < 1.8)), 'upgrade sounds: ' + notes.map(s => s.length).join(' < ') + ' notes, none above 5 kHz (highest ' + Math.round(Math.max(...notes.flat().map(x => x[0]))) + ' Hz), all under two seconds');
+    const peak = s => Math.max(...s.map(x => x[0])), low = s => Math.min(...s.map(x => x[0]));
+    ok(notes.every((s, i) => !i || (peak(s) > peak(notes[i - 1]) && low(s) < low(notes[i - 1]))), 'and every tier reaches higher and starts lower than the one before: ' + notes.map(s => Math.round(low(s)) + '–' + Math.round(peak(s))).join(', ') + ' Hz');
+    for (const f of [() => A.SFX.chestTry(1), () => A.SFX.chestTry(3), () => A.SFX.chestUp(), () => A.SFX.chestUp(5), () => A.SFX.chestUp(99), () => A.SFX.chestOpen(), () => A.SFX.chestOpen(5)]) { let err = ''; try { f() } catch (e) { err = e.message } ok(!err, 'the sound calls do not fail without a loudspeaker: ' + err) }
+  }
+  // a save from before 2.9: chests keep their tier and the attempts already used; an unknown tier is thrown out
+  {
+    const inv = [{ id: 'a', tier: 'EPIC', source: 'DAILY_QUEST', status: 'READY', createdAt: 1, taps: 2 }, { id: 'b', tier: 'MEGA', source: 'STREAK', status: 'READY', createdAt: 2, taps: 0 }, { id: 'c', tier: 'ULTRA', source: 'X', status: 'READY', createdAt: 3, taps: 0 }];
+    const A = fresh({ t: at(16) }, { inv, coins: 0 });
+    ok(A.S.prog.inv.map(c => c.id + c.tier + c.taps).join() === 'aEPIC2,bMEGA0', 'old chests are kept as they are: ' + A.S.prog.inv.map(c => c.id + c.tier + c.taps).join());
+    const r = A.tapChest('a', () => .99); ok(r.open && r.tier === 'EPIC', 'a chest with two taps used has one attempt left');
+    const L = fresh({ t: at(16) }, { inv: [{ id: 'l', tier: 'LEGEND', source: 'DAILY', status: 'READY', createdAt: 1, taps: 1 }] }); ok(L.S.prog.inv.length === 1 && L.S.prog.inv[0].tier === 'LEGEND', 'the new tiers survive saving and loading');
   }
   // Serien-Schutz from a chest: at most two in the bag, otherwise coins instead
   {
@@ -307,7 +354,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
       play(A, ids, 'de-en'); ok(A.S.prog.inv.filter(c => c.source === 'DAILY').length === 1, 'one per day');
       ok(A.S.prog.inv.every(c => c.status === 'READY' && !('unlockWindowStart' in c) && !('unlockWindowEnd' in c)), 'no chest has opening hours');
       clock.t += 40 * 86400000; A.persist(); const B = load({ clock, storage: A.mem });
-      ok(B.S.prog.inv.length === A.S.prog.inv.length && B.tapChest(dc[0].id).taps === 1, 'forty days later every chest is still there and opens');
+      { const t = B.tapChest(dc[0].id, () => .99); ok(B.S.prog.inv.length === A.S.prog.inv.length && t && !t.open && t.taps === 1, 'forty days later every chest is still there and can be tapped') }
     }
   }
   // triggers: every fifth round, level-up, streak milestones
@@ -334,7 +381,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
       quests: { day: '2026-11-18', list: [['xp', 40, 'COMMON'], ['right', 30, 'RARE'], ['rounds', 3, 'EPIC']], done: { xp: true }, chest: false } };
     const A = load({ clock: { t: now }, storage: { 'wordbox.units.v1': JSON.stringify(units), 'wordbox.prog.v1': JSON.stringify(old) } });
     ok(A.S.prog.inv.length === 2 && A.S.prog.inv.every(c => c.status === 'READY' && !('unlockWindowStart' in c)) && A.S.prog.inv[1].taps === 1, 'chests with opening hours are simply chests now');
-    ok(A.tapChest('a').taps === 1, 'the former early-bird chest opens right away');
+    ok(A.tapChest('a', () => .99).taps === 1, 'the former early-bird chest opens right away');      // a fixed die: with the real one the tap sometimes lifts the chest and the count starts again
     ok(A.S.prog.boost && A.S.prog.boost.mult === 2 && A.S.prog.boost.rounds === 1 && !('left' in A.S.prog.boost), 'fourteen minutes of booster become one round');
     const sl = A.questSlots(); ok(sl[0].id === 'xp' && sl[0].done === '2026-11-18' && sl[1].id === 'right' && sl[1].stat.right === 12 && sl[2].id === 'rounds' && sl[2].stat.rounds === 1, 'the quests of the day come along with their counts: ' + JSON.stringify(sl.map(q => [q.id, q.done, q.stat.right, q.stat.rounds])));
     const B = fresh({ t: now }, { inv: [{ id: 'a', tier: 'EPIC', status: 'READY', source: 'STREAK' }, null, { id: 5, tier: 'RARE', status: 'READY' }, { id: 'b', tier: 'BESSER', status: 'READY' }, { id: 'c', tier: 'RARE', status: 'OPENED' }], boost: { mult: 'x' }, quests: { slots: [{ id: 'xp' }, 7] } });
@@ -509,7 +556,7 @@ function play(A, ids, mode, right = () => true, n = 10, opts) {
     let n = 0; const N = 6000; for (let i = 0; i < N; i++) if (C.rollLoot('MEGA').skin) n++; ok(Math.abs(n / N - .1) < .025, 'a diamond chest holds a skin about one time in ten: ' + (n / N).toFixed(3));
     // opening: the skin is in the bag afterwards, not put on, shown with its name; coins as rolled
     const c = C.addChest('MEGA', 'STREAK'); C.S.chest = { id: c.id, tier: c.tier, source: c.source, taps: 2, up: false, loot: null }; c.taps = 2;
-    const r = C.tapChest(c.id, seq(0, .99, .99, 0, 0)); ok(r.open && r.loot.skin && C.S.prog.outfits[r.loot.skin] && C.S.prog.outfit === '' && C.S.prog.coins === C.CHEST.MEGA.coins[0], 'opened: ' + r.loot.skin + ' is owned, coins ' + C.S.prog.coins);
+    const r = C.tapChest(c.id, seq(.99, 0, .99, .99, 0, 0)); ok(r.open && r.loot.skin && C.S.prog.outfits[r.loot.skin] && C.S.prog.outfit === '' && C.S.prog.coins === C.CHEST.MEGA.coins[0], 'opened: ' + r.loot.skin + ' is owned, coins ' + C.S.prog.coins);
     C.S.chest.loot = r.loot; C.S.view = 'home'; C.render(); ok(new RegExp('Neuer Skin: ' + C.lookName(r.loot.skin)).test(C.els.app.innerHTML.replace(/<svg[\s\S]*?<\/svg>/g, '')), 'the chest names the skin');
     // with every skin up to Legendär owned a chest simply holds none
     C.OUTFITS.forEach(o => { if (o.tier <= 3) C.giveLook(o.id) }); ok(C.chestSkins(3).length === 0 && !C.rollLoot('MEGA', seq(.5, .99, .99, 0, 0)).skin, 'nothing left to find: no skin, no error');

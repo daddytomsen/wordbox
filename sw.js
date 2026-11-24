@@ -1,7 +1,7 @@
 // Voc a Bit service worker: lets the app start without internet and picks up new versions.
 // The page and the lesson lists are asked from the network first, with a short time limit so a poor
 // connection never keeps the app from starting. Icons, manifest and fonts come from the cache.
-const CACHE = 'wordbox-v2.8';
+const CACHE = 'wordbox-v2.9';
 const PREFIX = 'wordbox-v';          // other apps live on the same address; only our own caches are touched
 const CORE = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './lists/index.json', './skins/bit.webp'];
 const FONTS = /^fonts\.(googleapis|gstatic)\.com$/;
